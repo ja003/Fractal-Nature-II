@@ -1,0 +1,4 @@
+Applying diamond square
+
+- diamond square algorithm applied to terrain
+- terrain still doesn't have appropriate size

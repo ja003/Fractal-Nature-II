@@ -85,7 +85,7 @@ public class TerrainGenerator : ITerrainGenerator
     int individualMeshSize;
 
     //Scaling vectors
-    public Vector3 scaleTerrain = new Vector3(800, 150, 800);
+    public Vector3 scaleTerrain = new Vector3(195, 100, 195); //195 for now...dont know how to create different size
     Vector2 uvScale;
     Vector3 vertsScale;
     Vector2 waterUvScale;
@@ -140,7 +140,7 @@ public class TerrainGenerator : ITerrainGenerator
         //The terrain size is built with a row of quads between the patches, to avoid vertex overlapping
         //while the meshSize is the renderable 2^i X 2^i mesh.
         terrainSize = patchSize * patchCount + patchCount;
-        meshSize = patchSize * patchCount + 1;
+        meshSize =  patchSize * patchCount + 1;
         individualMeshSize = meshSize / 2 + 1;
 
         //Textures initialisation
@@ -449,6 +449,18 @@ public class TerrainGenerator : ITerrainGenerator
 
     public void applyDiamondSquare(float scale)
     {
+        int widthCount = localTerrain.terrainWidth / (3 * patchSize / 4);
+        int heightCount = localTerrain.terrainHeight / (3 * patchSize / 4);
+
+        for (int x = -patchSize / 2; x < localTerrain.terrainWidth; x += 3 * patchSize / 4)
+        {
+            for (int z = -patchSize / 2; z < localTerrain.terrainHeight; z += 3 * patchSize / 4)
+            {
+                Debug.Log("Starting from: " + x + "," + z);
+                initDiamondSquare(new Vector3(x, 0, z), scale);
+            }
+        }
+
         //Iterate through patches
         /*
         for (int x = 0; x < patchCount; x++)
@@ -471,6 +483,7 @@ public class TerrainGenerator : ITerrainGenerator
         }*/
 
         int halfStep = (int)(0.5 * patchSize);
+        /*
         Debug.Log(patchSize);
 
         initDiamondSquare(new Vector3(localTerrain.terrainWidth/2, 0, localTerrain.terrainHeight / 2), scale * 2);
@@ -479,7 +492,7 @@ public class TerrainGenerator : ITerrainGenerator
         initDiamondSquare(new Vector3(-localTerrain.terrainWidth/2, 0, -localTerrain.terrainHeight/2), scale);
 
         initDiamondSquare(new Vector3(localTerrain.terrainWidth, 0, localTerrain.terrainHeight), scale);
-
+        */
 
         /*
         initDiamondSquare(new Vector3(patchSize, 0, patchSize), scale * 2);

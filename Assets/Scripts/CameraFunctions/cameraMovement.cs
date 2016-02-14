@@ -24,7 +24,11 @@ public class cameraMovement : MonoBehaviour {
 		}
         if (Input.GetKey("c"))
         {
-            gameObject.GetComponent<MouseLook>().enabled = !gameObject.GetComponent<MouseLook>().enabled;
+            if (gameObject.GetComponent<MouseLook>().enabled)
+                gameObject.GetComponent<MouseLook>().enabled = false;
+            else
+                gameObject.GetComponent<MouseLook>().enabled = transform;
+            //gameObject.GetComponent<MouseLook>().enabled = !gameObject.GetComponent<MouseLook>().enabled;
         }
 
         camera_pos.x = transform.position.x;
