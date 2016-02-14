@@ -56,9 +56,6 @@ public class GlobalTerrain : IGlobalTerrain
             Debug.Log(x + "," + z + ": SMALL");
             DoubleSizeOfQuadrant(GetQuandrantNumber(x, z));
         }
-        while (!CheckIfQuadrantDefined(x, z))
-        {
-        }
 
         if (x == 0 && z == 0)
         {
@@ -67,7 +64,13 @@ public class GlobalTerrain : IGlobalTerrain
         else
         {
             float[,] quadrant = GetQuandrant(x, z);
-            return quadrant[Math.Abs(x), Math.Abs(z)];
+            try {
+                return quadrant[Math.Abs(x), Math.Abs(z)];
+            }catch(IndexOutOfRangeException e)
+            {
+                Debug.Log(x + "," + z + " OUT");
+                return 666;
+            }
         }
         /*
         else if (x > 0 && z > 0)
@@ -134,7 +137,7 @@ public class GlobalTerrain : IGlobalTerrain
         }
         else
         {
-            return !(x > Math.Sqrt(GetQuandrant(x, z).Length) || z > Math.Sqrt(GetQuandrant(x, z).Length));
+            return !(x > Math.Sqrt(GetQuandrant(x, z).Length)-1 || z > Math.Sqrt(GetQuandrant(x, z).Length)-1);
         }
     }
 

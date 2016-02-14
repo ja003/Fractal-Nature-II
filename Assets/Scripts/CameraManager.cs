@@ -15,8 +15,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         Debug.Log("!");
 
-        terrainWidth = 100;
-        terrainHeight = 100;
+        terrainWidth = 200;
+        terrainHeight = 200;
 
         globalTerrain = new GlobalTerrain(Math.Max(terrainWidth, terrainHeight));
         Debug.Log("!");

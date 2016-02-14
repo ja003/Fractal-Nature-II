@@ -1,0 +1,4 @@
+Terrain size
+
+- terrain size can be changed
+- terrain width has to be same as height...TODO

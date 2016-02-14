@@ -55,4 +55,10 @@ public class LocalTerrain : ILocalTerrain {
         //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
         return globalTerrain.GetHeight(x + (int)center.x - terrainWidth / 2, z + (int)center.z - terrainHeight / 2);
     }
+
+    //TODO
+    public void SetHeight(int x, int z, float height)
+    {
+
+    }
 }
