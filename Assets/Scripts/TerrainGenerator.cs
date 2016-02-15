@@ -4,14 +4,18 @@ using System;
 
 public class TerrainGenerator : ITerrainGenerator
 {
-    private GlobalTerrain globalTerrain;
-    private LocalTerrain localTerrain;
+    public GlobalTerrain globalTerrain;
+    public LocalTerrain localTerrain;
 
-    public TerrainGenerator(GlobalTerrain globalTerrain, LocalTerrain localTerrain)
+    int terrainWidth;
+    int terrainHeight;
+    int individualMeshWidth;
+    int individualMeshHeight;
+    public Vector3 scaleTerrain;
+
+    public TerrainGenerator()
     {
-        this.globalTerrain = globalTerrain;
-        this.localTerrain = localTerrain;
-        initialize(64,3);
+        //initialize(64,3);
     }
 
     public void GenerateTerrainOn(float[,] heightmap)
@@ -20,10 +24,13 @@ public class TerrainGenerator : ITerrainGenerator
         {
             for (int z = 0; z < localTerrain.terrainHeight; z++)
             {
+                vertices[x, z].x = x; //shouldnt have to be declared
                 vertices[x, z].y = localTerrain.visibleTerrain[x, z];
+                vertices[x, z].z = z;
+
                 //vertices[x, z].y = 1+UnityEngine.Random.Range(0f, 1f);
-                //if(x<10 && z < 10)
-                    //Debug.Log(vertices[x, z].y);
+                if(x<10 && z < 10)
+                    Debug.Log(vertices[x, z].y);
             }
         }
         applyDiamondSquare(1);
@@ -42,96 +49,11 @@ public class TerrainGenerator : ITerrainGenerator
         }
     }
 
-
-    Vector3 sandColor = new Vector3(0.90f, 0.90f, 0.00f);  // Sand r,g,b
-    Vector3 grassColor = new Vector3(0.00f, 0.70f, 0.00f); // Grass r,g,b
-    Vector3 rockColor = new Vector3(0.20f, 0.05f, 0.00f); // Rock r,g,b
-    Vector3 snowColor = new Vector3(1.00f, 1.00f, 1.00f); // Snow r,g,b
-
-    float sandLimit = 0.3f;     // Sand maximum altitude
-    float sandStrength = 7.0f;  // Sand color multiplier
-    float sandCoverage = 0.02f; // Sand maximum slope size
-    float grassStrength = 1.0f; // Grass color multiplier
-    float snowLimit = 0.55f;    // Snow minimum altitude
-    float snowStrength = 6.0f;  // Snow color multiplier
-    float snowCoverage = 0.02f; // Snow minumum slope size
-    float slopeLimit = 0.0f;    // Rock altitude
-    float slopeStrength = 6.0f; // Rock multiplier
-    float noiseTexValue = 0.2f; // Random noise range
-
-    //Terrain object and mesh
-    public GameObject[] myTerrain;
-    public Mesh[] myMesh;
-
-    //Water object and mesh
-    public GameObject[] myWater;
-    public Mesh[] myWaterMesh;
-
-    //Textures
-    public Texture2D heightMap;
-    public Texture2D[] waterMap;
-    public Texture2D proceduralTexture;
-
-    //Mesh limits 
-    public Vector3 endOf;
-    public Vector3 startOf;
-    public Vector3 middleOf;
-
-    //Terrain sizes
-    //public int terrainSize;
-    //public int patchSize;
-    //int patchCount;
-    //int meshSize;
-    //int individualMeshSize;
-    int terrainWidth;
-    int terrainHeight;
-    int individualMeshWidth;
-    int individualMeshHeight;
-
-    //Scaling vectors
-    public Vector3 scaleTerrain;// = new Vector3(100, 10, 100); //195 for now...dont know how to create different size
-    Vector2 uvScale;
-    Vector3 vertsScale;
-    Vector2 waterUvScale;
-
-    //Meshes data
-    public Vector3[][] verticesWater;
-    public Vector3[,] vertices;
-    public Vector3[][] verticesOut;
-
-    Vector2[] waterUv;
-    Vector2[][] uv;
-    int[] triangles;
-    public Vector3[][] normals;
-
-    //Blurring kernel
-    float[,] gaussianKernel;
-
-    //On-the-fly generation offsets
-    int blurOffset;
-    int thermalOffset;
-
-    //Hydraulic erosion maps
-    public float[,] W; //water
-    public float[,] S; //sediment
-    public Vector2[,] V; //velocity
-    public Vector4[,] F; //outflow flux
-
-    //Diamond-square algorithm welding flags
-    bool a_corner, b_corner, c_corner, d_corner;
-
-    //Wind parameters
-    Vector2 windStrength = new Vector2(0.0f, 0.0f);
-    float windCoverage = 1.0f;
-    bool windAltitude = true;
-
-
-
-
-
+    
     //CLASS AND OBJECTS INITIALISATION
 
-    public void initialize(int patch_size, int patch_count)
+    //public void initialize(int patch_size, int patch_count)
+    public void initialize()
     {
 
         //Class Constructor
@@ -147,7 +69,7 @@ public class TerrainGenerator : ITerrainGenerator
         terrainWidth = localTerrain.terrainWidth;
         terrainHeight= localTerrain.terrainHeight;
 
-        scaleTerrain = new Vector3(terrainWidth, 10, terrainHeight);
+        scaleTerrain = new Vector3(terrainWidth, 20, terrainHeight);
         //meshSize =  patchSize * patchCount + 1;
         int meshSizeX =  32 * 2 + 1;
         int meshSizeZ =  64 * 2 + 1;
@@ -328,8 +250,24 @@ public class TerrainGenerator : ITerrainGenerator
         //erosionManager.initHydraulicMaps();
     }
 
+    public void MoveTerrain(Vector3 center)
+    {
+        for(int x = 0; x < terrainWidth; x++)
+        {
+            for (int z = 0; z < terrainWidth; z++)
+            {
+                vertices[x, z].x = x + center.x - terrainWidth / 2;
+                vertices[x, z].z = z + center.z - terrainHeight / 2;
+            }
+        }
+    }
+
     public void build()
     {
+        //move terrain
+        //Debug.Log("move to " + localTerrain.center);
+        MoveTerrain(localTerrain.center);
+
         //Function called to update the renderables when changes occur
 
         //Initialise scaling values according to terrain size and user-controlled sizing
@@ -522,14 +460,7 @@ public class TerrainGenerator : ITerrainGenerator
     }
     */
 
-
-
-
-    //PROCEDURAL GENERATION ALGORITHMS
-    /**/
-
-
-    //DIAMOND-SQUARE FRACTAL DISPLACEMENT MODEL
+        
 
     int patchWidth;
     int patchHeight;
@@ -554,14 +485,19 @@ public class TerrainGenerator : ITerrainGenerator
         int widthCount = terrainWidth / (3 * terrainWidth / 4);
         int heightCount = terrainHeight / (3 * terrainHeight / 4);
 
+        
         for (int x = -patchWidth / 2; x < terrainWidth; x += 3 * patchWidth / 4)
         {
             for (int z = -patchHeight / 2; z < terrainHeight; z += 3 * patchHeight / 4)
             {
-                Debug.Log("Starting from: " + x + "," + z);
+                //Debug.Log("Starting from: " + x + "," + z);
                 initDiamondSquare(new Vector3(x, 0, z), scale);
+
+                //if(CheckBounds(x,z))
+                //    vertices[x, z].y = 10;
             }
         }
+        
 
         //Iterate through patches
         /*
@@ -643,20 +579,35 @@ public class TerrainGenerator : ITerrainGenerator
         if(CheckBounds(x,z))
             vertices[x, z].y = height;
         ¨*/
+        /*
+        float h;
+        if (CheckBounds(x, z))
+        {
+            //Debug.Log("setting: " + x + "," + z + ":" + height);
+            h = vertices[x, z].y;
+        }*/
+
         if (CheckBounds(x, z)) {
             if (vertices[x, z].y == 666) 
             {
                 vertices[x, z].y = height;
+                localTerrain.SetHeight(x, z, height, false);
             }
             else
             {
-                vertices[x, z].y = vertices[x, z].y;
+
             }
         }
+        //h = vertices[x, z].y;
+
+        //update values also to global terrain        
+        localTerrain.SetGlobalHeight(x, z, height, false);
+        //globalTerrain.SetHeight(x, z, height, false);
     }
 
     /// <summary>
     /// returns height of vertex
+    /// if coordinates are out of bounds, it returns global height
     /// returns 0 if vertex is not defined
     /// </summary>
     /// <param name="x"></param>
@@ -823,6 +774,10 @@ public class TerrainGenerator : ITerrainGenerator
                 //vertices[i, start_z + patchSize + 1].y = vertices[i, start_z + patchSize].y;
                 */
 
+        // TODO 
+        //Copy margin values to neighbouring vertices belonging to nearby pathes 
+        //to avoid unwanted artifacts/seams between patches
+        /*
         //west
         if (start_x != 0)
             for (int i = start_z; i < start_z + patchHeight + 1; i++)
@@ -842,6 +797,8 @@ public class TerrainGenerator : ITerrainGenerator
         if (start_z + patchHeight != terrainHeight - 1)
             for (int i = start_x; i < start_x + patchWidth + 1; i++)
                 SetVertex(i, start_z + patchHeight + 1, GetVertexHeight(i, start_z + patchHeight));
+        */
+
         //vertices[i, start_z + patchSize + 1].y = vertices[i, start_z + patchSize].y;
     }
     int ss = 0;
@@ -1536,4 +1493,86 @@ public class TerrainGenerator : ITerrainGenerator
         ObjExporter.MeshToFile(myTerrain[2].GetComponent<MeshFilter>(), "/myTerrain_2.obj");
         ObjExporter.MeshToFile(myTerrain[3].GetComponent<MeshFilter>(), "/myTerrain_3.obj");
     }*/
+
+
+    /// <summary>
+    /// PARAMETERS I DONT NEED...
+    /// </summary>
+
+    Vector3 sandColor = new Vector3(0.90f, 0.90f, 0.00f);  // Sand r,g,b
+    Vector3 grassColor = new Vector3(0.00f, 0.70f, 0.00f); // Grass r,g,b
+    Vector3 rockColor = new Vector3(0.20f, 0.05f, 0.00f); // Rock r,g,b
+    Vector3 snowColor = new Vector3(1.00f, 1.00f, 1.00f); // Snow r,g,b
+
+    float sandLimit = 0.3f;     // Sand maximum altitude
+    float sandStrength = 7.0f;  // Sand color multiplier
+    float sandCoverage = 0.02f; // Sand maximum slope size
+    float grassStrength = 1.0f; // Grass color multiplier
+    float snowLimit = 0.55f;    // Snow minimum altitude
+    float snowStrength = 6.0f;  // Snow color multiplier
+    float snowCoverage = 0.02f; // Snow minumum slope size
+    float slopeLimit = 0.0f;    // Rock altitude
+    float slopeStrength = 6.0f; // Rock multiplier
+    float noiseTexValue = 0.2f; // Random noise range
+
+    //Terrain object and mesh
+    public GameObject[] myTerrain;
+    public Mesh[] myMesh;
+
+    //Water object and mesh
+    public GameObject[] myWater;
+    public Mesh[] myWaterMesh;
+
+    //Textures
+    public Texture2D heightMap;
+    public Texture2D[] waterMap;
+    public Texture2D proceduralTexture;
+
+    //Mesh limits 
+    public Vector3 endOf;
+    public Vector3 startOf;
+    public Vector3 middleOf;
+
+    //Terrain sizes
+    //public int terrainSize;
+    //public int patchSize;
+    //int patchCount;
+    //int meshSize;
+    //int individualMeshSize;
+    
+    Vector2 uvScale;
+    Vector3 vertsScale;
+    Vector2 waterUvScale;
+
+    //Meshes data
+    public Vector3[][] verticesWater;
+    public Vector3[,] vertices;
+    public Vector3[][] verticesOut;
+
+    Vector2[] waterUv;
+    Vector2[][] uv;
+    int[] triangles;
+    public Vector3[][] normals;
+
+    //Blurring kernel
+    float[,] gaussianKernel;
+
+    //On-the-fly generation offsets
+    int blurOffset;
+    int thermalOffset;
+
+    //Hydraulic erosion maps
+    public float[,] W; //water
+    public float[,] S; //sediment
+    public Vector2[,] V; //velocity
+    public Vector4[,] F; //outflow flux
+
+    //Diamond-square algorithm welding flags
+    bool a_corner, b_corner, c_corner, d_corner;
+
+    //Wind parameters
+    Vector2 windStrength = new Vector2(0.0f, 0.0f);
+    float windCoverage = 1.0f;
+    bool windAltitude = true;
+
 }

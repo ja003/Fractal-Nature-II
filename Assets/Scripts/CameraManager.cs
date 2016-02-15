@@ -12,23 +12,37 @@ public class CameraManager : MonoBehaviour, ICameraManager
     int terrainHeight;
 
     void Start () {
-
-        Debug.Log("!");
-
+        
         terrainWidth = 200;
         terrainHeight = 200;
 
         globalTerrain = new GlobalTerrain(Math.Max(terrainWidth, terrainHeight));
-        Debug.Log("!");
-        localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30, globalTerrain);
-        Debug.Log("!");
-        terrainGenerator = new TerrainGenerator(globalTerrain, localTerrain);
-        Debug.Log("!");
-        terrainGenerator.GenerateTerrainOn(localTerrain.visibleTerrain);
-        Debug.Log("!");
+        terrainGenerator = new TerrainGenerator();
+        localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30);
+
+        AssignFunctions();
+        terrainGenerator.initialize();
+        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
     }
-	
-	void Update () {
-	
-	}
+
+    public void AssignFunctions()
+    {
+        localTerrain.globalTerrain = globalTerrain;
+        localTerrain.terrainGenerator = terrainGenerator;
+
+        terrainGenerator.globalTerrain = globalTerrain;
+        terrainGenerator.localTerrain = localTerrain;
+    }
+
+    int lastActionFrame = 0;
+
+    void Update () {
+
+        if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
+        {
+            //Debug.Log("generating on: " + gameObject.transform.position);
+            localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
+            lastActionFrame = Time.frameCount;
+        }
+    }
 }

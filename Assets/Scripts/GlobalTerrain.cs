@@ -53,7 +53,7 @@ public class GlobalTerrain : IGlobalTerrain
     {
         while (!CheckIfQuadrantDefined(x, z))
         {
-            Debug.Log(x + "," + z + ": SMALL");
+            //Debug.Log(x + "," + z + ": SMALL");
             DoubleSizeOfQuadrant(GetQuandrantNumber(x, z));
         }
 
@@ -72,38 +72,17 @@ public class GlobalTerrain : IGlobalTerrain
                 return 666;
             }
         }
-        /*
-        else if (x > 0 && z > 0)
-        {
-            return quadrant1heightmap[x, z];
-        }
-        else if (x < 0 && z > 0)
-        {
-            return quadrant2heightmap[Math.Abs(x), z];
-        }
-        else if (x < 0 && z < 0)
-        {
-            return quadrant3heightmap[Math.Abs(x), Math.Abs(z)];
-        }
-        else if (x > 0 && z < 0)
-        {
-            return quadrant4heightmap[x, Math.Abs(z)];
-        }
-        else
-        {
-            Debug.Log(x + "," + z + ":" + "incorrect coordinate calculation");
-            return 666;
-        }
-        */
     }
 
     /// <summary>
     /// sets height to heightmap at given coordinates
+
     /// </summary>
     /// <param name="x"></param>
     /// <param name="z"></param>
     /// <param name="height"></param>
-    public void SetHeight(int x, int z, float height)
+    /// <param name="overwrite">overwrite original value</param>
+    public void SetHeight(int x, int z, float height, bool overwrite)
     {
         while (!CheckIfQuadrantDefined(x, z))
         {
@@ -111,15 +90,23 @@ public class GlobalTerrain : IGlobalTerrain
             DoubleSizeOfQuadrant(GetQuandrantNumber(x, z));
         }
 
+        //do not overwite height if it is already set
+        if (!overwrite && GetHeight(x, z) != 666)
+            return;
+
         if (x == 0 && z == 0)
         {
             globalCenter = height;
         }
         else
         {
-            GetQuandrant(x, z)[x, z] = height;
+            GetQuandrant(x, z)[Math.Abs(x), Math.Abs(z)] = height;
         }
-        
+    }
+
+    public void SetHeight(int x, int z, float height)
+    {
+        SetHeight(x, z, height, true);
     }
 
     /// <summary>
@@ -137,7 +124,7 @@ public class GlobalTerrain : IGlobalTerrain
         }
         else
         {
-            return !(x > Math.Sqrt(GetQuandrant(x, z).Length)-1 || z > Math.Sqrt(GetQuandrant(x, z).Length)-1);
+            return !(Math.Abs(x) > Math.Sqrt(GetQuandrant(x, z).Length)-1 || Math.Abs(z) > Math.Sqrt(GetQuandrant(x, z).Length)-1);
         }
     }
 

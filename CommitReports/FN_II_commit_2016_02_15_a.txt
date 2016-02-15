@@ -1,0 +1,4 @@
+Moving terrain
+
+- implemented possibility to generate terrain anywhere on map
+- terrain mesh is translated with camera
