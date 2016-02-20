@@ -1,0 +1,4 @@
+New random terrain 
+
+- diamond square...doesn't work well, better implement my own for now
+- implemented new local/global coordinate mapping system
