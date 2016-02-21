@@ -46,18 +46,23 @@ public class GlobalTerrain : IGlobalTerrain
     }
 
     /// <summary>
-    /// returns average of neighbour vertices heights
+    /// returns average of neighbour vertices heights in area = 1
     /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
-    /// <returns></returns>
     public float GetNeighbourAverage(int _x, int _z)
+    {
+        return GetNeighbourAverage(_x, _z, 1);
+    }
+
+    /// <summary>
+    /// returns average of neighbour vertices heights in given area
+    /// </summary>
+    public float GetNeighbourAverage(int _x, int _z, int area)
     {
         float heightAverage = 0;
         int neighboursCount = 0;
-        for (int x = _x - 1; x <= _x + 1; x++)
+        for (int x = _x - area; x <= _x + area; x++)
         {
-            for (int z = _z - 1; z <= _z + 1; z++)
+            for (int z = _z - area; z <= _z + area; z++)
             {
                 if (GetHeight(x, z) != 666)
                 {

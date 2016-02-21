@@ -15,8 +15,11 @@ public class LocalTerrain : ILocalTerrain {
     public GlobalCoordinates globalTerrainC;
     public FilterGenerator fg;
 
-    public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize)
+    public GlobalTerrain gt;
+
+    public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain)
     {
+        gt = globalTerrain;
         visibleTerrain = new float[terrainHeight, terrainWidth];
         this.terrainHeight = terrainHeight;
         this.terrainWidth = terrainWidth;
@@ -42,7 +45,9 @@ public class LocalTerrain : ILocalTerrain {
 
         tg.GenerateTerrainOn(visibleTerrain, localTerrainC.botLeft, localTerrainC.topRight);
 
-        fg.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 2, 50, 10);
+        fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 3, 50, 10);
+
+        fg.af.GenerateAverageFilterInRegion(localTerrainC.botLeft, localTerrainC.topRight);
 
         tg.build();
     }
@@ -68,9 +73,7 @@ public class LocalTerrain : ILocalTerrain {
         localTerrainC.botLeft = botLeft;
         localTerrainC.topRight = topRight;
 
-        tg.filterGenerator.localFilterC.center = center;
-        tg.filterGenerator.localFilterC.botLeft = botLeft;
-        tg.filterGenerator.localFilterC.topRight = topRight;
+        tg.filterGenerator.UpdateLocalCoordinates(center, botLeft, topRight);
 
     }
 

@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         globalTerrain = new GlobalTerrain(quadrantSize);
         terrainGenerator = new TerrainGenerator();
-        localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30);
+        localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30, globalTerrain);
         filterGenerator = new FilterGenerator(quadrantSize, localTerrain);
 
         functionMathCalculator = new FunctionMathCalculator();
@@ -31,7 +31,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         terrainGenerator.initialize();
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
         //filterGenerator.PerserveMountains(3, 50, 10);
-        terrainGenerator.build();
+        //terrainGenerator.build();
     }
 
     public void AssignFunctions()
@@ -70,7 +70,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
         {
             FixCameraPosition();
-            //Debug.Log("generating on: " + gameObject.transform.position);
+            Debug.Log("generating on: " + gameObject.transform.position);
             localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
             lastActionFrame = Time.frameCount;
         }
@@ -85,12 +85,19 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("perserve mountain");
-            filterGenerator.PerserveMountainsInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight, 3, 50, 10);
+            filterGenerator.mf.PerserveMountainsInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight, 3, 50, 10);
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
         {
-            filterGenerator.ResetFilter();
+            filterGenerator.ResetFilters();
+            lastActionFrame = Time.frameCount;
+        }
+        if (Input.GetKey("4") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("averaging");
+
+            filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight);
             lastActionFrame = Time.frameCount;
         }
     }

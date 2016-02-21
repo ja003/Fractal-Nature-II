@@ -1,0 +1,4 @@
+Filter decomposition
+
+- mountain filter moved to seperate class
+- added averaging filter => makes terrain smooth

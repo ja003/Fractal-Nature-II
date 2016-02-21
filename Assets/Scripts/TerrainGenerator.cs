@@ -134,11 +134,12 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z);
-                if (x < 10 && z < 10)
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterAverageC);
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterMountainC);
+                /*if (x < 10 && z < 10)
                 {
-                    //Debug.Log(filterGenerator.GetLocalValue(x, z));
-                }
+                    Debug.Log(filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterAverageC));
+                }*/
             }
         }
     }
