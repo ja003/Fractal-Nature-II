@@ -8,7 +8,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
     private LocalTerrain localTerrain;
     private TerrainGenerator terrainGenerator;
     private FilterGenerator filterGenerator;
-    private FunctionMathCalculator fmc;
+    private FunctionMathCalculator functionMathCalculator;
 
     int terrainWidth;
     int terrainHeight;
@@ -25,7 +25,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30);
         filterGenerator = new FilterGenerator(quadrantSize, localTerrain);
 
-        fmc = new FunctionMathCalculator();
+        functionMathCalculator = new FunctionMathCalculator();
             
         AssignFunctions();
         terrainGenerator.initialize();
@@ -37,12 +37,13 @@ public class CameraManager : MonoBehaviour, ICameraManager
     public void AssignFunctions()
     {
         //localTerrain.globalTerrain = globalTerrain;
-        localTerrain.terrainGenerator = terrainGenerator;
-        localTerrain.AssignFunctions(globalTerrain.globalTerrainC);
+        localTerrain.tg = terrainGenerator;
+        localTerrain.AssignFunctions(globalTerrain.globalTerrainC, filterGenerator);
 
-        terrainGenerator.AssignFunctions(globalTerrain, localTerrain, filterGenerator);
+        terrainGenerator.AssignFunctions(globalTerrain, localTerrain, filterGenerator, functionMathCalculator);
+        
 
-        filterGenerator.AssignFunctions(fmc, localTerrain);
+        filterGenerator.AssignFunctions(functionMathCalculator, localTerrain);
     }
 
     int lastActionFrame = 0;
@@ -57,6 +58,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
     }
 
     void Update () {
+
+        //generate terrain when camera gets close to border
+        if(Get2dDistance(gameObject.transform.position, localTerrain.localTerrainC.center) > 70)
+        {
+            FixCameraPosition();
+            //Debug.Log("moving to center: " + gameObject.transform.position);
+            localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
+        }
 
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
         {
@@ -76,8 +85,24 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("perserve mountain");
-            //filterGenerator.PerserveMountains(3, 50, 10);
+            filterGenerator.PerserveMountainsInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight, 3, 50, 10);
             lastActionFrame = Time.frameCount;
         }
+        if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
+        {
+            filterGenerator.ResetFilter();
+            lastActionFrame = Time.frameCount;
+        }
+    }
+
+    /// <summary>
+    /// returns distance of 2 points in X and Z space
+    /// </summary>
+    /// <param name="v1"></param>
+    /// <param name="v2"></param>
+    /// <returns></returns>
+    float Get2dDistance(Vector3 v1, Vector3 v2)
+    {
+        return Vector3.Distance(new Vector3(v1.x, 0, v1.z), new Vector3(v2.x, 0, v2.z));
     }
 }

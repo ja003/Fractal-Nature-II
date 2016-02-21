@@ -73,7 +73,7 @@ public class GlobalCoordinates {
     {
         while (!CheckIfQuadrantDefined(x, z))
         {
-            Debug.Log(x + "," + z + ": SMALL");
+            //Debug.Log(x + "," + z + ": SMALL");
             DoubleSizeOfQuadrant(GetQuandrantNumber(x, z));
         }
 
@@ -241,5 +241,19 @@ public class GlobalCoordinates {
         }
     }
 
+    public void ResetQuadrants()
+    {
+        Debug.Log("reseting quadrants");
+        int quadrantSize = 100; //TODO: assign value
 
+        quadrant1 = new float[quadrantSize, quadrantSize];
+        quadrant2 = new float[quadrantSize, quadrantSize];
+        quadrant3 = new float[quadrantSize, quadrantSize];
+        quadrant4 = new float[quadrantSize, quadrantSize];
+
+        InitialiseQuadrant(quadrant1);
+        InitialiseQuadrant(quadrant2);
+        InitialiseQuadrant(quadrant3);
+        InitialiseQuadrant(quadrant4);
+    }
 }

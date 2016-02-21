@@ -3,28 +3,27 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class FilterGenerator : IFilterGenerator
+public class FilterGenerator// : IFilterGenerator
 {
     private LocalTerrain lt;
     private FunctionMathCalculator fmc;
     public LocalCoordinates localFilterC;
     public GlobalCoordinates globalFilterC;
 
+    private List<Vertex> peaks;
 
     public FilterGenerator(int quadrantSize, LocalTerrain localTerrain)
     {
         globalFilterC = new GlobalCoordinates(100);
         lt = localTerrain;
         localFilterC = new LocalCoordinates(globalFilterC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
+        peaks = new List<Vertex>();
     }
 
     /// <summary>
-    /// returns filter value on given coordiantes (0 if not derfined)
+    /// returns filter value on given local coordiantes (0 if not defined)
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    /// <returns></returns>
-    public float GetValue(int x, int z)
+    public float GetLocalValue(int x, int z)
     {
         float value = localFilterC.GetGlobalValue(x, z);
         if (value != 666)
@@ -32,15 +31,26 @@ public class FilterGenerator : IFilterGenerator
         else
             return 0;
     }
-    
-    public void SetValue(int x, int z, float value, bool overwrite)
+
+    /// <summary>
+    /// returns filter value on given global coordiantes (0 if not defined)
+    /// </summary>
+    public float GetGlobalValue(int x, int z)
     {
-        if (!overwrite && localFilterC.IsDefined(x, z))
-        {
-            //Debug.Log(x + "," + z + ": set");
-            return;
-        }
-        localFilterC.SetGlobalValue(x, z, value, overwrite);
+        float value = globalFilterC.GetValue(x, z);
+        if (value != 666)
+            return value;
+        else
+            return 0;
+    }
+    
+    /// <summary>
+    /// sets filter value
+    /// all filters should operate on global space
+    /// </summary>
+    public void SetGlobalValue(int x, int z, float value, bool overwrite)
+    {
+        globalFilterC.SetValue(x, z, value, overwrite);
     }
 
     public void AssignFunctions(FunctionMathCalculator functionMathCalculator, LocalTerrain localTerrain)
@@ -49,26 +59,31 @@ public class FilterGenerator : IFilterGenerator
         lt = localTerrain;
     }
 
-    public void PerserveMountains(int count, int radius, int scaleFactor)
+    /// <summary>
+    /// finds 'count' highest peaks in given area which are distatnt enough from already found peaks
+    /// sets filter value to given region 
+    /// !!! values are being overwriten
+    /// </summary>
+    public void PerserveMountainsInRegion(Vector3 botLeft, Vector3 topRight, int count, int radius, int scaleFactor)
     {
-        List<Vertex> peaks = new List<Vertex>();
+        //List<Vertex> peaks = new List<Vertex>();
         for (int i = 0; i < count; i++)
         {
-            if (FindNextHighestPeak(radius, peaks) != null)
-                peaks.Add(FindNextHighestPeak(radius, peaks));
+            if (FindNextHighestPeakInRegion(radius, botLeft, topRight) != null)
+                peaks.Add(FindNextHighestPeakInRegion(radius, botLeft, topRight));
         }
-        int x_min = 0;
-        int x_max = lt.terrainWidth;
-        int z_min = 0;
-        int z_max = lt.terrainHeight;
+        int x_min = (int)botLeft.x;
+        int z_min = (int)botLeft.z;
 
+        int x_max = (int)topRight.x;        
+        int z_max = (int)topRight.z;
         
 
         for (int x = x_min; x < x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                Vertex vert = new Vertex(x, z, lt.GetGlobalHeight(x, z));
+                Vertex vert = new Vertex(x, z, lt.GetLocalHeight(x, z));
                 double scale = 0;
 
                 foreach (Vertex v in peaks)
@@ -86,16 +101,16 @@ public class FilterGenerator : IFilterGenerator
                     //Debug.Log(GetValue(x, z));
                     //Debug.Log("setting: " + (lt.GetGlobalHeight(x, z) - lt.GetGlobalHeight(x, z) * (float)Math.Pow(scale, scaleFactor)));
                 }
-                SetValue(x, z, lt.GetGlobalHeight(x, z) - lt.GetGlobalHeight(x, z) * (float)Math.Pow(scale, scaleFactor), false);
+                SetGlobalValue(x, z, lt.GetGlobalHeight(x, z) - lt.GetGlobalHeight(x, z) * (float)Math.Pow(scale, scaleFactor), true);
                 if (x == 50 && z == 50)
                 {
                     //Debug.Log(GetValue(x, z));
                 }
 
                 //vertices[x, z].y *= (float)Math.Pow(scale, scaleFactor);
-                if (x < 10 && z < 10)
+                if (x > 90 && z > 90)
                 {
-                    //Debug.Log(localFilterC.GetGlobalValue(x, z));
+                    //Debug.Log(GetGlobalValue(x, z));
 
                     //Debug.Log(scale);
                 }
@@ -120,26 +135,46 @@ public class FilterGenerator : IFilterGenerator
        // rg.terrain.build();
     }
 
-    public Vertex FindNextHighestPeak(int radius, List<Vertex> foundPeaks)
+    /// <summary>
+    /// deletes all filter values
+    /// resets number of peaks
+    /// </summary>
+    public void ResetFilter()
+    {
+        globalFilterC.ResetQuadrants();
+        peaks = new List<Vertex>();
+    }
+
+    /// <summary>
+    /// finds highest peaks in given area which are distatnt enough from already found peaks
+    /// </summary>
+    public Vertex FindNextHighestPeakInRegion(int radius, Vector3 botLeft, Vector3 topRight)
     {
         int border = 20;
-        Vertex highestPeak = new Vertex(0, 0, 0);
-        for (int x = border; x < lt.terrainWidth - border; x++)
+        int x_min = (int)botLeft.x + border;
+        int z_min = (int)botLeft.z + border;
+
+        int x_max = (int)topRight.x - border;
+        int z_max = (int)topRight.z - border;
+
+        Vertex highestPeak = new Vertex(0, 0, -666);
+        for (int x = x_min; x < x_max; x++)
         {
-            for (int z = border; z < lt.terrainHeight - border; z++)
+            for (int z = z_min; z < z_max; z++)
             {
-                if (lt.GetGlobalHeight(x, z) > highestPeak.height)
+                if (GetGlobalValue(x, z) > highestPeak.height)
                 {
                     bool isInRange = false;
-                    foreach (Vertex v in foundPeaks)
+                    foreach (Vertex v in peaks)
                     {
-                        if (fmc.IsInRange(new Vertex(x, z, lt.GetGlobalHeight(x, z)), v, radius * 2))
+                        //dont add peak if it is too close to one of already found
+                        if (fmc.IsInRange(new Vertex(x, z), v, radius * 2))
                         {
                             isInRange = true;
                         }
                     }
                     if (!isInRange)
-                        highestPeak = new Vertex(x, z, lt.GetGlobalHeight(x, z));
+                        highestPeak = new Vertex(x, z, GetGlobalValue(x, z));
                 }
             }
         }

@@ -1,0 +1,7 @@
+Moving terrain
+
+- terrain generates with camera movement
+- improved random terrain generation
+- applied mountain perservation filter
+- mountain filter is called with camera movement 
+- PROBLEM: when new peak is found too close to border, it can affect already generated terrain 

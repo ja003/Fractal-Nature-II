@@ -51,7 +51,7 @@ public class GlobalTerrain : IGlobalTerrain
     /// <param name="_x"></param>
     /// <param name="_z"></param>
     /// <returns></returns>
-    public float GetNeighbourHeight(int _x, int _z)
+    public float GetNeighbourAverage(int _x, int _z)
     {
         float heightAverage = 0;
         int neighboursCount = 0;
@@ -78,5 +78,30 @@ public class GlobalTerrain : IGlobalTerrain
 
     }
 
+    /// <summary>
+    /// returns highest neighbour of given point
+    /// 0 if no neighbour is defined
+    /// </summary>
+    /// <param name="_x"></param>
+    /// <param name="_z"></param>
+    /// <returns></returns>
+    public float GetHighestNeighbour(int _x,int _z)
+    {
+        float highest = -666;
+        for (int x = _x - 1; x <= _x + 1; x++)
+        {
+            for (int z = _z - 1; z <= _z + 1; z++)
+            {
+                if (GetHeight(x, z) != 666 && GetHeight(x, z) > highest)
+                {
+                    highest = GetHeight(x, z);
+                }
+            }
+        }
+        if (highest == -666)
+            highest = 0;
 
+        return highest;
+    }
+    
 }

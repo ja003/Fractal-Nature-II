@@ -10,8 +10,10 @@ public class LocalTerrain : ILocalTerrain {
     private int stepSize;
     public int terrainWidth;
     public int terrainHeight;
-    public TerrainGenerator terrainGenerator;
+    public TerrainGenerator tg;
     public LocalCoordinates localTerrainC;
+    public GlobalCoordinates globalTerrainC;
+    public FilterGenerator fg;
 
     public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize)
     {
@@ -23,9 +25,11 @@ public class LocalTerrain : ILocalTerrain {
         Debug.Log(":?");
     }
 
-    public void AssignFunctions(GlobalCoordinates globalTerrain)
+    public void AssignFunctions(GlobalCoordinates globalTerrainC, FilterGenerator filterGenerator)
     {
-        localTerrainC = new LocalCoordinates(globalTerrain, new Vector3(0, 0, 0), terrainWidth, terrainHeight);
+        this.globalTerrainC = globalTerrainC;
+        localTerrainC = new LocalCoordinates(globalTerrainC, new Vector3(0, 0, 0), terrainWidth, terrainHeight);
+        fg = filterGenerator;
     }
 
     /// <summary>
@@ -36,7 +40,11 @@ public class LocalTerrain : ILocalTerrain {
     {
         MoveVisibleTerrain(cameraPosition);
 
-        terrainGenerator.GenerateTerrainOn(visibleTerrain, localTerrainC.botLeft, localTerrainC.topRight);        
+        tg.GenerateTerrainOn(visibleTerrain, localTerrainC.botLeft, localTerrainC.topRight);
+
+        fg.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 2, 50, 10);
+
+        tg.build();
     }
 
     public void MoveVisibleTerrain(Vector3 cameraPosition)
@@ -47,7 +55,7 @@ public class LocalTerrain : ILocalTerrain {
             new Vector3(cameraPosition.x - terrainWidth / 2, 0, cameraPosition.z - terrainHeight / 2),
             new Vector3(cameraPosition.x + terrainWidth / 2, 0, cameraPosition.z + terrainHeight / 2));
         
-        terrainGenerator.MoveVisibleTerrain(localTerrainC.center);
+        tg.MoveVisibleTerrain(localTerrainC.center);
     }
 
     /// <summary>
@@ -60,9 +68,9 @@ public class LocalTerrain : ILocalTerrain {
         localTerrainC.botLeft = botLeft;
         localTerrainC.topRight = topRight;
 
-        terrainGenerator.filterGenerator.localFilterC.center = center;
-        terrainGenerator.filterGenerator.localFilterC.botLeft = botLeft;
-        terrainGenerator.filterGenerator.localFilterC.topRight = topRight;
+        tg.filterGenerator.localFilterC.center = center;
+        tg.filterGenerator.localFilterC.botLeft = botLeft;
+        tg.filterGenerator.localFilterC.topRight = topRight;
 
     }
 
@@ -73,12 +81,19 @@ public class LocalTerrain : ILocalTerrain {
 
     /// <summary>
     /// returns height from global terrain
+    /// </summary>
+    public float GetGlobalHeight(int x, int z)
+    {
+        //Debug.Log("getting " + x + "," + z);
+        //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
+        return globalTerrainC.GetValue(x, z);
+    }
+
+    /// <summary>
+    /// returns height from global terrain
     /// maps given local coordinates on global
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    /// <returns></returns>
-    public float GetGlobalHeight(int x, int z)
+    public float GetLocalHeight(int x, int z)
     {
         //Debug.Log("getting " + x + "," + z);
         //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
@@ -88,9 +103,7 @@ public class LocalTerrain : ILocalTerrain {
     /// sets height to global terrain
     /// maps given local coordinates on global
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    public void SetGlobalHeight(int x, int z, float height, bool overwrite)
+    public void SetLocalHeight(int x, int z, float height, bool overwrite)
     {
         localTerrainC.SetGlobalValue(x ,z, height, overwrite);
     }
@@ -109,9 +122,9 @@ public class LocalTerrain : ILocalTerrain {
         {
             for (int z = _z - 1; z <= _z + 1; z++)
             {
-                if (GetGlobalHeight(x, z) != 666)
+                if (GetLocalHeight(x, z) != 666)
                 {
-                    heightAverage += GetGlobalHeight(x, z);
+                    heightAverage += GetLocalHeight(x, z);
                     neighboursCount++;
                     if (_x == 32 && _z == 32)
                     {
@@ -139,7 +152,7 @@ public class LocalTerrain : ILocalTerrain {
         {
             for (int z = _z - neighbourhoodSize / 2; z < _z + neighbourhoodSize / 2; z++)
             {
-                if (GetGlobalHeight(x, z) == 666)
+                if (GetLocalHeight(x, z) == 666)
                     return false;
             }
         }
@@ -152,7 +165,7 @@ public class LocalTerrain : ILocalTerrain {
         {
             for (int z = from; z < to; z++)
             {
-                Debug.Log(x + "," + z + ": " + visibleTerrain[x, z] + "/" + GetGlobalHeight(x, z));
+                Debug.Log(x + "," + z + ": " + visibleTerrain[x, z] + "/" + GetLocalHeight(x, z));
 
             }
         }
@@ -160,7 +173,7 @@ public class LocalTerrain : ILocalTerrain {
 
     public void SetHeight(int x, int z, float height, bool overwrite)
     {
-        if (!overwrite && GetGlobalHeight(x, z) != 666)
+        if (!overwrite && GetLocalHeight(x, z) != 666)
             return;
 
         visibleTerrain[x, z] = height;

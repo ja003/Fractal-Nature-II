@@ -9,6 +9,7 @@ public class TerrainGenerator// : ITerrainGenerator
     public FilterGenerator filterGenerator;
     public DiamondSquare ds;
     public RandomTerrain rt;
+    public FunctionMathCalculator fmc;
 
     public int terrainWidth;
     public int terrainHeight;
@@ -23,12 +24,14 @@ public class TerrainGenerator// : ITerrainGenerator
         rt = new RandomTerrain(this);
     }
 
-    public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain, FilterGenerator filterGenerator)
+    public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain, FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator)
     {
         this.globalTerrain = globalTerrain;
         this.localTerrain = localTerrain;
         this.filterGenerator = filterGenerator;
+        fmc = functionMathCalculator;
 
+        rt.AssignFunctions(fmc);
     }
 
     public void MoveVisibleTerrain(Vector3 cameraPosition)
@@ -55,7 +58,7 @@ public class TerrainGenerator// : ITerrainGenerator
             for (int z = 0; z < localTerrain.terrainHeight; z++)
             {
                 vertices[x, z].x = x; //shouldnt have to be declared
-                vertices[x, z].y = localTerrain.GetGlobalHeight(x, z); //localTerrain.visibleTerrain[x, z];
+                vertices[x, z].y = localTerrain.GetLocalHeight(x, z); //localTerrain.visibleTerrain[x, z];
                 vertices[x, z].z = z;
 
                 //vertices[x, z].y = 1+UnityEngine.Random.Range(0f, 1f);
@@ -66,14 +69,16 @@ public class TerrainGenerator// : ITerrainGenerator
         //applyDiamondSquare(5);
         rt.GenerateRandomTerrain(botLeft, topRight);
 
-        //FixUnsetValues();
+        //filterGenerator.PerserveMountains(3, 50, 10);
+
+        //FixUnsetValues(); //shouldnt be neccessary
 
         AssignHeightsToVertices();
 
         applyProceduralTex(true, sandColor, sandLimit, sandStrength, sandCoverage, true, grassColor, grassStrength, true, snowColor, snowLimit, snowStrength, snowCoverage, true, rockColor, slopeLimit, slopeStrength, noiseTexValue);
         
 
-        build();
+        //build(); //schouldnt be called here
 
         for (int x = 0; x < localTerrain.terrainWidth; x++)
         {
@@ -91,7 +96,7 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                if (localTerrain.GetGlobalHeight(x, z) == 666)
+                if (localTerrain.GetLocalHeight(x, z) == 666)
                 {
                     Debug.Log("fixing: " + x + "," + z);
                     SetVertex(x, z, localTerrain.GetNeighbourHeight(x, z));
@@ -110,7 +115,7 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                vertices[x, z].y = localTerrain.GetGlobalHeight(x, z);
+                vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
                 if(x < 1 && z < 1)
                 {
                     //Debug.Log(x + "," + z + ": " + vertices[x, z].y);
@@ -120,14 +125,20 @@ public class TerrainGenerator// : ITerrainGenerator
         }
     }
 
-
+    /// <summary>
+    /// applies values from filter to vertices
+    /// </summary>
     public void ApplyFilters()
     {
         for(int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                vertices[x, z].y -= filterGenerator.GetValue(x, z);
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z);
+                if (x < 10 && z < 10)
+                {
+                    //Debug.Log(filterGenerator.GetLocalValue(x, z));
+                }
             }
         }
     }
@@ -652,7 +663,7 @@ public class TerrainGenerator// : ITerrainGenerator
             for (int z = 0; z < terrainHeight; z++)
             {
                 //if (vertices[x, z].y == 666)
-                if (localTerrain.GetGlobalHeight(x, z) == 666)
+                if (localTerrain.GetLocalHeight(x, z) == 666)
                 {
                     //Debug.Log("fixing: " + x + "," + z);
                     //stepSquare(x, z, 0.4f, 0.6f, 10, 10);
@@ -680,7 +691,7 @@ public class TerrainGenerator// : ITerrainGenerator
     /// <param name="height"></param>
     public void SetVertex(int x, int z, float height, bool overwrite)
     {
-        if (!overwrite && localTerrain.GetGlobalHeight(x, z) != 666)
+        if (!overwrite && localTerrain.GetLocalHeight(x, z) != 666)
             return;
 
         if (CheckBounds(x, z)) {
@@ -695,7 +706,7 @@ public class TerrainGenerator// : ITerrainGenerator
             }
         }
         //update values also to global terrain        
-        localTerrain.SetGlobalHeight(x, z, height, overwrite);
+        localTerrain.SetLocalHeight(x, z, height, overwrite);
     }
 
     public void SetVertex(int x, int z, float height)
@@ -714,8 +725,8 @@ public class TerrainGenerator// : ITerrainGenerator
     public float GetVertexHeight(int x, int z)
     {
         
-        if (localTerrain.GetGlobalHeight(x, z) != 666)
-            return localTerrain.GetGlobalHeight(x, z);
+        if (localTerrain.GetLocalHeight(x, z) != 666)
+            return localTerrain.GetLocalHeight(x, z);
         else
             return 0;
         

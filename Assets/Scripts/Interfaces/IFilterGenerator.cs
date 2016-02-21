@@ -3,6 +3,6 @@ using System.Collections;
 
 public interface IFilterGenerator  {
 
-    void PerserveMountains(int count, int radius, int scaleFactor);
+    void PerserveMountainsOn(int count, int radius, int scaleFactor);
 
 }
