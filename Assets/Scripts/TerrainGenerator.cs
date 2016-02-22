@@ -135,8 +135,10 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterAverageC);
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterMountainC);
+                vertices[x, z].y += filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
+
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
                 /*if (x < 10 && z < 10)
                 {
                     Debug.Log(filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterAverageC));
@@ -363,7 +365,7 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         //move terrain
         //Debug.Log("move to " + localTerrain.center);
-        MoveTerrain(localTerrain.localTerrainC.center);
+        MoveTerrain(localTerrain.localCoordinates.center);
 
         ApplyFilters();
 

@@ -14,8 +14,6 @@ public class GlobalCoordinates {
 
     public GlobalCoordinates(int quadrantSize)
     {
-        Debug.Log(quadrantSize);
-
         quadrant1 = new float[quadrantSize, quadrantSize];
         quadrant2 = new float[quadrantSize, quadrantSize];
         quadrant3 = new float[quadrantSize, quadrantSize];

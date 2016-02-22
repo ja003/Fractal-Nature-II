@@ -21,9 +21,36 @@ public class FunctionTerrainManager {
     }
 
     /// <summary>
+    /// returns median of given area
+    /// operates with global coordinates
+    /// </summary>
+    public float GetGlobalMedian(int _x, int _z, int regionSize)
+    {
+        //List<float> heights = new List<float>();
+        float heightSum = 0;
+        int count = 0;
+        for (int x = _x - regionSize; x < _x + regionSize; x++)
+        {
+            for (int z = _z - regionSize; z < _z + regionSize; z++)
+            {
+                if(lt.GetGlobalHeight(x, z) != 666)
+                //if (lt.ft.GetValue(x, z) != 666)
+                {
+                    heightSum += lt.GetGlobalHeight(x, z);// lt.ft.GetValue(x, z);
+                    count++;
+                }
+            }
+        }
+        if (count == 0)
+            return 0;
+        return heightSum / count;
+    }
+
+
+    /// <summary>
     /// returns median of given area on visible terrain
     /// </summary>
-    public float GetMedian(int _x, int _z, int regionSize)
+    public float GetLocalMedian(int _x, int _z, int regionSize)
     {
         //List<float> heights = new List<float>();
         float heightSum = 0;
@@ -44,7 +71,7 @@ public class FunctionTerrainManager {
         return heightSum / count;
     }
 
-    public float GetMedian(int _x, int _z, int regionSize, float[,] depthMap)
+    public float GetLocalMedian(int _x, int _z, int regionSize, float[,] depthMap)
     {
         //List<float> heights = new List<float>();
         float heightSum = 0;

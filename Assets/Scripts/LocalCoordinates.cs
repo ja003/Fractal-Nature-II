@@ -9,11 +9,11 @@ public class LocalCoordinates {
 
     public int terrainWidth;
     public int terrainHeight;
-    public GlobalCoordinates gc;
+    //public GlobalCoordinates gc;
 
-    public LocalCoordinates(GlobalCoordinates globalCoordinates, Vector3 center, int terrainWidth, int terrainHeight)
+    public LocalCoordinates(Vector3 center, int terrainWidth, int terrainHeight)
     {
-        gc = globalCoordinates;
+        //gc = globalCoordinates;
         this.center = center;
         botLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z - terrainHeight / 2);
         topRight = new Vector3(center.x + terrainWidth / 2, 0, center.z + terrainHeight / 2);
@@ -23,9 +23,9 @@ public class LocalCoordinates {
 
     }
 
-    public bool IsDefined(int x, int z)
+    public bool IsDefined(int x, int z, GlobalCoordinates gc)
     {
-        if (GetGlobalValue(x, z) == 666)
+        if (GetGlobalValue(x, z, gc) == 666)
             return false;
         else
             return true;
@@ -38,7 +38,7 @@ public class LocalCoordinates {
     /// <param name="x"></param>
     /// <param name="z"></param>
     /// <returns></returns>
-    public float GetGlobalValue(int x, int z)
+    public float GetGlobalValue(int x, int z, GlobalCoordinates gc)
     {
         //Debug.Log("getting " + x + "," + z);
         //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
@@ -50,9 +50,9 @@ public class LocalCoordinates {
     /// </summary>
     /// <param name="x"></param>
     /// <param name="z"></param>
-    public void SetGlobalValue(int x, int z, float height, bool overwrite)
+    public void SetGlobalValue(int x, int z, float height, bool overwrite, GlobalCoordinates gc)
     {
-        if (!overwrite && IsDefined(x, z))
+        if (!overwrite && IsDefined(x, z, gc))
             return;
         gc.SetValue(x + (int)center.x - terrainWidth / 2, z + (int)center.z - terrainHeight / 2, height, overwrite);
     }

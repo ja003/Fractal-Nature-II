@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class RiverGenerator  {
 
     public GlobalCoordinates globalRiverC;
-    public LocalCoordinates localRiverC;
+    public LocalCoordinates localCoordinates;
 
     public LocalTerrain lt;
 
@@ -22,7 +22,8 @@ public class RiverGenerator  {
         lt = localTerrain;
 
         globalRiverC = new GlobalCoordinates(100);
-        localRiverC = new LocalCoordinates(globalRiverC, new Vector3(0, 0, 0), 200, 200);
+        localCoordinates = lt.localCoordinates;
+        //localRiverC = new LocalCoordinates(globalRiverC, new Vector3(0, 0, 0), 200, 200);
     }
 
     public void AssignFunctions(FunctionTerrainManager functionTerrainManager, 

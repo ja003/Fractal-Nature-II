@@ -8,6 +8,9 @@ public class FunctionRiverDigger {
     public RiverGenerator rg;
     public LocalTerrain lt;
 
+    public LocalCoordinates lc;
+    public GlobalCoordinates globalRiverC;
+
     public FunctionMathCalculator fmc;
     public FunctionTerrainManager ftm;
     public FunctionDebugger fd;
@@ -21,6 +24,10 @@ public class FunctionRiverDigger {
     public void AssignFunctions(RiverGenerator rg)
     {
         this.rg = rg;
+
+        lc = rg.localCoordinates;
+        globalRiverC = rg.globalRiverC;
+
         lt = rg.lt;
         fmc = rg.fmc;
         ftm = rg.ftm;
@@ -296,7 +303,7 @@ public class FunctionRiverDigger {
             {
                 if (depthField[x, z] != 666)
                 {
-                    filtField[x, z] += ftm.GetMedian(x,z,2, depthField);
+                    filtField[x, z] += ftm.GetLocalMedian(x,z,2, depthField);
                 }
             }
         }
@@ -310,7 +317,7 @@ public class FunctionRiverDigger {
                 if (depthField[x, z] != 666)
                 {
                     //vertices[x, z].y += filtField[x, z] * depthFactor;
-                    rg.localRiverC.SetGlobalValue(x, z, filtField[x, z] * depthFactor, false);
+                    lc.SetGlobalValue(x, z, filtField[x, z] * depthFactor, false, globalRiverC);
                 }
             }
         }

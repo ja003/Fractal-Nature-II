@@ -1,0 +1,7 @@
+Rework of coordinate system
+
+- all entities have same LocalCoordinates system 
+- when getting global values from LocalCoordinates, GlobalCoordinate 
+system has to be specified
+- added median filter
+- added new component Filteredterrain - TODO: use it

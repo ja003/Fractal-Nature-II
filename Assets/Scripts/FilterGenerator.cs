@@ -7,46 +7,55 @@ public class FilterGenerator// : IFilterGenerator
 {
     private LocalTerrain lt;
     private FunctionMathCalculator fmc;
+    public FunctionTerrainManager ftm;
 
-    public LocalCoordinates localFilterMountainC;
+    public LocalCoordinates localCoordinates;
+
     public GlobalCoordinates globalFilterMountainC;
-
-    public LocalCoordinates localFilterAverageC;
     public GlobalCoordinates globalFilterAverageC;
+    public GlobalCoordinates globalFilterMedianC;
 
     public MountainFilter mf;
     public AverageFilter af;
-    
+    public MedianFilter mdf;
+
     public FilterGenerator(int quadrantSize, LocalTerrain localTerrain)
     {
         globalFilterMountainC = new GlobalCoordinates(100);
         globalFilterAverageC = new GlobalCoordinates(100);
-        lt = localTerrain;
+        globalFilterMedianC = new GlobalCoordinates(100);
 
-        localFilterMountainC = new LocalCoordinates(globalFilterMountainC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
-        localFilterAverageC = new LocalCoordinates(globalFilterAverageC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
+        lt = localTerrain;
+        localCoordinates = lt.localCoordinates;
+
+        //localFilterMountainC = new LocalCoordinates(globalFilterMountainC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
+        //localFilterAverageC = new LocalCoordinates(globalFilterAverageC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
 
         //peaks = new List<Vertex>();
         mf = new MountainFilter(this);
         af = new AverageFilter(this);
+        mdf = new MedianFilter(this);
     }
 
-    public void AssignFunctions(FunctionMathCalculator functionMathCalculator, LocalTerrain localTerrain)
+    public void AssignFunctions(FunctionMathCalculator functionMathCalculator, 
+        LocalTerrain localTerrain, FunctionTerrainManager functionTerrainManager)
     {
         fmc = functionMathCalculator;
         lt = localTerrain;
+        ftm = functionTerrainManager;
 
         mf.AssignFunctions(lt, fmc, globalFilterMountainC);
         af.AssignFunctions(lt, fmc, globalFilterAverageC);
+        mdf.AssignFunctions(lt, fmc, globalFilterMedianC, ftm);
     }
     
     /// <summary>
     /// returns filter value on given local coordiantes (0 if not defined)
     /// localFilter = filter type
     /// </summary>
-    public float GetLocalValue(int x, int z, LocalCoordinates localFilter)
+    public float GetLocalValue(int x, int z, GlobalCoordinates gc)
     {
-        float value = localFilter.GetGlobalValue(x, z);
+        float value = localCoordinates.GetGlobalValue(x, z, gc);
         if (value != 666)
             return value;
         else
@@ -84,8 +93,9 @@ public class FilterGenerator// : IFilterGenerator
     {
         mf.ResetFilter();
         af.ResetFilter();
+        mdf.ResetFilter();
     }
-
+    /*
     public void UpdateLocalCoordinates(Vector3 center, Vector3 botLeft, Vector3 topRight)
     {
         localFilterMountainC.center = center;
@@ -95,6 +105,6 @@ public class FilterGenerator// : IFilterGenerator
         localFilterAverageC.center = center;
         localFilterAverageC.botLeft = botLeft;
         localFilterAverageC.topRight = topRight;
-    }
+    }*/
 
 }

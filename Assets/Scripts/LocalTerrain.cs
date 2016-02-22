@@ -10,16 +10,24 @@ public class LocalTerrain : ILocalTerrain {
     private int stepSize;
     public int terrainWidth;
     public int terrainHeight;
-    public TerrainGenerator tg;
-    public LocalCoordinates localTerrainC;
+    
+    public LocalCoordinates localCoordinates;
     public GlobalCoordinates globalTerrainC;
+
+    public TerrainGenerator tg;
     public FilterGenerator fg;
+    public RiverGenerator rg;
 
     public GlobalTerrain gt;
+    public FilteredTerrain ft;
 
     public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain)
     {
         gt = globalTerrain;
+        ft = new FilteredTerrain();
+
+        localCoordinates = new LocalCoordinates(new Vector3(0, 0, 0), terrainWidth, terrainHeight);
+
         visibleTerrain = new float[terrainHeight, terrainWidth];
         this.terrainHeight = terrainHeight;
         this.terrainWidth = terrainWidth;
@@ -28,11 +36,16 @@ public class LocalTerrain : ILocalTerrain {
         Debug.Log(":?");
     }
 
-    public void AssignFunctions(GlobalCoordinates globalTerrainC, FilterGenerator filterGenerator)
+    public void AssignFunctions(GlobalCoordinates globalTerrainC, TerrainGenerator terrainGenerator, 
+        FilterGenerator filterGenerator, RiverGenerator riverGenerator)
     {
         this.globalTerrainC = globalTerrainC;
-        localTerrainC = new LocalCoordinates(globalTerrainC, new Vector3(0, 0, 0), terrainWidth, terrainHeight);
+
+        tg = terrainGenerator;
         fg = filterGenerator;
+        rg = riverGenerator;
+
+        ft.AssignFunctions(tg, fg, rg);
     }
 
     /// <summary>
@@ -43,11 +56,12 @@ public class LocalTerrain : ILocalTerrain {
     {
         MoveVisibleTerrain(cameraPosition);
 
-        tg.GenerateTerrainOn(visibleTerrain, localTerrainC.botLeft, localTerrainC.topRight);
+        tg.GenerateTerrainOn(visibleTerrain, localCoordinates.botLeft, localCoordinates.topRight);
 
-        fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 3, 50, 10);
+        fg.mf.PerserveMountainsInRegion(localCoordinates.botLeft, localCoordinates.topRight, 3, 50, 10);
 
-        fg.af.GenerateAverageFilterInRegion(localTerrainC.botLeft, localTerrainC.topRight);
+        fg.mdf.GenerateMedianFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
+        //fg.af.GenerateAverageFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
 
         tg.build();
     }
@@ -60,26 +74,26 @@ public class LocalTerrain : ILocalTerrain {
             new Vector3(cameraPosition.x - terrainWidth / 2, 0, cameraPosition.z - terrainHeight / 2),
             new Vector3(cameraPosition.x + terrainWidth / 2, 0, cameraPosition.z + terrainHeight / 2));
         
-        tg.MoveVisibleTerrain(localTerrainC.center);
+        tg.MoveVisibleTerrain(localCoordinates.center);
     }
 
     /// <summary>
-    /// updates all local centers based on Localterrain position
+    /// updates center and botLeft+topRight of local coordinates
     /// params should always come in rounded values!
     /// </summary>
     public void UpdateLocalCoordinates(Vector3 center, Vector3 botLeft, Vector3 topRight)
     {
-        localTerrainC.center = center;
-        localTerrainC.botLeft = botLeft;
-        localTerrainC.topRight = topRight;
+        localCoordinates.center = center;
+        localCoordinates.botLeft = botLeft;
+        localCoordinates.topRight = topRight;
 
-        tg.filterGenerator.UpdateLocalCoordinates(center, botLeft, topRight);
+        //tg.filterGenerator.UpdateLocalCoordinates(center, botLeft, topRight);
 
     }
 
     public Vector3 GetGlobalCoordinate(int x, int z)
     {
-        return new Vector3(x + (int)localTerrainC.center.x - terrainWidth / 2, 0, z + (int)localTerrainC.center.z - terrainHeight / 2);
+        return new Vector3(x + (int)localCoordinates.center.x - terrainWidth / 2, 0, z + (int)localCoordinates.center.z - terrainHeight / 2);
     }
 
     /// <summary>
@@ -100,7 +114,7 @@ public class LocalTerrain : ILocalTerrain {
     {
         //Debug.Log("getting " + x + "," + z);
         //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
-        return localTerrainC.GetGlobalValue(x,z);
+        return localCoordinates.GetGlobalValue(x,z, globalTerrainC);
     }
     /// <summary>
     /// sets height to global terrain
@@ -108,7 +122,7 @@ public class LocalTerrain : ILocalTerrain {
     /// </summary>
     public void SetLocalHeight(int x, int z, float height, bool overwrite)
     {
-        localTerrainC.SetGlobalValue(x ,z, height, overwrite);
+        localCoordinates.SetGlobalValue(x ,z, height, overwrite, globalTerrainC);
     }
 
     /// <summary>
