@@ -6,9 +6,16 @@ public class CameraManager : MonoBehaviour, ICameraManager
 {
     private GlobalTerrain globalTerrain;
     private LocalTerrain localTerrain;
+
     private TerrainGenerator terrainGenerator;
     private FilterGenerator filterGenerator;
+    private RiverGenerator riverGenerator;
+    
     private FunctionMathCalculator functionMathCalculator;
+    private FunctionDebugger functionDebugger;
+    private FunctionRiverDigger functionRiverDigger;
+    private FunctionRiverPlanner functionRiverPlanner;
+    private FunctionTerrainManager functionTerrainManager;
 
     int terrainWidth;
     int terrainHeight;
@@ -21,12 +28,18 @@ public class CameraManager : MonoBehaviour, ICameraManager
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
         globalTerrain = new GlobalTerrain(quadrantSize);
-        terrainGenerator = new TerrainGenerator();
         localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30, globalTerrain);
         filterGenerator = new FilterGenerator(quadrantSize, localTerrain);
 
         functionMathCalculator = new FunctionMathCalculator();
-            
+        functionDebugger = new FunctionDebugger();
+        functionRiverDigger = new FunctionRiverDigger();
+        functionRiverPlanner = new FunctionRiverPlanner();
+        functionTerrainManager = new FunctionTerrainManager();
+        
+        terrainGenerator = new TerrainGenerator();
+        riverGenerator = new RiverGenerator(localTerrain);
+
         AssignFunctions();
         terrainGenerator.initialize();
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
@@ -41,9 +54,15 @@ public class CameraManager : MonoBehaviour, ICameraManager
         localTerrain.AssignFunctions(globalTerrain.globalTerrainC, filterGenerator);
 
         terrainGenerator.AssignFunctions(globalTerrain, localTerrain, filterGenerator, functionMathCalculator);
-        
-
         filterGenerator.AssignFunctions(functionMathCalculator, localTerrain);
+        riverGenerator.AssignFunctions(functionTerrainManager, functionRiverPlanner, functionDebugger,
+            functionMathCalculator, functionRiverDigger);
+
+        functionDebugger.AssignFunctions(riverGenerator);
+        functionRiverDigger.AssignFunctions(riverGenerator);
+        functionRiverPlanner.AssignFunctions(riverGenerator);
+        functionMathCalculator.AssignFunctions(localTerrain);
+        functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator);
     }
 
     int lastActionFrame = 0;
@@ -98,6 +117,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
             Debug.Log("averaging");
 
             filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight);
+            lastActionFrame = Time.frameCount;
+        }
+
+        if (Input.GetKey("3") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("river");
+
+            riverGenerator.GenerateRiver();
             lastActionFrame = Time.frameCount;
         }
     }

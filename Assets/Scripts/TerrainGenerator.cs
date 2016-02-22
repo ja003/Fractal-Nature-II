@@ -24,7 +24,8 @@ public class TerrainGenerator// : ITerrainGenerator
         rt = new RandomTerrain(this);
     }
 
-    public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain, FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator)
+    public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
+        FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator)
     {
         this.globalTerrain = globalTerrain;
         this.localTerrain = localTerrain;
