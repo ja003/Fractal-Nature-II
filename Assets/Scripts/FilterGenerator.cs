@@ -55,7 +55,7 @@ public class FilterGenerator// : IFilterGenerator
     /// </summary>
     public float GetLocalValue(int x, int z, GlobalCoordinates gc)
     {
-        float value = localCoordinates.GetGlobalValue(x, z, gc);
+        float value = localCoordinates.GetLocalValue(x, z, gc);
         if (value != 666)
             return value;
         else

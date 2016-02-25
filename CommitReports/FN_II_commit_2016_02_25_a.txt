@@ -1,0 +1,8 @@
+Layers + River functions
+
+- implemented height layers
+- fixed median filter
+- fixed river planning
+- fixed river digging
+- TODO: fix assigning maxSum in 
+RiverDigger.AssignWidthToPoints...shouldnt start with 0

@@ -25,7 +25,7 @@ public class LocalCoordinates {
 
     public bool IsDefined(int x, int z, GlobalCoordinates gc)
     {
-        if (GetGlobalValue(x, z, gc) == 666)
+        if (GetLocalValue(x, z, gc) == 666)
             return false;
         else
             return true;
@@ -38,7 +38,7 @@ public class LocalCoordinates {
     /// <param name="x"></param>
     /// <param name="z"></param>
     /// <returns></returns>
-    public float GetGlobalValue(int x, int z, GlobalCoordinates gc)
+    public float GetLocalValue(int x, int z, GlobalCoordinates gc)
     {
         //Debug.Log("getting " + x + "," + z);
         //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
@@ -50,7 +50,7 @@ public class LocalCoordinates {
     /// </summary>
     /// <param name="x"></param>
     /// <param name="z"></param>
-    public void SetGlobalValue(int x, int z, float height, bool overwrite, GlobalCoordinates gc)
+    public void SetLocalValue(int x, int z, float height, bool overwrite, GlobalCoordinates gc)
     {
         if (!overwrite && IsDefined(x, z, gc))
             return;

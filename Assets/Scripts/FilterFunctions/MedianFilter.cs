@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MedianFilter  {
 
@@ -33,14 +34,19 @@ public class MedianFilter  {
 
         int x_max = (int)topRight.x;
         int z_max = (int)topRight.z;
-        
+        List<Layer> ignoreLayers = new List<Layer>();
+        ignoreLayers.Add(Layer.filterMedian);
 
         for (int x = x_min; x < x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                //fg.SetGlobalValue(x, z, lt.ft.GetValue(x, z) - ftm.GetGlobalMedian(x, z, 2), false, globalFilterMedianC);
-                fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - ftm.GetGlobalMedian(x, z, 2), false, globalFilterMedianC);
+                //if(fg.GetGlobalValue(x,z,globalFilterMedianC)
+                //if(!globalFilterMedianC.IsDefined(x, z)){ //TODO: mountain filter sometimes changes provious values, therefore median has to also overwrite
+
+                    fg.SetGlobalValue(x, z, lt.ft.GetValue(x, z, ignoreLayers) - ftm.GetGlobalMedian(x, z, 2), true, globalFilterMedianC);
+                //}
+                //fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - ftm.GetGlobalMedian(x, z, 2), false, globalFilterMedianC);
                 //fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - lt.gt.GetNeighbourAverage(x, z, 2), false, globalFilterMedianC);
             }
         }

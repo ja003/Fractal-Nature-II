@@ -51,7 +51,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
     {
         localTerrain.AssignFunctions(globalTerrain.globalTerrainC, terrainGenerator, filterGenerator, riverGenerator);
 
-        terrainGenerator.AssignFunctions(globalTerrain, localTerrain, filterGenerator, functionMathCalculator);
+        terrainGenerator.AssignFunctions(globalTerrain, localTerrain, filterGenerator, functionMathCalculator, riverGenerator);
         filterGenerator.AssignFunctions(functionMathCalculator, localTerrain, functionTerrainManager);
         riverGenerator.AssignFunctions(functionTerrainManager, functionRiverPlanner, functionDebugger,
             functionMathCalculator, functionRiverDigger);
@@ -108,6 +108,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
         {
             filterGenerator.ResetFilters();
+            riverGenerator.ResetRivers();
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("4") && lastActionFrame < Time.frameCount - 30)

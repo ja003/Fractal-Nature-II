@@ -29,6 +29,9 @@ public class FunctionTerrainManager {
         //List<float> heights = new List<float>();
         float heightSum = 0;
         int count = 0;
+        List<Layer> ignoreLayers = new List<Layer>();
+        ignoreLayers.Add(Layer.filterMedian);
+
         for (int x = _x - regionSize; x < _x + regionSize; x++)
         {
             for (int z = _z - regionSize; z < _z + regionSize; z++)
@@ -36,13 +39,14 @@ public class FunctionTerrainManager {
                 if(lt.GetGlobalHeight(x, z) != 666)
                 //if (lt.ft.GetValue(x, z) != 666)
                 {
-                    heightSum += lt.GetGlobalHeight(x, z);// lt.ft.GetValue(x, z);
+                    //heightSum += lt.GetGlobalHeight(x, z);// lt.ft.GetValue(x, z);
+                    heightSum += lt.ft.GetValue(x, z, ignoreLayers);
                     count++;
                 }
             }
         }
         if (count == 0)
-            return 0;
+            return 10;//shouldnt happen
         return heightSum / count;
     }
 
@@ -513,7 +517,7 @@ public class FunctionTerrainManager {
     }
 
     /// <summary>
-    /// returns highest point from given region
+    /// returns highest point from given local region
     /// </summary>
     public Vertex GetHighestpoint(int x_min, int x_max, int z_min, int z_max)
     {

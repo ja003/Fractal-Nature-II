@@ -14,7 +14,9 @@ public class FunctionRiverPlanner  {
 
 
     public Vector3[,] vertices;
-    public int terrainSize;
+    //public int terrainSize;
+    public int terrainWidth;
+    public int terrainHeight;
 
     public Color redColor = new Color(1, 0, 0);
     public Color greenColor = new Color(0, 1, 0);
@@ -32,6 +34,9 @@ public class FunctionRiverPlanner  {
         ftm = rg.ftm;
         fmc = rg.fmc;
         frd = rg.frd;
+
+        terrainWidth = rg.lt.terrainWidth;
+        terrainHeight = rg.lt.terrainHeight;
     }
 
 
@@ -139,7 +144,7 @@ public class FunctionRiverPlanner  {
                     //dont process already processed nodes again
                     if (!currentNode.processed)
                     {
-                        if (i > terrainSize * terrainSize)
+                        if (i > terrainWidth* terrainHeight)
                         {
                             Debug.Log("FAIL");
                             finalIndex = i;

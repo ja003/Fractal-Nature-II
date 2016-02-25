@@ -45,6 +45,9 @@ public class FunctionRiverDigger {
         }
     }
 
+    /// <summary>
+    /// function for determine "strength" of each river path nodes
+    /// </summary>
     public List<float> AssignWidthToPoints(List<Vertex> path, float minWidth)
     {
         List<float> sumOfPointNeighb = new List<float>();
@@ -64,12 +67,17 @@ public class FunctionRiverDigger {
         //Debug.Log("-------------");
         foreach (float f in sumOfPointNeighb)
         {
-            float value = minWidth + minWidth/2 * (maxSum - f) / maxSum;
+            float value = 0;
+            value = minWidth + minWidth / 2 * (maxSum - f) / maxSum;
+            if (Double.IsPositiveInfinity(value) && counter<10) //TODO: fix assigning maxSum...shouldnt start with 0
+            {
+                value = minWidth;
+                Debug.Log("!");
+                counter++;
+            }
             finalWidthValues.Add(value);
-            //Debug.Log(value);
-            //finalWidthValues.Add(minWidth);
         }
-
+        
         return finalWidthValues;
     }
 
@@ -108,11 +116,13 @@ public class FunctionRiverDigger {
     //dig river with default values
     public void DigRiver(List<Vertex> path)
     {
-        DigRiver(path, 10, 0.4f);
+        DigRiver(path, 10, 0.5f);
     }
 
     public void DigRiver(List<Vertex> path, int width, float depthFactor)
     {
+        
+
         float[,] depthField = new float[lt.terrainWidth, lt.terrainHeight]; //depth to dig
         float[,] distField = new float[lt.terrainWidth, lt.terrainHeight]; //distance from line
         float[,] pathMark = new float[lt.terrainWidth, lt.terrainHeight]; //path number which will effect the vertex
@@ -200,7 +210,12 @@ public class FunctionRiverDigger {
                         {
                             valid = false;
                         }
-                        
+
+                        if (Double.IsNaN(MySinc(distance, localWidth, depthFactor)) && counter < 10)
+                        {
+                            Debug.Log("[" + x + "," + z + "]: NaN");
+                            counter++;
+                        }
                         depth = MySinc(distance, localWidth, depthFactor);
 
 
@@ -303,13 +318,19 @@ public class FunctionRiverDigger {
             {
                 if (depthField[x, z] != 666)
                 {
+                    if (Double.IsNaN(ftm.GetLocalMedian(x, z, 2, depthField)) && counter < 10)
+                    {
+                        Debug.Log("[" + x + "," + z + "]: NaN");
+                        counter++;
+                    }
                     filtField[x, z] += ftm.GetLocalMedian(x,z,2, depthField);
                 }
             }
         }
-        
+        counter = 0;
+
         //apply digging
-        
+
         for (int x = 0; x < lt.terrainWidth; x++)
         {
             for (int z = 0; z < lt.terrainHeight; z++)
@@ -317,13 +338,32 @@ public class FunctionRiverDigger {
                 if (depthField[x, z] != 666)
                 {
                     //vertices[x, z].y += filtField[x, z] * depthFactor;
-                    lc.SetGlobalValue(x, z, filtField[x, z] * depthFactor, false, globalRiverC);
+                    if(Double.IsNaN(filtField[x, z] * depthFactor) && counter < 10)
+                    {
+                        Debug.Log("[" + x + "," + z + "]: NaN");
+                        counter++;
+                    }
+
+                    lc.SetLocalValue(x, z, filtField[x, z] * depthFactor, false, globalRiverC);
                 }
             }
         }
-        
+        /*
+        for (int x = 0; x < lt.terrainWidth; x++)
+        {
+            for (int z = 50; z < 70; z++)
+            {
+                if (depthField[x, z] != 666)
+                {
+                    //vertices[x, z].y += filtField[x, z] * depthFactor;
+
+                    lc.SetLocalValue(x, z, filtField[x, z] * depthFactor, true, globalRiverC);
+                }
+            }
+        }*/
+
         //rg.terrain.build();
-        
+
 
         //ColorPixel(20, 20, 0, greenColor);
         //color digging
@@ -331,7 +371,7 @@ public class FunctionRiverDigger {
         //pathmark:
         //  1 = river
         //  2 = corner
-        
+
         for (int x = 0; x < lt.terrainWidth; x++)
         {
             for (int z = 0; z < lt.terrainHeight; z++)
@@ -350,10 +390,21 @@ public class FunctionRiverDigger {
 
 
     }
+    int counter = 0;
 
     public float MySinc(float x, float width, float depth)
     {
+        if(x == 0 || width == 0)
+        {
+            Debug.Log("000");
+            return 0;
+        }
         double r = -(depth/ Math.PI) * Math.Sin(x * Math.PI / width) / x * width;
+        if (Double.IsNaN(r) && counter < 10)
+        {
+            Debug.Log("NaN");
+            counter++;
+        }
         return (float)r;
         /*
         return (float)(-

@@ -58,9 +58,10 @@ public class LocalTerrain : ILocalTerrain {
 
         tg.GenerateTerrainOn(visibleTerrain, localCoordinates.botLeft, localCoordinates.topRight);
 
-        fg.mf.PerserveMountainsInRegion(localCoordinates.botLeft, localCoordinates.topRight, 3, 50, 10);
+        fg.mf.PerserveMountainsInRegion(localCoordinates.botLeft, localCoordinates.topRight, 4, 60, 10);
 
         fg.mdf.GenerateMedianFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
+
         //fg.af.GenerateAverageFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
 
         tg.build();
@@ -76,6 +77,16 @@ public class LocalTerrain : ILocalTerrain {
         
         tg.MoveVisibleTerrain(localCoordinates.center);
     }
+
+
+    /// <summary>
+    /// updates coordinates with same parameters
+    /// </summary>
+    public void UpdateLocalCoordinates()
+    {
+        UpdateLocalCoordinates(localCoordinates.center, localCoordinates.botLeft, localCoordinates.topRight);
+    }
+
 
     /// <summary>
     /// updates center and botLeft+topRight of local coordinates
@@ -114,7 +125,7 @@ public class LocalTerrain : ILocalTerrain {
     {
         //Debug.Log("getting " + x + "," + z);
         //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
-        return localCoordinates.GetGlobalValue(x,z, globalTerrainC);
+        return localCoordinates.GetLocalValue(x,z, globalTerrainC);
     }
     /// <summary>
     /// sets height to global terrain
@@ -122,7 +133,7 @@ public class LocalTerrain : ILocalTerrain {
     /// </summary>
     public void SetLocalHeight(int x, int z, float height, bool overwrite)
     {
-        localCoordinates.SetGlobalValue(x ,z, height, overwrite, globalTerrainC);
+        localCoordinates.SetLocalValue(x ,z, height, overwrite, globalTerrainC);
     }
 
     /// <summary>

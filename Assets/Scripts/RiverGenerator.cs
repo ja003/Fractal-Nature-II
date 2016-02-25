@@ -94,8 +94,27 @@ public class RiverGenerator  {
 
         currentRiver = river;
 
+        Debug.Log("digging:" + currentRiver);
         frd.DigRiver(currentRiver.riverPath);
 
 
+    }
+
+    /// <summary>
+    /// returns river value on given local coordiantes (0 if not defined)
+    /// </summary>
+    public float GetLocalValue(int x, int z)
+    {
+        float value = localCoordinates.GetLocalValue(x, z, globalRiverC);
+        if (value != 666)
+            return value;
+        else
+            return 0;
+    }
+
+
+    public void ResetRivers()
+    {
+        globalRiverC.ResetQuadrants();
     }
 }

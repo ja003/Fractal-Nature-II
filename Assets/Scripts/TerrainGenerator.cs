@@ -6,7 +6,10 @@ public class TerrainGenerator// : ITerrainGenerator
 {
     public GlobalTerrain globalTerrain;
     public LocalTerrain localTerrain;
+
     public FilterGenerator filterGenerator;
+    public RiverGenerator riverGenerator;
+
     public DiamondSquare ds;
     public RandomTerrain rt;
     public FunctionMathCalculator fmc;
@@ -25,11 +28,13 @@ public class TerrainGenerator// : ITerrainGenerator
     }
 
     public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
-        FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator)
+        FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator,
+        RiverGenerator riverGenerator)
     {
         this.globalTerrain = globalTerrain;
         this.localTerrain = localTerrain;
         this.filterGenerator = filterGenerator;
+        this.riverGenerator = riverGenerator;
         fmc = functionMathCalculator;
 
         rt.AssignFunctions(fmc);
@@ -126,23 +131,39 @@ public class TerrainGenerator// : ITerrainGenerator
         }
     }
 
+
+    int counter = 0;
     /// <summary>
-    /// applies values from filter to vertices
+    /// applies values from all layers to vertices
     /// </summary>
-    public void ApplyFilters()
+    public void ApplyLayers()
     {
         for(int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                vertices[x, z].y += filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
+                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
-                /*if (x < 10 && z < 10)
+                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
+                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
+
+                /*
+                if(riverGenerator.GetLocalValue(x, z) != 0)
                 {
-                    Debug.Log(filterGenerator.GetLocalValue(x, z, filterGenerator.localFilterAverageC));
+                    //Debug.Log(riverGenerator.GetLocalValue(x, z));
                 }*/
+                if( Double.IsNaN(riverGenerator.GetLocalValue(x, z)) && counter < 10)
+                {
+                    Debug.Log("[" + x + "," + z + "]: NaN");
+                    counter++;
+                }
+
+                vertices[x, z].y = 1;
+                vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
+                if (x < 10 && z < 10)
+                {
+                    //Debug.Log(riverGenerator.GetLocalValue(x, z));
+                }
             }
         }
     }
@@ -367,7 +388,7 @@ public class TerrainGenerator// : ITerrainGenerator
         //Debug.Log("move to " + localTerrain.center);
         MoveTerrain(localTerrain.localCoordinates.center);
 
-        ApplyFilters();
+        ApplyLayers();
 
         //Function called to update the renderables when changes occur
 
@@ -400,7 +421,7 @@ public class TerrainGenerator// : ITerrainGenerator
                                 z + individualMeshHeight * i - i);
 
                         //Set heightmap texture pixel
-                        float this_color = vertices[x + individualMeshWidth * j, z + individualMeshHeight * i].y;
+                        float this_color = vertices[x + individualMeshWidth * j, z + individualMeshHeight * i].y + 20;
                         heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i, new Color(this_color, this_color, this_color));
 
                         //Set water data if water is present
