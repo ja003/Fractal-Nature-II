@@ -1,0 +1,7 @@
+Connecting river
+
+- added implicit conversion between Vertex and vector3
+- modified river
+-- operates on global space
+-- TODO: fix river digging
+- added local/global space conversion

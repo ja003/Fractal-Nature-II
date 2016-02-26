@@ -65,6 +65,17 @@ public class Vertex
         return new Vertex(x, z, height);
     }
 
+    // User-defined conversion from Digit to double
+    public static implicit operator Vector3 (Vertex vertex)
+    {
+        return new Vector3(vertex.x, 0, vertex.z);
+    }
+    //  User-defined conversion from double to Digit
+    public static implicit operator Vertex(Vector3 vector)
+    {
+        return new Vertex((int)vector.x, (int)vector.z);
+    }
+
     public override string ToString()
     {
         return "[" + x + "," + z + "]=" + height;

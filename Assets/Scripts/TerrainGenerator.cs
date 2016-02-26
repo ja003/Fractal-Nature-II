@@ -142,10 +142,10 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
-                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
 
                 /*
                 if(riverGenerator.GetLocalValue(x, z) != 0)
@@ -158,8 +158,8 @@ public class TerrainGenerator// : ITerrainGenerator
                     counter++;
                 }
 
-                vertices[x, z].y = 1;
-                vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
+                //vertices[x, z].y = 1;
+                //vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
                 if (x < 10 && z < 10)
                 {
                     //Debug.Log(riverGenerator.GetLocalValue(x, z));

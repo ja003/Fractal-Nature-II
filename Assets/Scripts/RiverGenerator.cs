@@ -37,7 +37,7 @@ public class RiverGenerator  {
         frd = functionRiverDigger;
     }
 
-    public void GenerateRiver()
+    public void GenerateNewRiver()
     {
 
 
@@ -60,10 +60,11 @@ public class RiverGenerator  {
         //frp.FloodFromLowestPoint();
 
         Vertex start = ftm.GetLowestRegionCenter(20, 50);
-        Debug.Log("starting from " + start);
+        Vector3 globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
+        Debug.Log("starting from " + start + " = " + globalStart);
 
-        RiverInfo river = frp.GetRiverPathFrom(start, new List<Direction>(),
-            0,lt.terrainWidth, 0, lt.terrainHeight);
+        RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
+            //0,lt.terrainWidth, 0, lt.terrainHeight);
         Debug.Log(river);
 
         //now river has reached 1 side. 
@@ -81,22 +82,65 @@ public class RiverGenerator  {
         river.UpdateReachedSides();
 
         // 2)find second path
-        RiverInfo river2 = frp.GetRiverPathFrom(start, river.reachedSides,
-            x_min, x_max, z_min, z_max);
-
-
+        RiverInfo river2 = frp.GetRiverPathFrom(globalStart, river.reachedSides);
+            //x_min, x_max, z_min, z_max);
         Debug.Log(river2);
+
         // connect them
         river.ConnectWith(river2);
         river.DrawRiver();
 
-        Debug.Log(river);
-
         currentRiver = river;
 
-        Debug.Log("digging:" + currentRiver);
-        frd.DigRiver(currentRiver.riverPath);
+        Debug.Log(currentRiver);
+        
+        //frd.DigRiver(currentRiver.riverPath);
 
+
+    }
+
+    /// <summary>
+    /// generates rivers starting from curent river's starting and ending point
+    /// operation is processed only if points are in visible terrain and not on border
+    /// => meaning that terrain ahs been moved and river isn't complete
+    /// </summary>
+    public void GenerateConnectingRiver()
+    {
+        Debug.Log("currentRiver:"+currentRiver);
+        Vector3 startPoint = currentRiver.riverPath[0];
+        if (ftm.IsInVisibleterrain(startPoint) && !ftm.IsOnBorder(startPoint))
+        {
+            Debug.Log("connection river from start: " + startPoint);
+
+            RiverInfo startRiver =
+                frp.GetRiverPathFrom(startPoint, new List<Direction>());
+            currentRiver.ConnectWith(startRiver);
+
+            Debug.Log("startRiver:" + startRiver);
+        }
+        else
+        {
+            Debug.Log(startPoint + " OUT");
+            Debug.Log(lt.localCoordinates.botLeft + ", " + lt.localCoordinates.topRight);
+        }
+
+        Vector3 endPoint = currentRiver.riverPath[currentRiver.riverPath.Count-1];
+        if (ftm.IsInVisibleterrain(endPoint) && !ftm.IsOnBorder(endPoint))
+        {
+            Debug.Log("connection river from end: " + endPoint);
+
+            RiverInfo endRiver =
+                frp.GetRiverPathFrom(endPoint, new List<Direction>());
+            currentRiver.ConnectWith(endRiver);
+
+            Debug.Log("endRiver:" + endRiver);
+        }
+        else
+        {
+            Debug.Log(endPoint + " OUT");
+            Debug.Log(lt.localCoordinates.botLeft + ", " + lt.localCoordinates.topRight);
+
+        }
 
     }
 
@@ -110,6 +154,15 @@ public class RiverGenerator  {
             return value;
         else
             return 0;
+    }
+
+    public Vector3 GetBotLeft()
+    {
+        return lt.localCoordinates.botLeft;
+    }
+    public Vector3 GetTopRight()
+    {
+        return lt.localCoordinates.topRight;
     }
 
 

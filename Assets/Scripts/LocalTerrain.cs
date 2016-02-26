@@ -64,6 +64,14 @@ public class LocalTerrain : ILocalTerrain {
 
         //fg.af.GenerateAverageFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
 
+        //connect river (if it has been generated)
+        if(rg.currentRiver != null)
+        {
+
+            Debug.Log("connection river");
+            rg.GenerateConnectingRiver();
+        }
+
         tg.build();
     }
 

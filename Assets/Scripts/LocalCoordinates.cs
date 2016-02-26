@@ -32,6 +32,14 @@ public class LocalCoordinates {
     }
 
     /// <summary>
+    /// returns local coordinates of given global point
+    /// </summary>
+    public Vector3 GetLocalCoordinates(Vector3 point)
+    {
+        return new Vector3(point.x - botLeft.x, point.y, point.z - botLeft.z);
+    }
+
+    /// <summary>
     /// maps given local coordinates to global
     /// returns value on given coordinates
     /// </summary>

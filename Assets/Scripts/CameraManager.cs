@@ -123,8 +123,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             Debug.Log("river");
 
-            riverGenerator.GenerateRiver();
+            riverGenerator.GenerateNewRiver();
             lastActionFrame = Time.frameCount;
+            //localTerrain.MoveVisibleTerrain(gameObject.transform.position);
         }
         if (Input.GetKey("2") && lastActionFrame < Time.frameCount - 30)
         {

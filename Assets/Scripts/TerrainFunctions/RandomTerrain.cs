@@ -84,7 +84,7 @@ public class RandomTerrain {
                     //float neighb_highest = tg.globalTerrain.GetHighestNeighbour(x, z);
                     if (neighb_average == 666)
                     {
-                        Debug.Log(x + "," + z + ": unset");
+                        //Debug.Log(x + "," + z + ": unset");
                         neighb_average = 0;
                     }
                     float rand_height = Random.Range(neighb_average - 0.1f, neighb_average + 0.1f);

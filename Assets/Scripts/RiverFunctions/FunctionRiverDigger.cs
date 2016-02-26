@@ -11,6 +11,9 @@ public class FunctionRiverDigger {
     public LocalCoordinates lc;
     public GlobalCoordinates globalRiverC;
 
+    //GlobalCoordinates depthField;
+    //GlobalCoordinates distField;
+
     public FunctionMathCalculator fmc;
     public FunctionTerrainManager ftm;
     public FunctionDebugger fd;
@@ -72,7 +75,7 @@ public class FunctionRiverDigger {
             if (Double.IsPositiveInfinity(value) && counter<10) //TODO: fix assigning maxSum...shouldnt start with 0
             {
                 value = minWidth;
-                Debug.Log("!");
+                Debug.Log(f + "/" + maxSum + " IsPositiveInfinity");
                 counter++;
             }
             finalWidthValues.Add(value);
@@ -116,17 +119,19 @@ public class FunctionRiverDigger {
     //dig river with default values
     public void DigRiver(List<Vertex> path)
     {
-        DigRiver(path, 10, 0.5f);
+        DigRiver(path, 10, 0.7f);
     }
+
+    
 
     public void DigRiver(List<Vertex> path, int width, float depthFactor)
     {
-        
+
 
         float[,] depthField = new float[lt.terrainWidth, lt.terrainHeight]; //depth to dig
         float[,] distField = new float[lt.terrainWidth, lt.terrainHeight]; //distance from line
         float[,] pathMark = new float[lt.terrainWidth, lt.terrainHeight]; //path number which will effect the vertex
-        
+
 
         for (int x = 0; x < lt.terrainWidth; x++)
         {
@@ -242,6 +247,7 @@ public class FunctionRiverDigger {
                     }
                 }
             }
+            counter = 0;
             
 
         }
@@ -270,6 +276,11 @@ public class FunctionRiverDigger {
                             if (distance == 0) //sinc is not defined at 0
                                 distance += 0.01f;
 
+                            if (Double.IsNaN(MySinc(distance, widthInPoints[i], depthFactor)) && counter < 10)
+                            {
+                                Debug.Log("[" + x + "," + z + "]: NaN");
+                                counter++;
+                            }
                             depth = MySinc(distance, widthInPoints[i], depthFactor);
 
 
@@ -305,6 +316,7 @@ public class FunctionRiverDigger {
                 }
 
             }
+            counter = 0;
         }
         
 

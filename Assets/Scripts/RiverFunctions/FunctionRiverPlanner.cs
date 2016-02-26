@@ -43,20 +43,13 @@ public class FunctionRiverPlanner  {
     /// <summary>
     /// find river path from given starting point on restricted area
     /// </summary>
-    /// <param name="start">starting point</param>
-    /// <param name="reachedSides">sideas already reached - result path can't end on any of these these sides</param>
-    /// <param name="x_min">area restriction</param>
-    /// <param name="x_max">area restriction</param>
-    /// <param name="z_min">area restriction</param>
-    /// <param name="z_max">area restriction</param>
-    /// <returns></returns>
-    public RiverInfo GetRiverPathFrom(Vertex start, List<Direction> reachedSides,
-        int x_min, int x_max, int z_min, int z_max)
+    public RiverInfo GetRiverPathFrom(Vertex start, List<Direction> reachedSides)
+//        int x_min, int x_max, int z_min, int z_max)
     {
-        //int x_min = (int)botLeft.x;
-        //int z_min = (int)botLeft.z;
-        //int x_max = (int)topRight.x;
-        //int z_max = (int)topRight.z;
+        int x_min = (int)rg.GetBotLeft().x;
+        int z_min = (int)rg.GetBotLeft().z;
+        int x_max = (int)rg.GetTopRight().x;
+        int z_max = (int)rg.GetTopRight().z;
 
         fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
@@ -101,10 +94,19 @@ public class FunctionRiverPlanner  {
                 FloodNode currentNode = reachableNodes[i];
                 if (!currentNode.processed)
                 {
-                    int x = currentNode.vertex.x;
-                    int z = currentNode.vertex.z;
-                    //if (i < 100)
-                    //    Debug.Log(i + ":" + currentNode);
+                    //get local coordinates to check which side has been reached
+                    //int x = (int)rg.localCoordinates.GetLocalCoordinates(currentNode.vertex).x;
+                    //int z = (int)rg.localCoordinates.GetLocalCoordinates(currentNode.vertex).z;
+                    int x = (int)currentNode.vertex.x;
+                    int z = (int)currentNode.vertex.z;
+                    /*if (i < 100)
+                    {
+                        Debug.Log(i + ":" + currentNode);
+                        Debug.Log(x);
+                        Debug.Log(z);
+
+                    }*/
+
 
                     reachedSide = fmc.GetReachedSide(x, z, borderOffset, x_min, x_max, z_min, z_max);
                     if (reachedSide != Direction.none)
@@ -153,7 +155,7 @@ public class FunctionRiverPlanner  {
                         }
 
                         List<Vertex> neighbours =
-                            ftm.Get8Neighbours(currentNode.vertex, gridStep, 0, threshold, x_min, x_max, z_min, z_max);
+                            ftm.GetGlobal8Neighbours(currentNode.vertex, gridStep, 0, threshold);//, x_min, x_max, z_min, z_max);
                         if (neighbours.Count == 8)
                         {
                             currentNode.processed = true;

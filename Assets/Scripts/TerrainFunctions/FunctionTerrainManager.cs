@@ -101,52 +101,55 @@ public class FunctionTerrainManager {
     /// return 8 neighbourhood around center
     /// operates on local coordinates
     /// </summary>
-    public List<Vertex> Get8Neighbours(Vertex center, int step, int offset, float threshold)
-    {
-        return Get8Neighbours(center, step, offset, threshold, 0, lt.terrainWidth, 0, lt.terrainHeight);
-    }
+    //public List<Vertex> GetGlobal8Neighbours(Vertex center, int step, int offset, float threshold)
+    //{
+    //    return GetGlobal8Neighbours(center, step, offset, threshold);//, 0, lt.terrainWidth, 0, lt.terrainHeight);
+    //}
 
     /// <summary>
     /// return 8 neighbourhood around center
-    /// operates on local coordinates
+    /// operates on global coordinates
     /// </summary>
-    public List<Vertex> Get8Neighbours(Vertex center, int step, int offset, float threshold, 
-        int x_min, int x_max, int z_min, int z_max)
+    public List<Vertex> GetGlobal8Neighbours(Vertex center, int step, int offset, float threshold)//, 
+        //int x_min, int x_max, int z_min, int z_max)
     {
         List<Vertex> neighbours = new List<Vertex>();
         int x = center.x;
         int z = center.z;
 
-        if(fmc.GetDistanceFromCorner(x,z, x_min, x_max, z_min, z_max) < 2 * step) //dont process points too close to corners
+        /*if(fmc.GetDistanceFromCorner(x,z, x_min, x_max, z_min, z_max) < 2 * step) //dont process points too close to corners
         {
             //Debug.Log(center + " is too close to corner!");
             return neighbours;
-        }
+        }*/
 
         //left
-        if (CheckBounds(x - step, z, offset, x_min,x_max,z_min,z_max) && lt.GetLocalHeight(x - step, z) < threshold)
+        //if (CheckBounds(x - step, z, offset, x_min,x_max,z_min,z_max) && lt.GetLocalHeight(x - step, z) < threshold)
+
+        //suposing that if point is not defined than its not < threshold
+        if (lt.GetGlobalHeight(x - step, z) < threshold)
             { neighbours.Add(new Vertex(x - step, z, lt.GetLocalHeight(x - step, z))); }
         //up
-        if (CheckBounds(x, z + step, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x, z + step) < threshold)
+        if (lt.GetLocalHeight(x, z + step) < threshold)
             { neighbours.Add(new Vertex(x, z + step, lt.GetLocalHeight(x, z + step))); }
         //righ
-        if (CheckBounds(x + step, z, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x + step, z) < threshold)
+        if (lt.GetLocalHeight(x + step, z) < threshold)
             { neighbours.Add(new Vertex(x + step, z, lt.GetLocalHeight(x + step, z))); }
         //down
-        if (CheckBounds(x, z - step, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x, z - step) < threshold)
+        if (lt.GetLocalHeight(x, z - step) < threshold)
             { neighbours.Add(new Vertex(x, z - step, lt.GetLocalHeight(x, z - step))); }
 
         //leftUp
-        if (CheckBounds(x - step, z + step, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x - step, z + step)< threshold)
+        if (lt.GetLocalHeight(x - step, z + step)< threshold)
             { neighbours.Add(new Vertex(x - step, z + step, lt.GetLocalHeight(x - step, z + step))); }
         //rightUp
-        if (CheckBounds(x + step, z + step, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x + step, z + step) < threshold)
+        if (lt.GetLocalHeight(x + step, z + step) < threshold)
             { neighbours.Add(new Vertex(x + step, z + step, lt.GetLocalHeight(x + step, z + step))); }
         //righDown
-        if (CheckBounds(x + step, z - step, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x + step, z - step) < threshold)
+        if (lt.GetLocalHeight(x + step, z - step) < threshold)
             { neighbours.Add(new Vertex(x + step, z - step, lt.GetLocalHeight(x + step, z - step))); }
         //leftDown
-        if (CheckBounds(x - step, z - step, offset, x_min, x_max, z_min, z_max) && lt.GetLocalHeight(x - step, z - step) < threshold)
+        if (lt.GetLocalHeight(x - step, z - step) < threshold)
             { neighbours.Add(new Vertex(x - step, z - step, lt.GetLocalHeight(x - step, z - step))); }
         
         return neighbours;
@@ -174,6 +177,7 @@ public class FunctionTerrainManager {
 
     /// <summary>
     /// finds point on visible terrain with lowest neighbourhood 
+    /// returns local point
     /// </summary>
     public Vertex GetLowestRegionCenter(int radius, int offset)
     {
@@ -584,6 +588,35 @@ public class FunctionTerrainManager {
         return lowestVert;
     }
     */
+
+    /// <summary>
+    /// checks if given point is on border of visible terrain
+    /// point = global
+    /// </summary>
+    public bool IsOnBorder(Vector3 point)
+    {
+        bool leftSide = point.x == lt.localCoordinates.botLeft.x;
+        bool topSide = point.z == lt.localCoordinates.topRight.z;
+        bool rightSide = point.x == lt.localCoordinates.topRight.x;
+        bool botSide = point.z == lt.localCoordinates.botLeft.z;
+
+        return leftSide || topSide || rightSide || botSide;
+    }
+
+    /// <summary>
+    /// check if given point is in visible terrain
+    /// point = global coordinates
+    /// </summary>
+    public bool IsInVisibleterrain(Vector3 point)
+    {
+        return IsInRegion(point, lt.localCoordinates.botLeft, lt.localCoordinates.topRight);
+    }
+
+    public bool IsInRegion(Vector3 point, Vector3 botLeft, Vector3 topRight)
+    {
+        return CheckBounds((int)point.x, (int)point.z, 0, (int)botLeft.x, (int)topRight.x, (int)botLeft.z, (int)topRight.z);
+    }
+
     public bool CheckBounds(int x, int z, int offset)
     {
         return CheckBounds(x, z, offset, 0, lt.terrainWidth, 0, lt.terrainHeight);

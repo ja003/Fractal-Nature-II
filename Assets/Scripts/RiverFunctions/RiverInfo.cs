@@ -191,14 +191,14 @@ public class RiverInfo  {
             river2.riverPath.RemoveAt(0);
             river2.riverPath.Reverse();
         }
-        else if (riverPath[0].Equals(river2.riverPath[riverPath.Count - 1]))
+        else if (riverPath[0].Equals(river2.riverPath[river2.riverPath.Count - 1]))
         {
             riverPath.RemoveAt(0);
             riverPath.Reverse();
         }
-        else if (riverPath[riverPath.Count - 1].Equals(river2.riverPath[riverPath.Count - 1]))
+        else if (riverPath[riverPath.Count - 1].Equals(river2.riverPath[river2.riverPath.Count - 1]))
         {
-            river2.riverPath.RemoveAt(riverPath.Count - 1);
+            river2.riverPath.RemoveAt(river2.riverPath.Count - 1);
             river2.riverPath.Reverse();
         }
         else
@@ -275,7 +275,9 @@ public class RiverInfo  {
     {
         foreach(Vertex v in riverPath)
         {
-            fd.ColorPixel(v.x, v.z, 3, fd.pinkColor);
+            int localX = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).x;
+            int localZ = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).z;
+            fd.ColorPixel(localX, localZ, 3, fd.pinkColor);
         }
     }
     
