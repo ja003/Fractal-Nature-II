@@ -1,0 +1,5 @@
+Diamond square
+
+- implemented terrain generation using diamond square algorithm
+- TODO: connecting terrain can't be generated from any position, 
+center has to be exactly at border

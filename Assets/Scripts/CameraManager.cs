@@ -22,8 +22,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
     void Start () {
         
-        terrainWidth = 200; //TODO: terrain has to be exactly 200x200 and terrainWidth = terrainWidth / 6....why??
-        terrainHeight = 200;
+        terrainWidth = 256; 
+        terrainHeight = 256;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
@@ -46,7 +46,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //filterGenerator.PerserveMountains(3, 50, 10);
         //terrainGenerator.build();
     }
-
+    
     public void AssignFunctions()
     {
         localTerrain.AssignFunctions(globalTerrain.globalTerrainC, terrainGenerator, filterGenerator, riverGenerator);
@@ -139,6 +139,19 @@ public class CameraManager : MonoBehaviour, ICameraManager
             Debug.Log("color");
             riverGenerator.currentRiver.DrawRiver();
             terrainGenerator.build();
+            lastActionFrame = Time.frameCount;
+        }
+
+        if (Input.GetKey("p") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("diamond square");
+
+            lastActionFrame = Time.frameCount;
+        }
+        if (Input.GetKey("o") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("applying diamond square");
+
             lastActionFrame = Time.frameCount;
         }
     }

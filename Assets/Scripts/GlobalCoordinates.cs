@@ -71,7 +71,7 @@ public class GlobalCoordinates {
     {
         while (!CheckIfQuadrantDefined(x, z))
         {
-            Debug.Log(x + "," + z + ": SMALL");
+            //Debug.Log(x + "," + z + ": SMALL");
             DoubleSizeOfQuadrant(GetQuandrantNumber(x, z));
         }
 

@@ -11,7 +11,9 @@ public class TerrainGenerator// : ITerrainGenerator
     public RiverGenerator riverGenerator;
 
     public DiamondSquare ds;
+    public DiamondSquare2 ds2;
     public RandomTerrain rt;
+    
     public FunctionMathCalculator fmc;
 
     public int terrainWidth;
@@ -24,6 +26,7 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         //initialize(64,3);
         ds = new DiamondSquare(this);
+        ds2 = new DiamondSquare2(this);
         rt = new RandomTerrain(this);
     }
 
@@ -38,6 +41,7 @@ public class TerrainGenerator// : ITerrainGenerator
         fmc = functionMathCalculator;
 
         rt.AssignFunctions(fmc);
+        ds.AssignFunctions(localTerrain);
     }
 
     public void MoveVisibleTerrain(Vector3 cameraPosition)
@@ -58,7 +62,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
     public void GenerateTerrainOn(float[,] heightmap, Vector3 botLeft, Vector3 topRight)
     {
-        
+        /*
         for(int x = 0; x< localTerrain.terrainWidth; x++)
         {
             for (int z = 0; z < localTerrain.terrainHeight; z++)
@@ -71,9 +75,15 @@ public class TerrainGenerator// : ITerrainGenerator
                 //if(x<10 && z < 10)
                 //    Debug.Log(vertices[x, z].y);
             }
-        }
+        }*/
+
         //applyDiamondSquare(5);
-        rt.GenerateRandomTerrain(botLeft, topRight);
+
+        ///functional RANDOM terrin generator
+        //rt.GenerateRandomTerrain(botLeft, topRight);
+
+        ds.Initialize();
+        //ds.CopyValues();
 
         //filterGenerator.PerserveMountains(3, 50, 10);
 
@@ -83,17 +93,6 @@ public class TerrainGenerator// : ITerrainGenerator
 
         applyProceduralTex(true, sandColor, sandLimit, sandStrength, sandCoverage, true, grassColor, grassStrength, true, snowColor, snowLimit, snowStrength, snowCoverage, true, rockColor, slopeLimit, slopeStrength, noiseTexValue);
         
-
-        //build(); //schouldnt be called here
-
-        for (int x = 0; x < localTerrain.terrainWidth; x++)
-        {
-            for (int z = 0; z < localTerrain.terrainHeight; z++)
-            {
-                //if (x < 10 && z < 10)
-                    //Debug.Log(x + "," + z + ": " + vertices[x, z].y); 
-            }
-        }
     }
 
     public void FixUnsetValues()
@@ -122,11 +121,6 @@ public class TerrainGenerator// : ITerrainGenerator
             for (int z = 0; z < terrainHeight; z++)
             {
                 vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
-                if(x < 1 && z < 1)
-                {
-                    //Debug.Log(x + "," + z + ": " + vertices[x, z].y);
-                    //Debug.Log(localTerrain.GetGlobalCoordinate(x, z));
-                }
             }
         }
     }
@@ -144,17 +138,20 @@ public class TerrainGenerator// : ITerrainGenerator
             {
                 vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
 
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
+                //fornow
+                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
+
+                //fornow
+                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
 
                 /*
                 if(riverGenerator.GetLocalValue(x, z) != 0)
                 {
                     //Debug.Log(riverGenerator.GetLocalValue(x, z));
                 }*/
-                if( Double.IsNaN(riverGenerator.GetLocalValue(x, z)) && counter < 10)
+                if ( Double.IsNaN(riverGenerator.GetLocalValue(x, z)) && counter < 10)
                 {
                     Debug.Log("[" + x + "," + z + "]: NaN");
                     counter++;
@@ -194,8 +191,8 @@ public class TerrainGenerator// : ITerrainGenerator
         int meshSizeX =  32 * 2 + 1;
         int meshSizeZ =  64 * 2 + 1;
         //individualMeshSize = meshSize / 2 + 1;
-        individualMeshWidth = 100; 
-        individualMeshHeight = 100;
+        individualMeshWidth = terrainWidth/2; 
+        individualMeshHeight = terrainHeight/2;
 
         //Textures initialisation
         //heightMap = new Texture2D(meshSize, meshSize, TextureFormat.RGBA32, false);
@@ -610,7 +607,7 @@ public class TerrainGenerator// : ITerrainGenerator
         //int widthCount = terrainWidth / (3 * terrainWidth / 4);
         //int heightCount = terrainHeight / (3 * terrainHeight / 4);
 
-        ds.SetupDiamondSquare(patchWidth, patchHeight);
+        ds2.SetupDiamondSquare(patchWidth, patchHeight);
 
         /*
         for (int x = -patchWidth / 2; x < terrainWidth; x += 3 * patchWidth / 4)
@@ -655,7 +652,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 //Debug.Log("Starting from: " + x + "," + z);
                 if (!localTerrain.NeighbourhoodDefined(x, z, patchWidth / 2))
                 {
-                    ds.initDiamondSquare(new Vector3(x, 0, z), 1);// Math.Abs(2*scale1));
+                    ds2.initDiamondSquare(new Vector3(x, 0, z), 1);// Math.Abs(2*scale1));
                     //Debug.Log(scale1);
                 }
             }
