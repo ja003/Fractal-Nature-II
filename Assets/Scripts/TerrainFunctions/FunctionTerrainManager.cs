@@ -110,8 +110,8 @@ public class FunctionTerrainManager {
     /// return 8 neighbourhood around center
     /// operates on global coordinates
     /// </summary>
-    public List<Vertex> GetGlobal8Neighbours(Vertex center, int step, int offset, float threshold)//, 
-        //int x_min, int x_max, int z_min, int z_max)
+    public List<Vertex> GetGlobal8Neighbours(Vertex center, int step, int offset, float threshold, 
+        int x_min, int z_min, int x_max,  int z_max)
     {
         List<Vertex> neighbours = new List<Vertex>();
         int x = center.x;
@@ -127,30 +127,31 @@ public class FunctionTerrainManager {
         //if (CheckBounds(x - step, z, offset, x_min,x_max,z_min,z_max) && lt.GetLocalHeight(x - step, z) < threshold)
 
         //suposing that if point is not defined than its not < threshold
-        if (lt.GetGlobalHeight(x - step, z) < threshold)
-            { neighbours.Add(new Vertex(x - step, z, lt.GetLocalHeight(x - step, z))); }
+        //left
+        if (CheckBounds(x - step,z,0,x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x - step, z) < threshold)
+            { neighbours.Add(new Vertex(x - step, z, lt.GetGlobalHeight(x - step, z))); }
         //up
-        if (lt.GetLocalHeight(x, z + step) < threshold)
-            { neighbours.Add(new Vertex(x, z + step, lt.GetLocalHeight(x, z + step))); }
+        if (CheckBounds(x, z + step, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x, z + step) < threshold)
+            { neighbours.Add(new Vertex(x, z + step, lt.GetGlobalHeight(x, z + step))); }
         //righ
-        if (lt.GetLocalHeight(x + step, z) < threshold)
-            { neighbours.Add(new Vertex(x + step, z, lt.GetLocalHeight(x + step, z))); }
+        if (CheckBounds(x + step, z, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x + step, z) < threshold)
+            { neighbours.Add(new Vertex(x + step, z, lt.GetGlobalHeight(x + step, z))); }
         //down
-        if (lt.GetLocalHeight(x, z - step) < threshold)
-            { neighbours.Add(new Vertex(x, z - step, lt.GetLocalHeight(x, z - step))); }
+        if (CheckBounds(x, z - step, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x, z - step) < threshold)
+            { neighbours.Add(new Vertex(x, z - step, lt.GetGlobalHeight(x, z - step))); }
 
         //leftUp
-        if (lt.GetLocalHeight(x - step, z + step)< threshold)
-            { neighbours.Add(new Vertex(x - step, z + step, lt.GetLocalHeight(x - step, z + step))); }
+        if (CheckBounds(x - step, z + step, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x - step, z + step)< threshold)
+            { neighbours.Add(new Vertex(x - step, z + step, lt.GetGlobalHeight(x - step, z + step))); }
         //rightUp
-        if (lt.GetLocalHeight(x + step, z + step) < threshold)
-            { neighbours.Add(new Vertex(x + step, z + step, lt.GetLocalHeight(x + step, z + step))); }
+        if (CheckBounds(x + step, z + step, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x + step, z + step) < threshold)
+            { neighbours.Add(new Vertex(x + step, z + step, lt.GetGlobalHeight(x + step, z + step))); }
         //righDown
-        if (lt.GetLocalHeight(x + step, z - step) < threshold)
-            { neighbours.Add(new Vertex(x + step, z - step, lt.GetLocalHeight(x + step, z - step))); }
+        if (CheckBounds(x + step, z - step, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x + step, z - step) < threshold)
+            { neighbours.Add(new Vertex(x + step, z - step, lt.GetGlobalHeight(x + step, z - step))); }
         //leftDown
-        if (lt.GetLocalHeight(x - step, z - step) < threshold)
-            { neighbours.Add(new Vertex(x - step, z - step, lt.GetLocalHeight(x - step, z - step))); }
+        if (CheckBounds(x - step, z - step, 0, x_min, x_max, z_min, z_max) && lt.GetGlobalHeight(x - step, z - step) < threshold)
+            { neighbours.Add(new Vertex(x - step, z - step, lt.GetGlobalHeight(x - step, z - step))); }
         
         return neighbours;
     }
@@ -515,24 +516,24 @@ public class FunctionTerrainManager {
     /// <summary>
     /// returns highest point from visible terrain
     /// </summary>
-    public Vertex GetHighestpoint()
+    /*public Vertex GetHighestpoint()
     {
         return GetHighestpoint(0, lt.terrainWidth, 0, lt.terrainHeight);
-    }
+    }*/
 
     /// <summary>
     /// returns highest point from given local region
     /// </summary>
-    public Vertex GetHighestpoint(int x_min, int x_max, int z_min, int z_max)
+    public Vertex GetHighestpoint(int x_min, int z_min, int x_max, int z_max)
     {
 
 
-        Vertex highestPoint = new Vertex(x_min+10, z_min+10, lt.GetLocalHeight(x_min+10,z_min + 10));
+        Vertex highestPoint = new Vertex(x_min+10, z_min+10, lt.GetGlobalHeight(x_min+10,z_min + 10));
         for (int x = x_min; x < x_max - 1; x++)
         {
             for (int z = z_min; z < z_max - 1; z++)
             {
-                float height = lt.GetLocalHeight(x, z);
+                float height = lt.GetGlobalHeight(x, z);
                 if (height != 666 && height > highestPoint.height)
                     highestPoint = new Vertex(x, z, height);
             }
@@ -612,27 +613,43 @@ public class FunctionTerrainManager {
         return IsInRegion(point, lt.localCoordinates.botLeft, lt.localCoordinates.topRight);
     }
 
+    /// <summary>
+    /// determines wheter point lies in region defined by botLeft and topRight
+    /// </summary>
     public bool IsInRegion(Vector3 point, Vector3 botLeft, Vector3 topRight)
     {
-        return CheckBounds((int)point.x, (int)point.z, 0, (int)botLeft.x, (int)topRight.x, (int)botLeft.z, (int)topRight.z);
+        return CheckBounds((int)point.x, (int)point.z, 0, (int)botLeft.x, (int)botLeft.z,(int)topRight.x,  (int)topRight.z);
     }
-
+    /// <summary>
+    /// operates on global space
+    /// </summary>
     public bool CheckBounds(int x, int z, int offset)
     {
-        return CheckBounds(x, z, offset, 0, lt.terrainWidth, 0, lt.terrainHeight);
+        int x_min = (int)lt.localCoordinates.botLeft.x;
+        int z_min = (int)lt.localCoordinates.botLeft.z;
+        int x_max = (int)lt.localCoordinates.topRight.x;
+        int z_max = (int)lt.localCoordinates.topRight.z;
+        return CheckBounds(x, z, offset, x_min, z_min, x_max, z_max);
     }
 
-    public bool CheckBounds(int x, int z, int offset, int x_min, int x_max, int z_min, int z_max)
+    /// <summary>
+    /// operates on global space
+    /// </summary>
+    public bool CheckBounds(int x, int z, int offset, int x_min, int z_min, int x_max, int z_max)
     {
         //return x > x_min + offset && x < x_max - 1 - offset && z > z_min + offset && z < z_max - 1 - offset;
         return x >= x_min+offset && x < x_max - offset && z >= z_min+offset && z < z_max - offset;
     }
-
+    /// <summary>
+    /// operates on global space
+    /// </summary>
     public bool CheckBounds(int x, int z)
     {
         return CheckBounds(x, z, 0);
     }
-
+    /// <summary>
+    /// operates on global space
+    /// </summary>
     public bool CheckBounds(Vertex vertex)
     {
         return CheckBounds(vertex.x, vertex.z);

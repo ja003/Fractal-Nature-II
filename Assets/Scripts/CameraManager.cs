@@ -79,9 +79,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //generate terrain when camera gets close to border
         if(Get2dDistance(gameObject.transform.position, localTerrain.localCoordinates.center) > 70)
         {
-            FixCameraPosition();
+            //FixCameraPosition();
             //Debug.Log("moving to center: " + gameObject.transform.position);
-            localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
+            //localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
         }
 
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
@@ -131,6 +131,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             Debug.Log("median");
             filterGenerator.mdf.GenerateMedianFilterInRegion(localTerrain.localCoordinates.botLeft, localTerrain.localCoordinates.topRight);
+            lastActionFrame = Time.frameCount;
+        }
+
+        if (Input.GetKey("1") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("color");
+            riverGenerator.currentRiver.DrawRiver();
+            terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
     }

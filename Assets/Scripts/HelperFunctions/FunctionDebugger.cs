@@ -36,7 +36,11 @@ public class FunctionDebugger{
             for (int _z = z - offset; _z <= z + offset; _z++)
             {
                 if (ftm.CheckBounds(_x, _z))
-                    lt.tg.heightMap.SetPixel(_x, _z, color);
+                {
+                    int localX = (int)lt.localCoordinates.GetLocalCoordinates(new Vector3(_x, 0, _z)).x;
+                    int localZ = (int)lt.localCoordinates.GetLocalCoordinates(new Vector3(_x, 0, _z)).z;
+                    lt.tg.heightMap.SetPixel(localX, localZ, color);
+                }
             }
         }
 

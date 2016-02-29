@@ -275,9 +275,10 @@ public class RiverInfo  {
     {
         foreach(Vertex v in riverPath)
         {
-            int localX = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).x;
-            int localZ = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).z;
-            fd.ColorPixel(localX, localZ, 3, fd.pinkColor);
+            //int localX = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).x;
+            //int localZ = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).z;
+            //fd.ColorPixel(localX, localZ, 3, fd.pinkColor);
+            fd.ColorPixel(v.x, v.z, 3, fd.pinkColor);
         }
     }
     

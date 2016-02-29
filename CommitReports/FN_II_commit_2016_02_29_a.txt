@@ -1,0 +1,6 @@
+River planning
+
+- added region restriction in river path planning
+- modified order of coordinates: x_min, z_min, x_max, z_max
+- modified CheckBounds to operate on global space
+- TODO: generate connecting river 

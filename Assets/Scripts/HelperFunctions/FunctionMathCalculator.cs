@@ -54,7 +54,7 @@ public class FunctionMathCalculator {
     /// </summary>
     public Direction GetReachedSide(
         int x, int z, int borderOffset,
-        int x_min, int x_max, int z_min, int z_max)
+        int x_min, int z_min, int x_max, int z_max)
     {
         if (IsCloseTo(z, z_max, borderOffset))
         {
@@ -78,7 +78,7 @@ public class FunctionMathCalculator {
     // determines if point is close to one of the available side
     public bool ReachedAvailableSide(
         int x, int z, List<Direction> reachedSides, int borderOffset,
-        int x_min, int x_max, int z_min, int z_max)
+        int x_min, int z_min, int x_max, int z_max)
     {
         bool reachedAvailableSide = true;
         foreach (Direction sides in reachedSides)
@@ -140,38 +140,36 @@ public class FunctionMathCalculator {
     /// assignes values to boundaries
     /// boundaries starts on starting point and ends on opposite side of the reached side
     /// </summary>
-    public void DetermineBoundaries(Vertex start,
-        bool reachTop, bool reachRight, bool reachBot, bool reachLeft,
-         ref int x_min, ref int x_max, ref int z_min, ref int z_max)
+    public void DetermineBoundaries(Vertex start, RiverInfo river,
+         ref int x_min, ref int z_min, ref int x_max, ref int z_max)
     {
-        if (reachTop)
+        //Debug.Log("FROM");
+        //Debug.Log(x_min);
+        //Debug.Log(z_min);
+        //Debug.Log(x_max);
+        //Debug.Log(z_max);
+
+        if (river.reachTop)
         {
-            x_min = 0;
-            x_max = lt.terrainWidth;
-            z_min = 0;
             z_max = start.z;
         }
-        else if (reachRight)
+        else if (river.reachRight)
         {
-            x_min = 0;
             x_max = start.x;
-            z_min = 0;
-            z_max = lt.terrainHeight;
         }
-        else if (reachBot)
+        else if (river.reachBot)
         {
-            x_min = 0;
-            x_max = lt.terrainWidth;
             z_min = start.z;
-            z_max = lt.terrainHeight;
         }
-        else if (reachBot)
+        else if (river.reachBot)
         {
             x_min = start.x;
-            x_max = lt.terrainWidth;
-            z_min = 0;
-            z_max = lt.terrainHeight;
         }
+        //Debug.Log("TO");
+        //Debug.Log(x_min);
+        //Debug.Log(z_min);
+        //Debug.Log(x_max);
+        //Debug.Log(z_max);
     }
 
     /// <summary>
