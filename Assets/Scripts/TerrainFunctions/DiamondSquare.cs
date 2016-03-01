@@ -166,24 +166,56 @@ public class DiamondSquare
         float modNoise = 0.0f;
 
 
-        float defaultHeight = -20; //only to detect deffects in process. If terrain has some bad height (too high/low), there is some error
+        //TODO: there is some bug on the Z-edge, if i put defaultHeight high, border will be high
+        float defaultHeight = 0; //only to detect deffects in process. If terrain has some bad height (too high/low), there is some error
+        float defaultHeight2 = 20;//debug
+
         bool overwrite = false;
-
-        // init the grid
-        //float[][] grid = new float[size][];
-        //for (int i = 0; i < size; i++)
-        //    grid[i] = new float[size];
-
         // Seed the first four corners
         Random rand = (seed == 0 ? new Random() : new Random(seed));
-        //grid[0][0] = RandRange(rand, rMin, rMax);
-        //grid[s][0] = RandRange(rand, rMin, rMax);
-        //grid[0][s] = RandRange(rand, rMin, rMax);
-        //grid[s][s] = RandRange(rand, rMin, rMax);
-        lt.SetLocalHeight(0, 0, RandRange(rand, rMin, rMax), overwrite);
-        lt.SetLocalHeight(s, 0, RandRange(rand, rMin, rMax), overwrite);
-        lt.SetLocalHeight(0, s, RandRange(rand, rMin, rMax), overwrite);
-        lt.SetLocalHeight(s, s, RandRange(rand, rMin, rMax), overwrite);
+        float neighbourhood = 666;
+        //TODO: make method
+        neighbourhood = lt.GetNeighbourHeight(0, 0);
+        if (neighbourhood != 666)
+        {
+            lt.SetLocalHeight(0, 0, neighbourhood, false);
+        }
+        else
+        {
+            lt.SetLocalHeight(0, 0, RandRange(rand, rMin, rMax), overwrite);
+        }
+
+        neighbourhood = lt.GetNeighbourHeight(s, 0);
+        if (neighbourhood != 666)
+        {
+            lt.SetLocalHeight(s, 0, neighbourhood, false);
+        }
+        else
+        {
+            lt.SetLocalHeight(s, 0, RandRange(rand, rMin, rMax), overwrite);
+        }
+
+        neighbourhood = lt.GetNeighbourHeight(0, s);
+        if (neighbourhood != 666)
+        {
+            lt.SetLocalHeight(0, s, neighbourhood, false);
+        }
+        else
+        {
+            lt.SetLocalHeight(0, s, RandRange(rand, rMin, rMax), overwrite);
+        }
+
+        neighbourhood = lt.GetNeighbourHeight(s,s);
+        if (neighbourhood != 666)
+        {
+            lt.SetLocalHeight(s, s, neighbourhood, false);
+        }
+        else
+        {
+            lt.SetLocalHeight(s, s, RandRange(rand, rMin, rMax), overwrite);
+        }
+
+        
         
         /*
 			* Use temporary named variables to simplify equations
@@ -208,12 +240,19 @@ public class DiamondSquare
             {
                 for (int x = 0; x < s; x += i)
                 {
+                    
                     s0 = lt.GetLocalHeight(x, z, defaultHeight); //should need to define default 'undefined' value
                     s1 = lt.GetLocalHeight(x + i, z, defaultHeight);
                     s2 = lt.GetLocalHeight(x, z + i, defaultHeight);
                     s3 = lt.GetLocalHeight(x + i, z + i, defaultHeight);
 
-                    if(lt.localCoordinates.IsDefined(x + (i / 2), z + (i / 2), lt.globalTerrainC) && counter < 10)
+                    if (s0 > defaultHeight2 || s1 > defaultHeight2 || s2 > defaultHeight2 || s3 > defaultHeight2)
+                    {
+                        counter++;
+                        UnityEngine.Debug.Log("default");
+                    }
+
+                    if (lt.localCoordinates.IsDefined(x + (i / 2), z + (i / 2), lt.globalTerrainC) && counter < 10)
                     {
                         UnityEngine.Debug.Log(x + "," + z + ": set");
                         counter++;
@@ -244,6 +283,13 @@ public class DiamondSquare
                     d3 = x >= s - i ? (s1 + cn + s3) / 3.0f : 
                         (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f;
 
+                    if (s0 > defaultHeight2 || s1 > defaultHeight2 || s2 > defaultHeight2 || s3 > defaultHeight2||
+                        d0 > defaultHeight2 || d1 > defaultHeight2 || d2 > defaultHeight2 || d3 > defaultHeight2||
+                        cn > defaultHeight2)
+                    {
+                        counter++; 
+                        UnityEngine.Debug.Log("default");
+                    }
 
                     lt.SetLocalHeight(x + (i / 2), z, d0 + RandRange(rand, -modNoise, modNoise), overwrite);
                     lt.SetLocalHeight(x, z + (i / 2), d1 + RandRange(rand, -modNoise, modNoise), overwrite);

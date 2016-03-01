@@ -1,0 +1,8 @@
+Grid manager
+
+- implemented grid manager 
+-- used for getting center form diamond square algorithm
+- implemented connecting terrain (using DS)
+- TODO: Diamond square there is some bug on the Z-edge, 
+if i put defaultHeight high, border will be high
+- TODO: fix Diamond square connecting of patches

@@ -56,12 +56,13 @@ public class LocalTerrain : ILocalTerrain {
     {
         MoveVisibleTerrain(cameraPosition);
 
-        tg.GenerateTerrainOn(visibleTerrain, localCoordinates.botLeft, localCoordinates.topRight);
+        tg.GenerateTerrainOn(visibleTerrain, localCoordinates.center); //localCoordinates.botLeft, localCoordinates.topRight);
 
-        fg.mf.PerserveMountainsInRegion(localCoordinates.botLeft, localCoordinates.topRight, 4, 60, 10);
+        //fg.mf.PerserveMountainsInRegion(localCoordinates.botLeft, localCoordinates.topRight, 4, 60, 10);
 
-        fg.mdf.GenerateMedianFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
+        //fg.mdf.GenerateMedianFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
 
+        //not now
         //fg.af.GenerateAverageFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
 
         //connect river (if it has been generated)
@@ -75,15 +76,16 @@ public class LocalTerrain : ILocalTerrain {
         tg.build();
     }
 
-    public void MoveVisibleTerrain(Vector3 cameraPosition)
+    /// <summary>
+    /// moves local center
+    /// </summary>
+    public void MoveVisibleTerrain(Vector3 newCenter)
     {
-
-
-        UpdateLocalCoordinates(cameraPosition,
-            new Vector3(cameraPosition.x - terrainWidth / 2, 0, cameraPosition.z - terrainHeight / 2),
-            new Vector3(cameraPosition.x + terrainWidth / 2, 0, cameraPosition.z + terrainHeight / 2));
+        UpdateLocalCoordinates(newCenter,
+            new Vector3(newCenter.x - terrainWidth / 2, 0, newCenter.z - terrainHeight / 2),
+            new Vector3(newCenter.x + terrainWidth / 2, 0, newCenter.z + terrainHeight / 2));
         
-        tg.MoveVisibleTerrain(localCoordinates.center);
+        tg.MoveVisibleTerrain(localCoordinates.center);//only for moving terrain (not generating new)
     }
 
 
@@ -161,10 +163,8 @@ public class LocalTerrain : ILocalTerrain {
 
     /// <summary>
     /// returns average of neighbour vertices heights
+    /// 666 if neighbouthood is not derfined
     /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
-    /// <returns></returns>
     public float GetNeighbourHeight(int _x, int _z)
     {
         float heightAverage = 0;

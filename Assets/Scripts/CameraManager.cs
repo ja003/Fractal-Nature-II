@@ -17,6 +17,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
     private FunctionRiverPlanner functionRiverPlanner;
     private FunctionTerrainManager functionTerrainManager;
 
+    private GridManager gridManager;
+
     int terrainWidth;
     int terrainHeight;
 
@@ -40,18 +42,24 @@ public class CameraManager : MonoBehaviour, ICameraManager
         terrainGenerator = new TerrainGenerator();
         riverGenerator = new RiverGenerator(localTerrain);
 
+        gridManager = new GridManager(new Vector3(0,0,0), terrainWidth, terrainHeight);
+
         AssignFunctions();
         terrainGenerator.initialize();
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
         //filterGenerator.PerserveMountains(3, 50, 10);
         //terrainGenerator.build();
+
+        Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
     }
     
     public void AssignFunctions()
     {
-        localTerrain.AssignFunctions(globalTerrain.globalTerrainC, terrainGenerator, filterGenerator, riverGenerator);
+        localTerrain.AssignFunctions(globalTerrain.globalTerrainC, 
+            terrainGenerator, filterGenerator, riverGenerator);
 
-        terrainGenerator.AssignFunctions(globalTerrain, localTerrain, filterGenerator, functionMathCalculator, riverGenerator);
+        terrainGenerator.AssignFunctions(globalTerrain, localTerrain, 
+            filterGenerator, functionMathCalculator, riverGenerator, gridManager);
         filterGenerator.AssignFunctions(functionMathCalculator, localTerrain, functionTerrainManager);
         riverGenerator.AssignFunctions(functionTerrainManager, functionRiverPlanner, functionDebugger,
             functionMathCalculator, functionRiverDigger);
@@ -79,7 +87,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //generate terrain when camera gets close to border
         if(Get2dDistance(gameObject.transform.position, localTerrain.localCoordinates.center) > 70)
         {
-            //FixCameraPosition();
+            //FixCameraPosition(); //no need now
             //Debug.Log("moving to center: " + gameObject.transform.position);
             //localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
         }

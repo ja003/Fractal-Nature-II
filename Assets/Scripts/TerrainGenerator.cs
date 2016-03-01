@@ -16,6 +16,8 @@ public class TerrainGenerator// : ITerrainGenerator
     
     public FunctionMathCalculator fmc;
 
+    public GridManager gm;
+
     public int terrainWidth;
     public int terrainHeight;
     int individualMeshWidth;
@@ -32,7 +34,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
     public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
         FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator,
-        RiverGenerator riverGenerator)
+        RiverGenerator riverGenerator, GridManager gridManager)
     {
         this.globalTerrain = globalTerrain;
         this.localTerrain = localTerrain;
@@ -42,6 +44,8 @@ public class TerrainGenerator// : ITerrainGenerator
 
         rt.AssignFunctions(fmc);
         ds.AssignFunctions(localTerrain);
+
+        gm = gridManager;
     }
 
     public void MoveVisibleTerrain(Vector3 cameraPosition)
@@ -60,36 +64,58 @@ public class TerrainGenerator// : ITerrainGenerator
         build();
     }
 
-    public void GenerateTerrainOn(float[,] heightmap, Vector3 botLeft, Vector3 topRight)
+    /// <summary>
+    /// checks if corners of defined region (by center) are defined
+    /// if not, region with center in the corner is generated
+    /// </summary>
+    public void PregenerateRegions(Vector3 center)
     {
-        /*
-        for(int x = 0; x< localTerrain.terrainWidth; x++)
+        Vector3 botLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z - terrainHeight / 2);
+        Vector3 topLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z + terrainHeight / 2);
+        Vector3 topRight = new Vector3(center.x + terrainWidth / 2, 0, center.z + terrainHeight / 2);
+        Vector3 botRight = new Vector3(center.x + terrainWidth / 2, 0, center.z - terrainHeight / 2);
+
+        if (!localTerrain.globalTerrainC.IsDefined(botLeft))
         {
-            for (int z = 0; z < localTerrain.terrainHeight; z++)
-            {
-                vertices[x, z].x = x; //shouldnt have to be declared
-                vertices[x, z].y = localTerrain.GetLocalHeight(x, z); //localTerrain.visibleTerrain[x, z];
-                vertices[x, z].z = z;
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botLeft));
+            ds.Initialize();
+        }
+        if (!localTerrain.globalTerrainC.IsDefined(topLeft))
+        {
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topLeft));
+            ds.Initialize();
+        }
+        if (!localTerrain.globalTerrainC.IsDefined(topRight))
+        {
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topRight));
+            ds.Initialize();
+        }
+        if (!localTerrain.globalTerrainC.IsDefined(botRight))
+        {
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botRight));
+            ds.Initialize();
+        }
 
-                //vertices[x, z].y = 1+UnityEngine.Random.Range(0f, 1f);
-                //if(x<10 && z < 10)
-                //    Debug.Log(vertices[x, z].y);
-            }
-        }*/
+        //move back
+        localTerrain.MoveVisibleTerrain(center);
+    }
 
-        //applyDiamondSquare(5);
-
+    public void GenerateTerrainOn(float[,] heightmap, Vector3 center)//Vector3 botLeft, Vector3 topRight)
+    {
         ///functional RANDOM terrin generator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
-        ds.Initialize();
-        //ds.CopyValues();
+        PregenerateRegions(center);
+
+
+        //ds.Initialize();
+
+        //localTerrain.MoveVisibleTerrain(center);
+
 
         //filterGenerator.PerserveMountains(3, 50, 10);
 
-        //FixUnsetValues(); //shouldnt be neccessary
-
-        AssignHeightsToVertices();
+        //AssignHeightsToVertices();
 
         applyProceduralTex(true, sandColor, sandLimit, sandStrength, sandCoverage, true, grassColor, grassStrength, true, snowColor, snowLimit, snowStrength, snowCoverage, true, rockColor, slopeLimit, slopeStrength, noiseTexValue);
         

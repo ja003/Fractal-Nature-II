@@ -4,7 +4,7 @@ using System;
 
 public class GlobalCoordinates {
 
-    private float globalCenter;
+    public float globalCenter;
 
     private float[,] quadrant1;
     private float[,] quadrant2;
@@ -92,6 +92,11 @@ public class GlobalCoordinates {
     public void SetValue(int x, int z, float height)
     {
         SetValue(x, z, height, true);
+    }
+
+    public bool IsDefined(Vector3 point)
+    {
+        return IsDefined((int)point.x, (int)point.z);
     }
 
     public bool IsDefined(int x, int z)
