@@ -1,0 +1,7 @@
+Connection river
+
+- riverpath vertices might not store actual height of terrain
+- added method EqualsCoordinates to compare Verices
+- added attribute side to Vertex 
+-- stores information on which side is vertex located
+- improved system of keeping info about reached sides by river 

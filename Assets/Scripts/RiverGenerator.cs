@@ -22,7 +22,7 @@ public class RiverGenerator  {
         lt = localTerrain;
 
         globalRiverC = new GlobalCoordinates(100);
-        localCoordinates = lt.localCoordinates;
+        localCoordinates = lt.localTerrainC;
         //localRiverC = new LocalCoordinates(globalRiverC, new Vector3(0, 0, 0), 200, 200);
     }
 
@@ -62,29 +62,37 @@ public class RiverGenerator  {
         Vertex start = ftm.GetLowestRegionCenter(20, 50);//LOCAL!
         Vertex globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
         globalStart.height = start.height;
-        Debug.Log("starting from " + start + " = " + globalStart);
+        //Debug.Log("starting from " + start + " = " + globalStart);
 
         RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
             //0,lt.terrainWidth, 0, lt.terrainHeight);
-        Debug.Log(river);
+        //Debug.Log(river);
 
         //now river has reached 1 side. 
         //Find Path on other part of the map which reaches different side and connect them
 
         // 1)determine which part of map we want to seacrh on
-        int x_min = (int)lt.localCoordinates.botLeft.x;
-        int z_min = (int)lt.localCoordinates.botLeft.z;
-        int x_max = (int)lt.localCoordinates.topRight.x;
-        int z_max = (int)lt.localCoordinates.topRight.z;
+        //int x_min = (int)lt.localTerrainC.botLeft.x;
+        //int z_min = (int)lt.localTerrainC.botLeft.z;
+        //int x_max = (int)lt.localTerrainC.topRight.x;
+        //int z_max = (int)lt.localTerrainC.topRight.z;
 
-        fmc.DetermineBoundaries(globalStart,river,
-            ref x_min, ref z_min, ref x_max, ref z_max);
-        river.UpdateReachedSides();
+        //fmc.DetermineBoundaries(globalStart,river,
+        //    ref x_min, ref z_min, ref x_max, ref z_max);
+
+        //river.UpdateReachedSides();
+
+        globalStart.side = fmc.GetOppositeDirection(river.GetLastVertex().side);
+        Area restrictedArea = fmc.CalculateRestrictedArea(globalStart);
+        globalStart.side = Direction.none;
+
+        List<Direction> reachedSides = new List<Direction>();
+        reachedSides.Add(river.GetLastVertex().side);
 
         // 2)find second path
-        RiverInfo river2 = frp.GetRiverPathFrom(globalStart, river.reachedSides,
-            x_min, z_min, x_max, z_max);
-        Debug.Log(river2);
+        RiverInfo river2 = frp.GetRiverPathFrom(globalStart, reachedSides, restrictedArea);
+            //x_min, z_min, x_max, z_max);
+        //Debug.Log(river2);
 
         // connect them
         river.ConnectWith(river2);
@@ -102,45 +110,64 @@ public class RiverGenerator  {
     /// <summary>
     /// generates rivers starting from curent river's starting and ending point
     /// operation is processed only if points are in visible terrain and not on border
-    /// => meaning that terrain ahs been moved and river isn't complete
+    /// => meaning that terrain has been moved and river isn't complete
     /// </summary>
     public void GenerateConnectingRiver()
     {
-        Debug.Log("currentRiver:"+currentRiver);
-        Vector3 startPoint = currentRiver.riverPath[0];
+        //Debug.Log("currentRiver:"+currentRiver);
+        Vertex startPoint = currentRiver.riverPath[0];
         if (ftm.IsInVisibleterrain(startPoint) && !ftm.IsOnBorder(startPoint))
         {
-            Debug.Log("connection river from start: " + startPoint);
+            //Debug.Log("connection river from start: " + startPoint);
+
+            Area restrictArea = fmc.CalculateRestrictedArea(startPoint);
+
+            List<Direction> reachedSides = new List<Direction>();
+            reachedSides.Add(fmc.GetOppositeDirection(startPoint.side));
 
             RiverInfo startRiver =
-                frp.GetRiverPathFrom(startPoint, new List<Direction>());
+                frp.GetRiverPathFrom(startPoint, reachedSides, restrictArea);
             currentRiver.ConnectWith(startRiver);
 
-            Debug.Log("startRiver:" + startRiver);
+            startPoint.side = Direction.none;
+            //Debug.Log("startRiver:" + startRiver);
         }
         else
         {
-            Debug.Log(startPoint + " OUT");
-            Debug.Log(lt.localCoordinates.botLeft + ", " + lt.localCoordinates.topRight);
+            //Debug.Log(startPoint + " OUT [START]");
+            //Debug.Log(lt.localTerrainC.botLeft + ", " + lt.localTerrainC.topRight);
         }
 
-        Vector3 endPoint = currentRiver.riverPath[currentRiver.riverPath.Count-1];
+        Vertex endPoint = currentRiver.GetLastVertex();
+        //direction of river might have been changed
+        if(!ftm.IsInVisibleterrain(endPoint) && ftm.IsOnBorder(endPoint))
+        {
+            endPoint = currentRiver.riverPath[0];
+        }
+
         if (ftm.IsInVisibleterrain(endPoint) && !ftm.IsOnBorder(endPoint))
         {
-            Debug.Log("connection river from end: " + endPoint);
+            //Debug.Log("connection river from end: " + endPoint);
+            Area restrictArea = fmc.CalculateRestrictedArea(endPoint);
+
+            List<Direction> reachedSides = new List<Direction>();
+            reachedSides.Add(fmc.GetOppositeDirection(endPoint.side));
 
             RiverInfo endRiver =
-                frp.GetRiverPathFrom(endPoint, new List<Direction>());
+                frp.GetRiverPathFrom(endPoint, reachedSides, restrictArea);
             currentRiver.ConnectWith(endRiver);
 
-            Debug.Log("endRiver:" + endRiver);
+            endPoint.side = Direction.none;
+            //Debug.Log("endRiver:" + endRiver);
         }
         else
         {
-            Debug.Log(endPoint + " OUT");
-            Debug.Log(lt.localCoordinates.botLeft + ", " + lt.localCoordinates.topRight);
+            //Debug.Log(endPoint + " OUT [END]");
+            //Debug.Log(lt.localTerrainC.botLeft + ", " + lt.localTerrainC.topRight);
 
         }
+
+        Debug.Log("connected river:" + currentRiver);
 
     }
 
@@ -158,11 +185,11 @@ public class RiverGenerator  {
 
     public Vector3 GetBotLeft()
     {
-        return lt.localCoordinates.botLeft;
+        return lt.localTerrainC.botLeft;
     }
     public Vector3 GetTopRight()
     {
-        return lt.localCoordinates.topRight;
+        return lt.localTerrainC.topRight;
     }
 
 

@@ -50,7 +50,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //filterGenerator.PerserveMountains(3, 50, 10);
         //terrainGenerator.build();
 
-        Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
+        //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
     }
     
     public void AssignFunctions()
@@ -85,7 +85,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
     void Update () {
 
         //generate terrain when camera gets close to border
-        if(Get2dDistance(gameObject.transform.position, localTerrain.localCoordinates.center) > 70)
+        if(Get2dDistance(gameObject.transform.position, localTerrain.localTerrainC.center) > 70)
         {
             //FixCameraPosition(); //no need now
             //Debug.Log("moving to center: " + gameObject.transform.position);
@@ -95,7 +95,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
         {
             FixCameraPosition();
-            Debug.Log("generating on: " + gameObject.transform.position);
+            //Debug.Log("generating on: " + gameObject.transform.position);
             localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
             lastActionFrame = Time.frameCount;
         }
@@ -110,7 +110,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("perserve mountain");
-            filterGenerator.mf.PerserveMountainsInRegion(localTerrain.localCoordinates.botLeft, localTerrain.localCoordinates.topRight, 3, 50, 10);
+            filterGenerator.mf.PerserveMountainsInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight, 3, 50, 10);
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
@@ -123,13 +123,13 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             Debug.Log("averaging");
 
-            filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.localCoordinates.botLeft, localTerrain.localCoordinates.topRight);
+            filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight);
             lastActionFrame = Time.frameCount;
         }
 
         if (Input.GetKey("3") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("river");
+            //Debug.Log("river");
 
             riverGenerator.GenerateNewRiver();
             lastActionFrame = Time.frameCount;
@@ -138,7 +138,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("2") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("median");
-            filterGenerator.mdf.GenerateMedianFilterInRegion(localTerrain.localCoordinates.botLeft, localTerrain.localCoordinates.topRight);
+            filterGenerator.mdf.GenerateMedianFilterInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight);
             lastActionFrame = Time.frameCount;
         }
 

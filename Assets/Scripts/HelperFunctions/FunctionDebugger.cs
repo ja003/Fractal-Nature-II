@@ -37,8 +37,8 @@ public class FunctionDebugger{
             {
                 if (ftm.CheckBounds(_x, _z))
                 {
-                    int localX = (int)lt.localCoordinates.GetLocalCoordinates(new Vector3(_x, 0, _z)).x;
-                    int localZ = (int)lt.localCoordinates.GetLocalCoordinates(new Vector3(_x, 0, _z)).z;
+                    int localX = (int)lt.localTerrainC.GetLocalCoordinates(new Vector3(_x, 0, _z)).x;
+                    int localZ = (int)lt.localTerrainC.GetLocalCoordinates(new Vector3(_x, 0, _z)).z;
                     lt.tg.heightMap.SetPixel(localX, localZ, color);
                 }
             }

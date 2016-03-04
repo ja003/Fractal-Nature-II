@@ -57,6 +57,11 @@ public class RiverInfo  {
         }
     }
     
+    public Vertex GetLastVertex()
+    {
+        return riverPath[riverPath.Count - 1];
+    }
+
     /*
     public void UpdatePosition(Direction direction)
     {
@@ -178,25 +183,33 @@ public class RiverInfo  {
         }
     }
 
+    /// <summary>
+    /// reverse direction of the riverPath and swaps reached sid
+    /// </summary>
+    /*public void ReverseDirection()
+    {
+
+    }*/
+
     //connect 2 rivers into 1
     public void ConnectWith(RiverInfo river2)
     {
-        if (riverPath[0].Equals(river2.riverPath[0]))
+        if (riverPath[0].EqualsCoordinates(river2.riverPath[0]))
         {
             riverPath.RemoveAt(0);
             riverPath.Reverse();
         }
-        else if (riverPath[riverPath.Count-1].Equals(river2.riverPath[0]))
+        else if (GetLastVertex().EqualsCoordinates(river2.riverPath[0]))
         {
             river2.riverPath.RemoveAt(0);
-            river2.riverPath.Reverse();
         }
-        else if (riverPath[0].Equals(river2.riverPath[river2.riverPath.Count - 1]))
+        else if (riverPath[0].EqualsCoordinates(river2.GetLastVertex()))
         {
             riverPath.RemoveAt(0);
             riverPath.Reverse();
+            river2.riverPath.Reverse();
         }
-        else if (riverPath[riverPath.Count - 1].Equals(river2.riverPath[river2.riverPath.Count - 1]))
+        else if (GetLastVertex().EqualsCoordinates(river2.GetLastVertex()))
         {
             river2.riverPath.RemoveAt(river2.riverPath.Count - 1);
             river2.riverPath.Reverse();
@@ -212,7 +225,7 @@ public class RiverInfo  {
         reachBot = reachBot || river2.reachBot;
         reachLeft = reachLeft || river2.reachLeft;
     }
-
+    /*
     private void UpdateRiverValues(int diffX, int diffZ)
     {
         foreach(Vertex v in riverPath)
@@ -223,8 +236,8 @@ public class RiverInfo  {
             s += " to " + v;
             //Debug.Log(s);
         }
-    }
-
+    }*/
+    /*
     public void UpdateDirection(Direction direction)
     {
         UpdateDirection(direction, riverPath);
@@ -251,7 +264,7 @@ public class RiverInfo  {
                 break;
         }
     }
-
+    */
     public override string ToString()
     {
         string info = "";

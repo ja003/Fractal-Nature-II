@@ -252,9 +252,9 @@ public class DiamondSquare
                         UnityEngine.Debug.Log("default");
                     }
 
-                    if (lt.localCoordinates.IsDefined(x + (i / 2), z + (i / 2), lt.globalTerrainC) && counter < 10)
+                    if (lt.localTerrainC.IsDefined(x + (i / 2), z + (i / 2), lt.globalTerrainC) && counter < 10)
                     {
-                        UnityEngine.Debug.Log(x + "," + z + ": set");
+                        //UnityEngine.Debug.Log(x + "," + z + ": set");
                         counter++;
                     }
                     // cn
@@ -299,7 +299,7 @@ public class DiamondSquare
                 }
             }
         }
-        UnityEngine.Debug.Log("Diamond square complete");
+        //UnityEngine.Debug.Log("Diamond square complete");
     }
 
 

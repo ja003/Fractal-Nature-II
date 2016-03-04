@@ -122,24 +122,36 @@ public class FunctionMathCalculator {
         int x = vertex.x;
         int z = vertex.z;
 
+        Vertex borderVertex = vertex;
+
         switch (onSide)
         {
             case Direction.top:
-                return new Vertex(x, z_max, vertex.height);
+                borderVertex = new Vertex(x, z_max, vertex.height);
+                break;
             case Direction.right:
-                return new Vertex(x_max, z, vertex.height);
+                borderVertex = new Vertex(x_max, z, vertex.height);
+                break;
             case Direction.bot:
-                return new Vertex(x, z_min, vertex.height);
+                borderVertex = new Vertex(x, z_min, vertex.height);
+                break;
             case Direction.left:
-                return new Vertex(x_min, z, vertex.height);
+                borderVertex = new Vertex(x_min, z, vertex.height);
+                break;
+            case Direction.none:
+                return vertex;
+
         }
-        return vertex;
+        borderVertex.side = vertex.side;
+        vertex.side = Direction.none;
+        return borderVertex;        
     }
 
     /// <summary>
     /// assignes values to boundaries
     /// boundaries starts on starting point and ends on opposite side of the reached side
     /// </summary>
+    /// MAYBE OBSOLETE
     public void DetermineBoundaries(Vertex start, RiverInfo river,
          ref int x_min, ref int z_min, ref int x_max, ref int z_max)
     {
@@ -170,6 +182,22 @@ public class FunctionMathCalculator {
         //Debug.Log(z_min);
         //Debug.Log(x_max);
         //Debug.Log(z_max);
+    }
+
+    public Direction GetOppositeDirection(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.top:
+                return Direction.bot;
+            case Direction.right:
+                return Direction.left;
+            case Direction.bot:
+                return Direction.top;
+            case Direction.left:
+                return Direction.right;
+        }
+        return Direction.none;
     }
 
     /// <summary>
@@ -316,5 +344,37 @@ public class FunctionMathCalculator {
         return border - offset <= value && value <= border + offset;
     }
 
+
+    /// <summary>
+    /// determines the area on visible terrain based on given point 
+    /// and side where point was previously located (before visible terrain moved)
+    /// </summary>
+    public Area CalculateRestrictedArea(Vertex point)
+    {
+        Vector3 botLeft = lt.GetBotLeft();
+        Vector3 topRight= lt.GetTopRight();
+
+        switch (point.side)
+        {
+            case Direction.top:
+                botLeft = new Vector3(lt.GetBotLeft().x, 0, point.z);
+                topRight = lt.GetTopRight();
+                break;
+            case Direction.right:
+                botLeft = new Vector3(point.x, 0, lt.GetBotLeft().z);
+                topRight = lt.GetTopRight();
+                break;
+            case Direction.bot:
+                botLeft = lt.GetBotLeft();
+                topRight = new Vector3(lt.GetTopRight().x, 0, point.z);
+                break;
+            case Direction.left:
+                botLeft = lt.GetBotLeft();
+                topRight = new Vector3(point.x, 0, lt.GetTopRight().z);
+                break;
+        }
+
+        return new Area(botLeft, topRight);
+    }
 
 }

@@ -165,7 +165,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
 
                 //fornow
-                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
+                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
 
@@ -411,7 +411,7 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         //move terrain
         //Debug.Log("move to " + localTerrain.center);
-        MoveTerrain(localTerrain.localCoordinates.center);
+        MoveTerrain(localTerrain.localTerrainC.center);
 
         ApplyLayers();
 

@@ -26,7 +26,7 @@ public class FilterGenerator// : IFilterGenerator
         globalFilterMedianC = new GlobalCoordinates(100);
 
         lt = localTerrain;
-        localCoordinates = lt.localCoordinates;
+        localCoordinates = lt.localTerrainC;
 
         //localFilterMountainC = new LocalCoordinates(globalFilterMountainC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
         //localFilterAverageC = new LocalCoordinates(globalFilterAverageC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);

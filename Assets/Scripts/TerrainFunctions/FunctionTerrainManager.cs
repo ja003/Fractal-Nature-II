@@ -596,10 +596,10 @@ public class FunctionTerrainManager {
     /// </summary>
     public bool IsOnBorder(Vector3 point)
     {
-        bool leftSide = point.x == lt.localCoordinates.botLeft.x;
-        bool topSide = point.z == lt.localCoordinates.topRight.z;
-        bool rightSide = point.x == lt.localCoordinates.topRight.x;
-        bool botSide = point.z == lt.localCoordinates.botLeft.z;
+        bool leftSide = point.x == lt.localTerrainC.botLeft.x;
+        bool topSide = point.z == lt.localTerrainC.topRight.z;
+        bool rightSide = point.x == lt.localTerrainC.topRight.x;
+        bool botSide = point.z == lt.localTerrainC.botLeft.z;
 
         return leftSide || topSide || rightSide || botSide;
     }
@@ -610,7 +610,7 @@ public class FunctionTerrainManager {
     /// </summary>
     public bool IsInVisibleterrain(Vector3 point)
     {
-        return IsInRegion(point, lt.localCoordinates.botLeft, lt.localCoordinates.topRight);
+        return IsInRegion(point, lt.localTerrainC.botLeft, lt.localTerrainC.topRight);
     }
 
     /// <summary>
@@ -625,10 +625,10 @@ public class FunctionTerrainManager {
     /// </summary>
     public bool CheckBounds(int x, int z, int offset)
     {
-        int x_min = (int)lt.localCoordinates.botLeft.x;
-        int z_min = (int)lt.localCoordinates.botLeft.z;
-        int x_max = (int)lt.localCoordinates.topRight.x;
-        int z_max = (int)lt.localCoordinates.topRight.z;
+        int x_min = (int)lt.localTerrainC.botLeft.x;
+        int z_min = (int)lt.localTerrainC.botLeft.z;
+        int x_max = (int)lt.localTerrainC.topRight.x;
+        int z_max = (int)lt.localTerrainC.topRight.z;
         return CheckBounds(x, z, offset, x_min, z_min, x_max, z_max);
     }
 

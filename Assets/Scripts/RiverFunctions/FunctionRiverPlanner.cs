@@ -44,28 +44,37 @@ public class FunctionRiverPlanner  {
     /// </summary>
     public RiverInfo GetRiverPathFrom(Vertex start, List<Direction> reachedSides)
     {
-        int x_min = (int)rg.GetBotLeft().x;
-        int z_min = (int)rg.GetBotLeft().z;
-        int x_max = (int)rg.GetTopRight().x;
-        int z_max = (int)rg.GetTopRight().z;
+        //int x_min = (int)rg.GetBotLeft().x;
+        //int z_min = (int)rg.GetBotLeft().z;
+        //int x_max = (int)rg.GetTopRight().x;
+        //int z_max = (int)rg.GetTopRight().z;
 
-        return GetRiverPathFrom(start, reachedSides, x_min, z_min, x_max, z_max);
+        return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
     }
 
     /// <summary>
     /// find river path from given starting point on restricted area
     /// </summary>
     public RiverInfo GetRiverPathFrom(Vertex start, List<Direction> reachedSides,
-        int x_min, int z_min, int x_max,  int z_max)
+        Area restrictedArea)
     {
         fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
+        
+
+        int x_min = (int)restrictedArea.botLeft.x;
+        int z_min = (int)restrictedArea.botLeft.z;
+        int x_max = (int)restrictedArea.topRight.x;
+        int z_max = (int)restrictedArea.topRight.z;
+
         //Debug.Log("start: " + start);
         //Debug.Log("ON");
         //Debug.Log(x_min);
         //Debug.Log(z_min);
         //Debug.Log(x_max);
         //Debug.Log(z_max);
+        //if(reachedSides.Count != 0)
+        //    Debug.Log("reached: " + reachedSides[0]);
 
         if (step <= 0.1f) //step can't be too small
             step = 0.1f;
@@ -128,6 +137,7 @@ public class FunctionRiverPlanner  {
                         if (reachedAvailableSide)
                         {
                             finalIndex = i;
+                            currentNode.vertex.side = reachedSide;
                             break;
                         }
                         else
