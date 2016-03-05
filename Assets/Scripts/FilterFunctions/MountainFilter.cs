@@ -40,6 +40,13 @@ public class MountainFilter {
     /// </summary>
     public void PerserveMountainsInRegion(Vector3 botLeft, Vector3 topRight, int count, int radius, int scaleFactor)
     {
+        //dont generate if already generated
+        //TODO: mountain filter modifies region which has already been defined
+        /*if(globalFilterMountainC.IsDefined(botLeft) && globalFilterMountainC.IsDefined(topRight))
+        {
+            return;
+        }*/
+
         //List<Vertex> peaks = new List<Vertex>();
         for (int i = 0; i < count; i++)
         {

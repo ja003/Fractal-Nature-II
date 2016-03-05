@@ -65,8 +65,7 @@ public class DiamondSquare
     *		float rMin/rMax - the min and max height values for the terrain (defaults to 0 - 255 for greyscale)
     *		float noise - the roughness of the resulting terrain
     * */
-    /*
-    public float[][] DiamondSquareGrid(int size, int seed = 0, float rMin = 0, float rMax = 255, float noise = 0.0f)
+    public float[][] DiamondSquareGridOLD(int size, int seed = 0, float rMin = 0, float rMax = 255, float noise = 0.0f)
     {
         // Fail if grid size is not of the form (2 ^ n) - 1 or if min/max values are invalid
         int s = size - 1;
@@ -148,7 +147,7 @@ public class DiamondSquare
 
         return grid;
     }
-    */
+    
 
     int counter = 0;
 
@@ -167,7 +166,7 @@ public class DiamondSquare
 
 
         //TODO: there is some bug on the Z-edge, if i put defaultHeight high, border will be high
-        float defaultHeight = 0; //only to detect deffects in process. If terrain has some bad height (too high/low), there is some error
+        float defaultHeight = -20; //only to detect deffects in process. If terrain has some bad height (too high/low), there is some error
         float defaultHeight2 = 20;//debug
 
         bool overwrite = false;
@@ -228,7 +227,36 @@ public class DiamondSquare
 			* 
 			* */
         float s0, s1, s2, s3, d0, d1, d2, d3, cn;
-
+        
+        //copy border values...shouldnt be necessary
+        /*
+        for(int x = 0; x < s; x++)
+        {
+            for (int z = 0; z < s; z+= s-1)
+            {
+                if (lt.GetNeighbourHeight(x, z) != 666)
+                {
+                    neighbourhood = lt.GetNeighbourHeight(x, z);
+                    lt.SetLocalHeight(x, z, neighbourhood, overwrite);
+                    if (counter < 20)
+                    {
+                        UnityEngine.Debug.Log("setting  [" + x + "," + z + "]: " + neighbourhood);
+                        counter++;
+                    }
+                }
+                if (lt.GetNeighbourHeight(z,x) != 666)
+                {
+                    neighbourhood = lt.GetNeighbourHeight(z,x);
+                    lt.SetLocalHeight(z, x, neighbourhood, overwrite);
+                    if (counter < 20)
+                    {
+                        UnityEngine.Debug.Log("setting  [" + z + "," + x + "]: " + neighbourhood);
+                        counter++;
+                    }
+                }
+            }
+        }
+        */
 
         for (int i = s; i > 1; i /= 2)
         {
@@ -240,28 +268,16 @@ public class DiamondSquare
             {
                 for (int x = 0; x < s; x += i)
                 {
-                    
-                    s0 = lt.GetLocalHeight(x, z, defaultHeight); //should need to define default 'undefined' value
+                    s0 = lt.GetLocalHeight(x, z, defaultHeight); //shouldn't need to define default 'undefined' value
                     s1 = lt.GetLocalHeight(x + i, z, defaultHeight);
                     s2 = lt.GetLocalHeight(x, z + i, defaultHeight);
                     s3 = lt.GetLocalHeight(x + i, z + i, defaultHeight);
-
-                    if (s0 > defaultHeight2 || s1 > defaultHeight2 || s2 > defaultHeight2 || s3 > defaultHeight2)
-                    {
-                        counter++;
-                        UnityEngine.Debug.Log("default");
-                    }
-
-                    if (lt.localTerrainC.IsDefined(x + (i / 2), z + (i / 2), lt.globalTerrainC) && counter < 10)
-                    {
-                        //UnityEngine.Debug.Log(x + "," + z + ": set");
-                        counter++;
-                    }
                     // cn
                     lt.SetLocalHeight(x + (i / 2), z + (i / 2), ((s0 + s1 + s2 + s3) / 4.0f)
-                        + RandRange(rand, -modNoise, modNoise), overwrite);
+                            + RandRange(rand, -modNoise, modNoise), overwrite);
                 }
             }
+            counter = 0;
 
             // squares
             for (int z = 0; z < s; z += i)
@@ -274,28 +290,27 @@ public class DiamondSquare
                     s3 = lt.GetLocalHeight(x + i, z + i, defaultHeight);
                     cn = lt.GetLocalHeight(x + (i / 2), z + (i / 2), defaultHeight);
 
-                    d0 = z <= 0 ? (s0 + s1 + cn) / 3.0f : 
+                    d0 = z <= 0 ? (s0 + s1 + cn) / 3.0f :
                         (s0 + s1 + cn + lt.GetLocalHeight(x + (i / 2), z - (i / 2), defaultHeight)) / 4.0f;
-                    d1 = x <= 0 ? (s0 + cn + s2) / 3.0f : 
+                    d1 = x <= 0 ? (s0 + cn + s2) / 3.0f :
                         (s0 + cn + s2 + lt.GetLocalHeight(x - (i / 2), z + (i / 2), defaultHeight)) / 4.0f;
-                    d2 = x >= s - i ? (s1 + cn + s3) / 3.0f : 
-                        (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), defaultHeight)) / 4.0f;
-                    d3 = x >= s - i ? (s1 + cn + s3) / 3.0f : 
-                        (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f;
+                    //d2 = x >= s - i ? (s1 + cn + s3) / 3.0f :
+                    //    (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), defaultHeight)) / 4.0f; //default value used only here
+                    //d3 = x >= s - i ? (s1 + cn + s3) / 3.0f :
+                    //    (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f; //default value used only here
+                    //TODO: defaultHeight shouldn't be used!!!
+                    d2 = x >= s - i ? (s1 + cn + s3) / 3.0f :
+                        (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), d0)) / 4.0f; //default value used only here
+                    d3 = x >= s - i ? (s1 + cn + s3) / 3.0f :
+                        (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), d1)) / 4.0f; //default value used only here
 
-                    if (s0 > defaultHeight2 || s1 > defaultHeight2 || s2 > defaultHeight2 || s3 > defaultHeight2||
-                        d0 > defaultHeight2 || d1 > defaultHeight2 || d2 > defaultHeight2 || d3 > defaultHeight2||
-                        cn > defaultHeight2)
-                    {
-                        counter++; 
-                        UnityEngine.Debug.Log("default");
-                    }
-
+                    //if((d2 == (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), defaultHeight)) / 4.0f ||
+                    //    d3 == (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f) && counter < 10)
+                    
                     lt.SetLocalHeight(x + (i / 2), z, d0 + RandRange(rand, -modNoise, modNoise), overwrite);
                     lt.SetLocalHeight(x, z + (i / 2), d1 + RandRange(rand, -modNoise, modNoise), overwrite);
                     lt.SetLocalHeight(x + i, z + (i / 2), d2 + RandRange(rand, -modNoise, modNoise), overwrite);
                     lt.SetLocalHeight(x + (i / 2), z + i, d3 + RandRange(rand, -modNoise, modNoise), overwrite);
-
                 }
             }
         }
@@ -307,8 +322,8 @@ public class DiamondSquare
 
     public void GenerateTerrain()
     {
-        //!!!TODO: terrainWidth?
-        DiamondSquareGrid(lt.terrainWidth, seed, -1, 2, roughness / 5.0f);
+        //!!!TODO: set PATCH SIZE
+        DiamondSquareGrid(256, seed, -1, 2, roughness / 5.0f);
     }
     /*
     public void CopyValues()

@@ -70,27 +70,70 @@ public class TerrainGenerator// : ITerrainGenerator
     /// </summary>
     public void PregenerateRegions(Vector3 center)
     {
+        Vector3 top = new Vector3(center.x, 0, center.z + terrainHeight / 2);
+        Vector3 right = new Vector3(center.x + terrainWidth / 2, 0, center.z);
+        Vector3 bot = new Vector3(center.x, 0, center.z - terrainHeight / 2);
+        Vector3 left = new Vector3(center.x - terrainWidth / 2, 0, center.z);
+
         Vector3 botLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z - terrainHeight / 2);
         Vector3 topLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z + terrainHeight / 2);
         Vector3 topRight = new Vector3(center.x + terrainWidth / 2, 0, center.z + terrainHeight / 2);
         Vector3 botRight = new Vector3(center.x + terrainWidth / 2, 0, center.z - terrainHeight / 2);
+        
+        if (!localTerrain.globalTerrainC.IsDefinedArea(center, 1))
+        {
+            Debug.Log("!"); 
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(center));
+            ds.Initialize();
+        }
 
-        if (!localTerrain.globalTerrainC.IsDefined(botLeft))
+        /*
+        if (!localTerrain.globalTerrainC.IsDefinedArea(top, 1))
+        {
+            Debug.Log("!");
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(top));
+            ds.Initialize();
+        }
+
+        if (!localTerrain.globalTerrainC.IsDefinedArea(right, 1))
+        {
+            Debug.Log("!");
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(right));
+            ds.Initialize();
+        }
+        if (!localTerrain.globalTerrainC.IsDefinedArea(bot, 1))
+        {
+            Debug.Log("!");
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(bot));
+            ds.Initialize();
+        }
+
+        if (!localTerrain.globalTerrainC.IsDefinedArea(left, 1))
+        {
+            Debug.Log("!");
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(left));
+            ds.Initialize();
+        }
+        */
+
+        
+        if (!localTerrain.globalTerrainC.IsDefinedArea(botLeft,1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botLeft));
             ds.Initialize();
         }
-        if (!localTerrain.globalTerrainC.IsDefined(topLeft))
-        {
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topLeft));
-            ds.Initialize();
-        }
-        if (!localTerrain.globalTerrainC.IsDefined(topRight))
+        if (!localTerrain.globalTerrainC.IsDefinedArea(topRight, 1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topRight));
             ds.Initialize();
         }
-        if (!localTerrain.globalTerrainC.IsDefined(botRight))
+
+        if (!localTerrain.globalTerrainC.IsDefinedArea(topLeft, 1))
+        {
+            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topLeft));
+            ds.Initialize();
+        }        
+        if (!localTerrain.globalTerrainC.IsDefinedArea(botRight, 1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botRight));
             ds.Initialize();
@@ -395,6 +438,9 @@ public class TerrainGenerator// : ITerrainGenerator
         //erosionManager.initHydraulicMaps();
     }
 
+    /// <summary>
+    /// move meshes
+    /// </summary>
     public void MoveTerrain(Vector3 center)
     {
         for(int x = 0; x < terrainWidth; x++)

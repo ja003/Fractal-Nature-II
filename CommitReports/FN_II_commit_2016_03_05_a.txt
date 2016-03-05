@@ -1,0 +1,4 @@
+Terrain connection
+
+- modified DiamonSqaure default value
+-- TODO: default value shouldn't be used 

@@ -14,6 +14,8 @@ public class GlobalCoordinates {
 
     public GlobalCoordinates(int quadrantSize)
     {
+        globalCenter = 666;
+
         quadrant1 = new float[quadrantSize, quadrantSize];
         quadrant2 = new float[quadrantSize, quadrantSize];
         quadrant3 = new float[quadrantSize, quadrantSize];
@@ -101,10 +103,36 @@ public class GlobalCoordinates {
 
     public bool IsDefined(int x, int z)
     {
+        return IsDefinedArea(x, z, 0);
+        /*
         if (GetValue(x, z) == 666)
             return false;
         else
-            return true;
+            return true;*/
+    }
+
+    /// <summary>
+    /// checks if all points around [_x,_z] are defined
+    /// </summary>
+    public bool IsDefinedArea(int _x, int _z, int area)
+    {
+        for(int x = _x - area; x <= _x + area; x++)
+        {
+            for (int z = _z - area; z <= _z + area; z++)
+            {
+                if (GetValue(x, z) == 666)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// checks if all points around [_x,_z] are defined
+    /// </summary>
+    public bool IsDefinedArea(Vector3 point, int area)
+    {
+        return IsDefinedArea((int)point.x, (int)point.z, area);
     }
 
     /// <summary>

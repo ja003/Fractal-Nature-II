@@ -42,10 +42,8 @@ public class LocalCoordinates {
     /// <summary>
     /// maps given local coordinates to global
     /// returns value on given coordinates
+    /// 666 if not defined
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    /// <returns></returns>
     public float GetLocalValue(int x, int z, GlobalCoordinates gc)
     {
         //Debug.Log("getting " + x + "," + z);
