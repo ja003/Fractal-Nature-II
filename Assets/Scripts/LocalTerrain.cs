@@ -55,14 +55,11 @@ public class LocalTerrain : ILocalTerrain {
     {
         MoveVisibleTerrain(cameraPosition);
 
-        tg.GenerateTerrainOn(visibleTerrain, localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
+        //tg.GenerateTerrainOn(visibleTerrain, localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
 
-        fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
+        //fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
 
-        //fg.mdf.GenerateMedianFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
-
-        //not now
-        //fg.af.GenerateAverageFilterInRegion(localCoordinates.botLeft, localCoordinates.topRight);
+        
 
         //connect river (if it has been generated)
         if(rg.currentRiver != null)

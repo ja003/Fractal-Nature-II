@@ -61,6 +61,11 @@ public class GlobalCoordinates {
         }
     }
 
+    public float GetValue(Vector3 point)
+    {
+        return GetValue((int)point.x, (int)point.z);
+    }
+
     /// <summary>
     /// sets height to heightmap at given coordinates
 
@@ -90,6 +95,12 @@ public class GlobalCoordinates {
             GetQuandrant(x, z)[Math.Abs(x), Math.Abs(z)] = height;
         }
     }
+
+    public void SetValue(Vector3 point, float height, bool overwrite)
+    {
+        SetValue((int)point.x, (int)point.z, height, overwrite);
+    }
+
 
     public void SetValue(int x, int z, float height)
     {

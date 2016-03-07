@@ -313,6 +313,56 @@ public class FunctionMathCalculator {
     }
 
 
+    /// <summary>
+    /// calculates botLeft point from given vertices
+    /// </summary>
+    public Vertex CalculateBotLeft(Vertex v1, Vertex v2, int width, float widthFactor)
+    {
+        Vertex botLeft = new Vertex(v1.x, v1.z);
+        if (v1.x < v2.x)
+        {
+            botLeft.x = (int)(v1.x - widthFactor*width);
+        }
+        else
+        {
+            botLeft.x = (int)(v2.x - widthFactor*width);
+        }
+        if (v1.z < v2.z)
+        {
+            botLeft.z = (int)(v1.z - widthFactor * width);
+        }
+        else
+        {
+            botLeft.z = (int)(v2.z - widthFactor * width);
+        }
+        return botLeft;
+    }
+
+    /// <summary>
+    /// calculates botLeft point from given vertices
+    /// </summary>
+    public Vertex CalculateTopRight(Vertex v1, Vertex v2, int width, float widthFactor)
+    {
+        Vertex topRight = new Vertex(v1.x, v1.z);
+        if (v1.x < v2.x)
+        {
+            topRight.x = (int)(v2.x + widthFactor * width);
+        }
+        else
+        {
+            topRight.x = (int)(v1.x + widthFactor * width);
+        }
+        if (v1.z < v2.z)
+        {
+            topRight.z = (int)(v2.z + widthFactor * width);
+        }
+        else
+        {
+            topRight.z = (int)(v1.z + widthFactor * width);
+        }
+        return topRight;
+    }
+
     // returns distance from corner of given area
     public float GetDistanceFromCorner(int x, int z,
         int x_min, int x_max, int z_min, int z_max)

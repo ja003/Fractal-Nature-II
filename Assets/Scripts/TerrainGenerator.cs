@@ -226,12 +226,14 @@ public class TerrainGenerator// : ITerrainGenerator
                     counter++;
                 }
 
-                //vertices[x, z].y = 1;
-                //vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
-                if (x < 10 && z < 10)
-                {
-                    //Debug.Log(riverGenerator.GetLocalValue(x, z));
-                }
+                vertices[x, z].y = 0;
+                vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
+
+                //if (riverGenerator.GetLocalValue(x, z) != 0 && counter < 100)
+                //{
+                //    Debug.Log(localTerrain.GetGlobalCoordinate(x, z) + ": " + riverGenerator.GetLocalValue(x, z));
+                //    counter++;
+                //}
             }
         }
     }

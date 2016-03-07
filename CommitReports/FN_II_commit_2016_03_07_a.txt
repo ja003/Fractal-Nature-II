@@ -1,0 +1,4 @@
+River digger
+
+- implemented river digging
+- TODO: write documentation!

@@ -37,6 +37,33 @@ public class RiverGenerator  {
         frd = functionRiverDigger;
     }
 
+
+    public void GenerateDefaultRiver()
+    {
+
+        int w = 40;
+        List<Vertex> tempList = new List<Vertex>();
+        tempList.Add(new Vertex(-128, -128));
+        tempList.Add(new Vertex(-100, -100));
+        tempList.Add(new Vertex(-100, -50));
+        tempList.Add(new Vertex(-70, -30));
+        tempList.Add(new Vertex(-70, 0));
+        tempList.Add(new Vertex(-30, 0));
+        tempList.Add(new Vertex(0, 20));
+        tempList.Add(new Vertex(50, 20));
+        tempList.Add(new Vertex(40, -20));
+        tempList.Add(new Vertex(60, -50));
+
+
+        RiverInfo defaultRiver = new RiverInfo(this);
+        defaultRiver.riverPath = tempList;
+
+        frd.DigRiver2(defaultRiver.riverPath, 15, 2, 0.7f);
+
+        lt.tg.build();
+    }
+
+
     public void GenerateNewRiver()
     {
 
@@ -102,7 +129,7 @@ public class RiverGenerator  {
 
         Debug.Log(currentRiver);
         
-        //frd.DigRiver(currentRiver.riverPath);
+        frd.DigRiver(currentRiver.riverPath);
 
 
     }
