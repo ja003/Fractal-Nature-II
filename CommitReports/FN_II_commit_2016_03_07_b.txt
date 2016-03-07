@@ -1,0 +1,6 @@
+River digger
+
+- added documentation
+- digging applied on generated river
+- fixed corner digging bug
+- TODO: river shouldn't cross itself (or create circle)

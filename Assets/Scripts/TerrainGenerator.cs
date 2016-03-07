@@ -82,7 +82,6 @@ public class TerrainGenerator// : ITerrainGenerator
         
         if (!localTerrain.globalTerrainC.IsDefinedArea(center, 1))
         {
-            Debug.Log("!"); 
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(center));
             ds.Initialize();
         }
@@ -226,7 +225,7 @@ public class TerrainGenerator// : ITerrainGenerator
                     counter++;
                 }
 
-                vertices[x, z].y = 0;
+                //vertices[x, z].y = 0;
                 vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
 
                 //if (riverGenerator.GetLocalValue(x, z) != 0 && counter < 100)

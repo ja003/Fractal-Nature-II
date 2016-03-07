@@ -55,9 +55,9 @@ public class LocalTerrain : ILocalTerrain {
     {
         MoveVisibleTerrain(cameraPosition);
 
-        //tg.GenerateTerrainOn(visibleTerrain, localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
+        tg.GenerateTerrainOn(visibleTerrain, localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
 
-        //fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
+        fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
 
         
 

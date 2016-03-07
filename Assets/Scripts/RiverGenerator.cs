@@ -41,26 +41,35 @@ public class RiverGenerator  {
     public void GenerateDefaultRiver()
     {
 
-        int w = 40;
-        List<Vertex> tempList = new List<Vertex>();
-        tempList.Add(new Vertex(-128, -128));
-        tempList.Add(new Vertex(-100, -100));
-        tempList.Add(new Vertex(-100, -50));
-        tempList.Add(new Vertex(-70, -30));
-        tempList.Add(new Vertex(-70, 0));
-        tempList.Add(new Vertex(-30, 0));
-        tempList.Add(new Vertex(0, 20));
-        tempList.Add(new Vertex(50, 20));
-        tempList.Add(new Vertex(40, -20));
-        tempList.Add(new Vertex(60, -50));
+        int w = 20;
 
+        List<Vertex> tempList = new List<Vertex>();
+        tempList.Add(new Vertex(0, 0));
+        tempList.Add(new Vertex(w, 0));
+        tempList.Add(new Vertex(2*w, 0));
+        tempList.Add(new Vertex(3*w, 0));
 
         RiverInfo defaultRiver = new RiverInfo(this);
         defaultRiver.riverPath = tempList;
+        frd.DigRiver(defaultRiver.riverPath);
 
-        frd.DigRiver2(defaultRiver.riverPath, 15, 2, 0.7f);
+
+        List<Vertex> tempList2 = new List<Vertex>();
+
+        tempList2.Add(new Vertex(3*w, 0));
+        tempList2.Add(new Vertex(4*w, 0));
+        tempList2.Add(new Vertex(5*w, 0));
+
+        RiverInfo defaultRiver2 = new RiverInfo(this);
+        defaultRiver2.riverPath = tempList2;
+        defaultRiver.ConnectWith(defaultRiver2);
+        frd.DigRiver(defaultRiver.riverPath);
+
+        
 
         lt.tg.build();
+
+        defaultRiver.DrawRiver();
     }
 
 
@@ -158,6 +167,8 @@ public class RiverGenerator  {
 
             startPoint.side = Direction.none;
             //Debug.Log("startRiver:" + startRiver);
+            
+            //frd.DigRiver(startRiver.riverPath);
         }
         else
         {
@@ -186,6 +197,8 @@ public class RiverGenerator  {
 
             endPoint.side = Direction.none;
             //Debug.Log("endRiver:" + endRiver);
+            
+            //frd.DigRiver(endRiver.riverPath);
         }
         else
         {
@@ -196,6 +209,7 @@ public class RiverGenerator  {
 
         Debug.Log("connected river:" + currentRiver);
 
+        frd.DigRiver(currentRiver.riverPath);
     }
 
     /// <summary>

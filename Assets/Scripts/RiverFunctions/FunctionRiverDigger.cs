@@ -22,9 +22,6 @@ public class FunctionRiverDigger {
 
     public FunctionRiverDigger()
     {
-        depthField = new GlobalCoordinates(100);
-        distField = new GlobalCoordinates(100);
-        pathMark = new GlobalCoordinates(100);
     }
 
     public void AssignFunctions(RiverGenerator rg)
@@ -119,8 +116,21 @@ public class FunctionRiverDigger {
         return w1 * factor1 + w2*factor2;
     }
 
+    /// <summary>
+    /// digs river with default values
+    /// </summary>
+    public void DigRiver(List<Vertex> path)
+    {
+        DigRiver(path, 12, 2, 0.5f);
+    }
 
-    public void DigRiver2(List<Vertex> path, int width, float widthFactor, float maxDepth)
+    /// <summary>
+    /// digs river path
+    /// </summary>
+    /// <param name="width">width of river corridor</param>
+    /// <param name="widthFactor">defines area around river</param>
+    /// <param name="maxDepth">depth in center of river</param>
+    public void DigRiver(List<Vertex> path, int width, float widthFactor, float maxDepth)
     {
         //DigCorners(path, width, widthFactor, maxDepth);
 
@@ -135,6 +145,9 @@ public class FunctionRiverDigger {
         DigCorners(path, width, widthFactor, maxDepth);
     }
 
+    /// <summary>
+    /// digs river path (not corners)
+    /// </summary>
     public void DigRiverPath(List<Vertex> path, int width, float widthFactor, float maxDepth)
     {
         for (int i = 0; i < path.Count - 1; i++)
@@ -148,6 +161,12 @@ public class FunctionRiverDigger {
         }
     }
 
+    /// <summary>
+    /// digs river part v1 -> v2
+    /// previous and next are used to determine which node does processed point belong to
+    /// </summary>
+    /// <param name="previous">node before v1</param>
+    /// <param name="next">node after v2</param>
     public void DigRiverPart(Vertex v1, Vertex v2,Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
     {
         Vertex botLeft = fmc.CalculateBotLeft(v1, v2, width, widthFactor);
@@ -164,7 +183,7 @@ public class FunctionRiverDigger {
                 float distanceFromCorners = Math.Max(distV1, distV2);
                 float cornersDistance = fmc.GetDistance(v1, v2);
 
-                if (distance < widthFactor * width && distanceFromCorners < cornersDistance)
+                if (distance < widthFactor * width && distanceFromCorners <= cornersDistance)
                 {
                     float depth = GetDepth(distance, width, maxDepth);
                     float distanceFromPrevNext = 0;
@@ -191,6 +210,9 @@ public class FunctionRiverDigger {
         }
     }
 
+    /// <summary>
+    /// dig corners
+    /// </summary>
     public void DigCorners(List<Vertex> path, int width, float widthFactor, float depth)
     {
         for (int i = 0; i < path.Count; i++)
@@ -198,17 +220,23 @@ public class FunctionRiverDigger {
             Vertex previous = i > 0 ? path[i - 1] : path[i+1];
             Vertex corner = path[i];
             Vertex next = i < path.Count-1 ? path[i + 1] : path[i - 1];
-
+            
             DigCorner(corner, previous, next, width, widthFactor, depth);
         }
 
 
     }
 
+    /// <summary>
+    /// gigs only certain angle of corner
+    /// the angle is determined by sharpness of the path (from prev->corner->next sequence)
+    /// </summary>
     public void DigCorner(Vertex corner, Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
     {
-        Vertex botLeft = new Vertex(corner.x - (int)(widthFactor * width), corner.z - (int)(widthFactor * width));
-        Vertex topRight = new Vertex(corner.x + (int)(widthFactor * width), corner.z + (int)(widthFactor * width));
+        Vertex botLeft = new Vertex(corner.x - (int)(widthFactor * width), 
+            corner.z - (int)(widthFactor * width));
+        Vertex topRight = new Vertex(corner.x + (int)(widthFactor * width), 
+            corner.z + (int)(widthFactor * width));
         float cornerPreviousDistance = fmc.GetDistance(corner, previous);
         float cornerNextDistance = fmc.GetDistance(corner, next);
 
@@ -224,10 +252,11 @@ public class FunctionRiverDigger {
                     float pointPreviousDistance = fmc.GetDistance(point, previous);
                     float pointNextDistance = fmc.GetDistance(point, next);
 
-                    if (pointPreviousDistance  >= cornerPreviousDistance && pointNextDistance >= cornerNextDistance) {
+                    if (pointPreviousDistance  >= cornerPreviousDistance && 
+                        pointNextDistance >= cornerNextDistance) {
                         float depth = GetDepth(distance, width, maxDepth);
                         //if (depth < globalRiverC.GetValue(x, z))
-                        if(!globalRiverC.IsDefined(x,z))
+                        if(!globalRiverC.IsDefined(x,z) || depth < globalRiverC.GetValue(x, z))
                         {
                             globalRiverC.SetValue(x, z, depth);
                         }
@@ -262,13 +291,18 @@ public class FunctionRiverDigger {
         }
     }
     */
+
+    /// <summary>
+    /// calls depth function (currently MySinc)
+    /// </summary>
     public float GetDepth(float distance, float width, float maxDepth)
     {
         return MySinc(distance, width, maxDepth);
     }
 
 
-    //dig river with default values
+    //obsolete
+    /*
     public void DigRiver(List<Vertex> path)
     {
         DigRiver(path, 10, 0.7f);
@@ -504,7 +538,7 @@ public class FunctionRiverDigger {
             }
         }
         counter = 0;
-        */
+        
         //apply digging
 
         for (int x = 0; x < lt.terrainWidth; x++)
@@ -537,7 +571,7 @@ public class FunctionRiverDigger {
                     lc.SetLocalValue(x, z, filtField[x, z] * depthFactor, true, globalRiverC);
                 }
             }
-        }*/
+        }
 
         //rg.terrain.build();
 
@@ -567,6 +601,7 @@ public class FunctionRiverDigger {
 
 
     }
+    */
     /*
     public void DigRiver(List<Vertex> path, int width, float depthFactor)
     {
