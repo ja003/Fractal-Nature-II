@@ -134,6 +134,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
             riverGenerator.GenerateNewRiver();
             lastActionFrame = Time.frameCount;
             terrainGenerator.build();
+            riverGenerator.currentRiver.DrawRiver();
             //localTerrain.MoveVisibleTerrain(gameObject.transform.position);
         }
         if (Input.GetKey("2") && lastActionFrame < Time.frameCount - 30)

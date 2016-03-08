@@ -75,49 +75,12 @@ public class RiverGenerator  {
 
     public void GenerateNewRiver()
     {
-
-
-        //List<Vertex> tempList = new List<Vertex>();
-        //tempList.Add(new Vertex(30, 30));
-        //tempList.Add(new Vertex(60, 30));
-        //tempList.Add(new Vertex(20, 70));
-        //tempList.Add(new Vertex(30, 80));
-        //tempList.Add(new Vertex(40, 90));
-        //tempList.Add(new Vertex(20, 150));
-        //tempList.Add(new Vertex(35, 140));
-        //tempList.Add(new Vertex(40, 135));
-        //tempList.Add(new Vertex(55, 120));
-
-        //ftm.ClearTerrain();
-
-        //frd.DigRiver(tempList, 5, 0.4f);
-
-        //ACTUAL
-        //frp.FloodFromLowestPoint();
-
         Vertex start = ftm.GetLowestRegionCenter(20, 50);//LOCAL!
         Vertex globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
         globalStart.height = start.height;
-        //Debug.Log("starting from " + start + " = " + globalStart);
 
         RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
-            //0,lt.terrainWidth, 0, lt.terrainHeight);
-        //Debug.Log(river);
-
-        //now river has reached 1 side. 
-        //Find Path on other part of the map which reaches different side and connect them
-
-        // 1)determine which part of map we want to seacrh on
-        //int x_min = (int)lt.localTerrainC.botLeft.x;
-        //int z_min = (int)lt.localTerrainC.botLeft.z;
-        //int x_max = (int)lt.localTerrainC.topRight.x;
-        //int z_max = (int)lt.localTerrainC.topRight.z;
-
-        //fmc.DetermineBoundaries(globalStart,river,
-        //    ref x_min, ref z_min, ref x_max, ref z_max);
-
-        //river.UpdateReachedSides();
-
+           
         globalStart.side = fmc.GetOppositeDirection(river.GetLastVertex().side);
         Area restrictedArea = fmc.CalculateRestrictedArea(globalStart);
         globalStart.side = Direction.none;
@@ -127,9 +90,7 @@ public class RiverGenerator  {
 
         // 2)find second path
         RiverInfo river2 = frp.GetRiverPathFrom(globalStart, reachedSides, restrictedArea);
-            //x_min, z_min, x_max, z_max);
-        //Debug.Log(river2);
-
+            
         // connect them
         river.ConnectWith(river2);
         river.DrawRiver();
@@ -137,7 +98,7 @@ public class RiverGenerator  {
         currentRiver = river;
 
         Debug.Log(currentRiver);
-        
+        frd.DistortPath(currentRiver.riverPath, 10);
         frd.DigRiver(currentRiver.riverPath);
 
 
@@ -163,6 +124,7 @@ public class RiverGenerator  {
 
             RiverInfo startRiver =
                 frp.GetRiverPathFrom(startPoint, reachedSides, restrictArea);
+            frd.DistortPath(startRiver.riverPath, 10);
             currentRiver.ConnectWith(startRiver);
 
             startPoint.side = Direction.none;
@@ -193,6 +155,7 @@ public class RiverGenerator  {
 
             RiverInfo endRiver =
                 frp.GetRiverPathFrom(endPoint, reachedSides, restrictArea);
+            frd.DistortPath(endRiver.riverPath, 10);
             currentRiver.ConnectWith(endRiver);
 
             endPoint.side = Direction.none;

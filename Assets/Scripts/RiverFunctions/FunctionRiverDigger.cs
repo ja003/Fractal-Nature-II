@@ -37,11 +37,16 @@ public class FunctionRiverDigger {
         fd = rg.fd;
     }
 
+    /// <summary>
+    /// randomly dostort all path nodes bot first and last
+    /// </summary>
     public void DistortPath(List<Vertex> path, int maxDistort)
     {
         System.Random rnd = new System.Random();
-        foreach (Vertex v in path)
+        //foreach (Vertex v in path)
+        for(int i = 1;i<path.Count-1;i++)
         {
+            Vertex v = path[i];
             int distortX = rnd.Next(-maxDistort, maxDistort);
             int distortZ = rnd.Next(-maxDistort, maxDistort);
             v.Rewrite(v.x + distortX, v.z + distortZ, v.height);
