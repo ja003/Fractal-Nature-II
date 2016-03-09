@@ -1,0 +1,7 @@
+Terrain pregeneration 
+
+- terrain color darkened
+- modified terrain pregeneration algorithm
+- TODO: delete stepZ in GridManager? DS has to have squared area
+- implemeted possibility to change size of visible area 
+- TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)

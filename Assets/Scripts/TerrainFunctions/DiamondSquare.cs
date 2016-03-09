@@ -25,12 +25,12 @@ public class DiamondSquare
         lt = localTerrain;
     }
 
-    public void Initialize()
+    public void Initialize(int patchSize)
     {
         random = new Random();
         seed = random.Next(100);
         
-        GenerateTerrain();
+        GenerateTerrain(patchSize);
     }
 
     // TODO: break these off into a util class
@@ -320,10 +320,10 @@ public class DiamondSquare
 
     //float[][] ds;
 
-    public void GenerateTerrain()
+    public void GenerateTerrain(int patchSize)
     {
         //!!!TODO: set PATCH SIZE
-        DiamondSquareGrid(256, seed, -1, 2, roughness / 5.0f);
+        DiamondSquareGrid(patchSize, seed, -1, 2, roughness / 5.0f);
     }
     /*
     public void CopyValues()

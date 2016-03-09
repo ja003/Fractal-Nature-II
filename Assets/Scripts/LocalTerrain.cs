@@ -4,7 +4,7 @@ using System;
 
 public class LocalTerrain : ILocalTerrain {
 
-    public float[,] visibleTerrain; //practicaly not neccessary
+    //public float[,] visibleTerrain; //practicaly not neccessary
     
 
     private int stepSize;
@@ -28,7 +28,7 @@ public class LocalTerrain : ILocalTerrain {
 
         localTerrainC = new LocalCoordinates(new Vector3(0, 0, 0), terrainWidth, terrainHeight);
 
-        visibleTerrain = new float[terrainHeight, terrainWidth];
+        //visibleTerrain = new float[terrainHeight, terrainWidth];
         this.terrainHeight = terrainHeight;
         this.terrainWidth = terrainWidth;
 
@@ -55,9 +55,9 @@ public class LocalTerrain : ILocalTerrain {
     {
         MoveVisibleTerrain(cameraPosition);
 
-        tg.GenerateTerrainOn(visibleTerrain, localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
+        tg.GenerateTerrainOn(localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
 
-        fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
+        //fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
 
         
 
@@ -226,7 +226,7 @@ public class LocalTerrain : ILocalTerrain {
     {
         return new Area(GetBotLeft(), GetTopRight());
     }
-
+    /*
     public void PrintValues(int from, int to)
     {
         for(int x = from; x < to; x++)
@@ -237,13 +237,13 @@ public class LocalTerrain : ILocalTerrain {
 
             }
         }
-    }
-
+    }*/
+    /*
     public void SetHeight(int x, int z, float height, bool overwrite)
     {
         if (!overwrite && GetLocalHeight(x, z) != 666)
             return;
 
         visibleTerrain[x, z] = height;
-    }
+    }*/
 }

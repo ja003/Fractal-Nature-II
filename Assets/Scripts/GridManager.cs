@@ -4,23 +4,24 @@ using System.Collections;
 public class GridManager {
 
     Vector3 globalCenter;
-    int terrainWidth;
-    int terrainHeight;
+    int stepX;
+    int stepZ;
 
-    public GridManager(Vector3 globalCenter,int terrainWidth,int terrainHeight)
+    //TODO: delete stepZ? DS has to have squared area
+    public GridManager(Vector3 globalCenter,int stepX, int stepZ)
     {
         this.globalCenter = globalCenter;
-        this.terrainWidth = terrainWidth;
-        this.terrainHeight = terrainHeight;
+        this.stepX = stepX;
+        this.stepZ = stepZ;
     }
 
     /// <summary>
     /// returns projection of point on the grid defined by center, width and height
     /// </summary>
-    public Vector3 GetCenterOnGrid(Vector3 point)
+    public Vector3 GetPointOnGrid(Vector3 point)
     {
-        int xVal = (int)(point.x / (terrainWidth / 2));
-        int zVal = (int)(point.z / (terrainHeight / 2));
+        int xVal = (int)(point.x / (stepX / 2));
+        int zVal = (int)(point.z / (stepZ / 2));
 
         Vector3 closestCenter = new Vector3(666, 0, 666);
         for(int xi = -1; xi <= 1; xi++)
@@ -29,9 +30,9 @@ public class GridManager {
             {
                 Vector3 centerOnGrid = 
                     new Vector3(
-                        globalCenter.x + (xVal + xi) * terrainWidth/2,
+                        globalCenter.x + (xVal + xi) * stepX/2,
                         0,
-                        globalCenter.z + (zVal + zi) * terrainHeight/2);
+                        globalCenter.z + (zVal + zi) * stepZ/2);
 
                 //Debug.Log(centerOnGrid);
                 if (Vector3.Distance(point, centerOnGrid) <

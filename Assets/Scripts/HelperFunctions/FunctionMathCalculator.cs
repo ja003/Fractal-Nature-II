@@ -312,9 +312,57 @@ public class FunctionMathCalculator {
         return distance;
     }
 
+    /// <summary>
+    /// calculates surrounding area of given visible area
+    /// starts in center and moves by step = patchSize
+    /// </summary>
+    public Area GetSurroundingAreaFrom(Vector3 centerOnGrid,Area visibleArea,int patchSize)
+    {
+        Vector3 botLeft;
+        Vector3 topRight;
+
+        if (!visibleArea.Contains(centerOnGrid) || patchSize <= 0)
+        {
+            Debug.Log("centerOnGrid not in visible area: " + centerOnGrid);
+            botLeft = new Vector3(centerOnGrid.x - patchSize, 0, centerOnGrid.z - patchSize);
+            topRight = new Vector3(centerOnGrid.x + patchSize, 0, centerOnGrid.z + patchSize);
+            return new Area(botLeft, topRight);
+        }
+
+        //get most left coordinate
+        Vector3 pointLeft = centerOnGrid;
+        while (visibleArea.Contains(pointLeft)){
+            pointLeft.x -= patchSize;
+        }
+        //get most bot coordinate
+        Vector3 pointBot = centerOnGrid;
+        while (visibleArea.Contains(pointBot))
+        {
+            pointBot.z -= patchSize;
+        }
+
+        //get most right coordinate
+        Vector3 pointRight = centerOnGrid;
+        while (visibleArea.Contains(pointRight))
+        {
+            pointRight.x += patchSize;
+        }
+        //get most top coordinate
+        Vector3 pointTop = centerOnGrid;
+        while (visibleArea.Contains(pointTop))
+        {
+            pointTop.z += patchSize;
+        }
+
+        botLeft = new Vector3(pointLeft.x, 0, pointBot.z);
+        topRight = new Vector3(pointRight.x, 0, pointTop.z);
+
+        return new Area(botLeft, topRight);
+    }
 
     /// <summary>
     /// calculates botLeft point from given vertices
+    /// used in river digging function
     /// </summary>
     public Vertex CalculateBotLeft(Vertex v1, Vertex v2, int width, float widthFactor)
     {

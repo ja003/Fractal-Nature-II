@@ -20,16 +20,20 @@ public class TerrainGenerator// : ITerrainGenerator
 
     public int terrainWidth;
     public int terrainHeight;
+    public int patchSize;
+
+
     int individualMeshWidth;
     int individualMeshHeight;
     public Vector3 scaleTerrain;
 
-    public TerrainGenerator()
+    public TerrainGenerator(int patchSize)
     {
         //initialize(64,3);
         ds = new DiamondSquare(this);
         ds2 = new DiamondSquare2(this);
         rt = new RandomTerrain(this);
+        this.patchSize = patchSize;
     }
 
     public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
@@ -68,7 +72,7 @@ public class TerrainGenerator// : ITerrainGenerator
     /// checks if corners of defined region (by center) are defined
     /// if not, region with center in the corner is generated
     /// </summary>
-    public void PregenerateRegions(Vector3 center)
+    /*public void PregenerateRegions(Vector3 center)
     {
         Vector3 top = new Vector3(center.x, 0, center.z + terrainHeight / 2);
         Vector3 right = new Vector3(center.x + terrainWidth / 2, 0, center.z);
@@ -83,71 +87,87 @@ public class TerrainGenerator// : ITerrainGenerator
         if (!localTerrain.globalTerrainC.IsDefinedArea(center, 1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(center));
-            ds.Initialize();
+            ds.Initialize(patchSize);
         }
-
-        /*
-        if (!localTerrain.globalTerrainC.IsDefinedArea(top, 1))
-        {
-            Debug.Log("!");
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(top));
-            ds.Initialize();
-        }
-
-        if (!localTerrain.globalTerrainC.IsDefinedArea(right, 1))
-        {
-            Debug.Log("!");
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(right));
-            ds.Initialize();
-        }
-        if (!localTerrain.globalTerrainC.IsDefinedArea(bot, 1))
-        {
-            Debug.Log("!");
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(bot));
-            ds.Initialize();
-        }
-
-        if (!localTerrain.globalTerrainC.IsDefinedArea(left, 1))
-        {
-            Debug.Log("!");
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(left));
-            ds.Initialize();
-        }
-        */
+        
 
         
         if (!localTerrain.globalTerrainC.IsDefinedArea(botLeft,1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botLeft));
-            ds.Initialize();
+            ds.Initialize(patchSize);
         }
         if (!localTerrain.globalTerrainC.IsDefinedArea(topRight, 1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topRight));
-            ds.Initialize();
+            ds.Initialize(patchSize);
         }
 
         if (!localTerrain.globalTerrainC.IsDefinedArea(topLeft, 1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topLeft));
-            ds.Initialize();
+            ds.Initialize(patchSize);
         }        
         if (!localTerrain.globalTerrainC.IsDefinedArea(botRight, 1))
         {
             localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botRight));
-            ds.Initialize();
+            ds.Initialize(patchSize);
+        }
+
+        //move back
+        localTerrain.MoveVisibleTerrain(center);
+    }
+    */
+
+
+    //// <summary>
+    /// checks all points on grid in visible area are defined
+    /// if not, regions with centers in points on the grid is generated
+    /// </summary>
+    public void PregenerateRegions(Vector3 center, Area visibleArea, int patchSize)
+    {
+        Vector3 centerOnGrid = gm.GetPointOnGrid(center);
+        Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
+        //Debug.Log("pregenerating");
+        //Debug.Log("center: " + center);
+        //Debug.Log("centerOnGrid: " + centerOnGrid);
+        //Debug.Log("visibleArea: " + visibleArea);
+        //Debug.Log("surroundingArea: " + surroundingArea);
+
+        int x_min = (int)surroundingArea.botLeft.x;
+        int z_min = (int)surroundingArea.botLeft.z;
+        int x_max = (int)surroundingArea.topRight.x;
+        int z_max = (int)surroundingArea.topRight.z;
+
+        for (int x = x_min; x <= x_max; x += patchSize)
+        {
+            for (int z = z_min; z <= z_max; z += patchSize)
+            {
+                Vector3 movedCenter = new Vector3(x, 0, z);
+                if (!localTerrain.globalTerrainC.IsDefinedArea(movedCenter, 1))
+                {
+                    localTerrain.MoveVisibleTerrain(movedCenter); //should be already on grid
+                    ds.Initialize(patchSize);
+                    //Debug.Log("generating on: " + movedCenter);
+                }
+                else
+                {
+                    //Debug.Log("center defined: " + movedCenter);
+                }
+            }
         }
 
         //move back
         localTerrain.MoveVisibleTerrain(center);
     }
 
-    public void GenerateTerrainOn(float[,] heightmap, Vector3 center)//Vector3 botLeft, Vector3 topRight)
+
+    public void GenerateTerrainOn(Vector3 center)//Vector3 botLeft, Vector3 topRight)
     {
         ///functional RANDOM terrin generator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
-        PregenerateRegions(center);
+        PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
 
 
         //ds.Initialize();
@@ -296,6 +316,10 @@ public class TerrainGenerator// : ITerrainGenerator
         F = new Vector4[terrainWidth, terrainHeight]; //outflow map
 
         //Mesh values
+        //can't be used...mesh will get freaky
+        //int individualMeshSize = Mathf.Max(individualMeshWidth, individualMeshHeight);
+
+
         int numVerts = (individualMeshWidth + 1) * (individualMeshHeight + 1);
         int numQuads = (individualMeshWidth - 1) * (individualMeshHeight - 1);
         int numTriangles = numQuads * 2;
@@ -387,7 +411,12 @@ public class TerrainGenerator// : ITerrainGenerator
                             Debug.Log(x + "," + z + " OUT");
                             Debug.Log(meshIndex);
                         }
-                        verticesOut[meshIndex][(z * individualMeshHeight) + x].Scale(vertsScale);
+                        try {
+                            verticesOut[meshIndex][(z * individualMeshHeight) + x].Scale(vertsScale);
+                        }catch(IndexOutOfRangeException e)
+                        {
+                            Debug.Log("!");
+                        }
                         uv[meshIndex][(z * individualMeshHeight) + x] = Vector2.Scale(new Vector2(x + individualMeshWidth * j - j, z + individualMeshHeight * i - i), uvScale);
                         waterUv[(z * individualMeshHeight) + x] = Vector2.Scale(new Vector2(x, z), waterUvScale);
                         normals[meshIndex][(z * individualMeshHeight) + x] = new Vector3(0, 1, 0);
@@ -493,8 +522,10 @@ public class TerrainGenerator// : ITerrainGenerator
                                 z + individualMeshHeight * i - i);
 
                         //Set heightmap texture pixel
-                        float this_color = vertices[x + individualMeshWidth * j, z + individualMeshHeight * i].y + 20;
-                        heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i, new Color(this_color, this_color, this_color));
+                        float this_color = vertices[x + individualMeshWidth * j, z + 
+                            individualMeshHeight * i].y;
+                        heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i, 
+                            new Color(this_color, this_color, this_color));
 
                         //Set water data if water is present
                         if (W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] > 0.0001f)

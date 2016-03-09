@@ -21,11 +21,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
     int terrainWidth;
     int terrainHeight;
+    int patchSize; //size of generated terrain patch
 
     void Start () {
-        
-        terrainWidth = 256; 
-        terrainHeight = 256;
+
+        //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
+        terrainWidth = 300; 
+        terrainHeight = 300;
+        patchSize = 256;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
@@ -39,10 +42,10 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionRiverPlanner = new FunctionRiverPlanner();
         functionTerrainManager = new FunctionTerrainManager();
         
-        terrainGenerator = new TerrainGenerator();
+        terrainGenerator = new TerrainGenerator(patchSize);
         riverGenerator = new RiverGenerator(localTerrain);
 
-        gridManager = new GridManager(new Vector3(0,0,0), terrainWidth, terrainHeight);
+        gridManager = new GridManager(new Vector3(0,0,0), patchSize, patchSize);
 
         AssignFunctions();
         terrainGenerator.initialize();
@@ -82,6 +85,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
                 (int)gameObject.transform.position.z);
     }
 
+
+    bool textureFlag = true;
     void Update () {
 
         //generate terrain when camera gets close to border
@@ -95,7 +100,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
         {
             FixCameraPosition();
-            //Debug.Log("generating on: " + gameObject.transform.position);
+            Debug.Log("[8]: generating on: " + gameObject.transform.position);
             localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
             lastActionFrame = Time.frameCount;
         }
@@ -148,6 +153,15 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             Debug.Log("color");
             riverGenerator.currentRiver.DrawRiver();
+            terrainGenerator.build();
+            lastActionFrame = Time.frameCount;
+        }
+
+        if (Input.GetKey("l") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("procedural texture");
+            textureFlag = !textureFlag;
+            terrainGenerator.setTexture(textureFlag);
             terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
