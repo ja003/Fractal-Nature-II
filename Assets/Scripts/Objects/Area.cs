@@ -6,10 +6,17 @@ public class Area {
     public Vector3 botLeft;
     public Vector3 topRight;
 
+    public Vector3 topLeft;
+    public Vector3 botRight;
+
+
     public Area(Vector3 botLeft,Vector3 topRight)
     {
         this.botLeft = botLeft;
         this.topRight = topRight;
+
+        topLeft = new Vector3(botLeft.x, 0, topRight.z);
+        botRight = new Vector3(topRight.x, 0, botLeft.z);
     }
 
     /// <summary>

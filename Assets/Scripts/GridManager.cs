@@ -46,4 +46,39 @@ public class GridManager {
         return closestCenter;
     }
 
+    /// <summary>
+    /// returns coordinates of closest grid node to the point
+    /// in vector form (x,0,z)
+    /// </summary>
+    public Vertex GetCoordinatesOnGrid(Vector3 point)
+    {
+        int x = (int)(point.x / stepX);
+        int z = (int)(point.z / stepZ);
+        return new Vertex(x, z);
+    }
+
+    /// <summary>
+    /// maps grid point to real coordinates
+    /// </summary>
+    public Vector3 GetRealCoordinates(Vector3 gridPoint)
+    {
+        return new Vector3(gridPoint.x * stepX, 0, gridPoint.z * stepZ);
+    }
+
+    public Area GetPointArea(int gridX, int gridZ)
+    {
+        return GetPointAreaOnGrid(GetRealCoordinates(new Vector3(gridX, 0, gridZ)));
+    }
+
+    /// <summary>
+    /// returns area of point projected on grid
+    /// </summary>
+    public Area GetPointAreaOnGrid(Vector3 point)
+    {
+        Vector3 pointOnGrid = GetPointOnGrid(point);
+        Vector3 botLeft = new Vector3(pointOnGrid.x - stepX/2, 0, pointOnGrid.z - stepZ / 2);
+        Vector3 topRight = new Vector3(pointOnGrid.x + stepX/2, 0, pointOnGrid.z + stepZ / 2);
+
+        return new Area(botLeft, topRight);
+    }
 }

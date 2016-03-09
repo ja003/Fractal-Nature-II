@@ -26,8 +26,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
     void Start () {
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 300; 
-        terrainHeight = 300;
+        terrainWidth = 400; 
+        terrainHeight = 400;
         patchSize = 256;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);

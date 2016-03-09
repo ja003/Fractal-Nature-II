@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// OBSOLETE
+/// </summary>
 public class DiamondSquare2 {
 
     private TerrainGenerator tg;

@@ -1,0 +1,5 @@
+DiamondSquare partitioning
+
+- added new structure MountainPeaks
+-- every patch region has x peaks 
+- implemented Mountain peaks generation in DS

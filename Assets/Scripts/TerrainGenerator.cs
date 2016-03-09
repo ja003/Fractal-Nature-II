@@ -45,11 +45,12 @@ public class TerrainGenerator// : ITerrainGenerator
         this.filterGenerator = filterGenerator;
         this.riverGenerator = riverGenerator;
         fmc = functionMathCalculator;
+        
+        gm = gridManager;
 
         rt.AssignFunctions(fmc);
         ds.AssignFunctions(localTerrain);
 
-        gm = gridManager;
     }
 
     public void MoveVisibleTerrain(Vector3 cameraPosition)
