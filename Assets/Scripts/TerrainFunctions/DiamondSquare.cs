@@ -415,19 +415,11 @@ public class DiamondSquare
                         (s0 + s1 + cn + lt.GetLocalHeight(x + (i / 2), z - (i / 2), defaultHeight)) / 4.0f;
                     d1 = x <= 0 ? (s0 + cn + s2) / 3.0f :
                         (s0 + cn + s2 + lt.GetLocalHeight(x - (i / 2), z + (i / 2), defaultHeight)) / 4.0f;
-                    //d2 = x >= s - i ? (s1 + cn + s3) / 3.0f :
-                    //    (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), defaultHeight)) / 4.0f; //default value used only here
-                    //d3 = x >= s - i ? (s1 + cn + s3) / 3.0f :
-                    //    (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f; //default value used only here
-                    //TODO: defaultHeight shouldn't be used!!!
                     d2 = x >= s - i ? (s1 + cn + s3) / 3.0f :
-                        (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), d0)) / 4.0f; //default value used only here
-                    d3 = x >= s - i ? (s1 + cn + s3) / 3.0f :
-                        (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), d1)) / 4.0f; //default value used only here
-
-                    //if((d2 == (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), defaultHeight)) / 4.0f ||
-                    //    d3 == (s1 + cn + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f) && counter < 10)
-
+                        (s1 + cn + s3 + lt.GetLocalHeight(x + i + (i / 2), z + (i / 2), defaultHeight)) / 4.0f; 
+                    d3 = z >= s - i ? (cn + s2 + s3) / 3.0f :
+                        (cn + s2 + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f;
+                    
                     factor = 2 * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
                     modNoise = modNoiseOrig * factor;
 

@@ -132,11 +132,10 @@ public class LocalTerrain : ILocalTerrain {
     /// <summary>
     /// returns height from global terrain
     /// maps given local coordinates on global
+    /// 666 if not defined
     /// </summary>
     public float GetLocalHeight(int x, int z)
     {
-        //Debug.Log("getting " + x + "," + z);
-        //Debug.Log("= " + (x + (int)center.x - terrainWidth) + "," + (z + (int)center.z - terrainHeight / 2));
         return localTerrainC.GetLocalValue(x,z, globalTerrainC);
     }
 

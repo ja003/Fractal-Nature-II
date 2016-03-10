@@ -1,0 +1,4 @@
+DS bug fix
+
+- fixed wrong parameter in DS algorithm
+-- default value is no longer used
