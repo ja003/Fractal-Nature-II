@@ -1,0 +1,5 @@
+DS bug fix
+
+- when DS is processed, local coordinates 
+-- has to be scaled to the size of patchSize
+-- then scaled back to original 

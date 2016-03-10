@@ -77,6 +77,7 @@ public class RiverGenerator  {
     {
         Vertex start = ftm.GetLowestRegionCenter(20, 50);//LOCAL!
         Vertex globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
+
         globalStart.height = start.height;
 
         RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
@@ -98,7 +99,7 @@ public class RiverGenerator  {
         currentRiver = river;
 
         Debug.Log(currentRiver);
-        frd.DistortPath(currentRiver.riverPath, 10);
+        //frd.DistortPath(currentRiver.riverPath, 10);
         frd.DigRiver(currentRiver.riverPath);
 
 

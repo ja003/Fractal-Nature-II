@@ -13,12 +13,15 @@ public class DiamondSquare
     
     LocalTerrain lt;
 
+    int patchSize = 0;
+
     TerrainGenerator tg;
     MountainPeaksManager mountainPeaksManager;
 
-    public DiamondSquare(TerrainGenerator terrainGenerator)
+    public DiamondSquare(TerrainGenerator terrainGenerator, int patchSize)
     {
         tg = terrainGenerator;
+        this.patchSize = patchSize;
     }
 
     public void AssignFunctions(LocalTerrain localTerrain)
@@ -194,6 +197,7 @@ public class DiamondSquare
         float factoredValue = value * factor;*/
 
         lt.SetLocalHeight(x, z, value, overwrite);
+        //lt.SetLocalHeight(LocalX(x), LocalZ(z), value, overwrite);
     }
 
     /// <summary>
@@ -220,6 +224,16 @@ public class DiamondSquare
         return distance;
     }
 
+    private int LocalX(int x)
+    {
+        return x + (lt.terrainWidth / 2 - patchSize / 2);
+    }
+
+    private int LocalZ(int z)
+    {
+        return z + (lt.terrainHeight / 2 - patchSize / 2);
+    }
+
     /// <summary>
     /// set corners based on neighbouring values
     /// if neighbourhood is not defined, values are random
@@ -228,7 +242,12 @@ public class DiamondSquare
     {
         float neighbourhood = 666;
         float factor = 666;
-        
+
+        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(0, 0));
+        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(s, 0));
+        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(0, s));
+        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(s, s));
+
         neighbourhood = lt.GetNeighbourHeight(0, 0);
         if (neighbourhood != 666)
         {

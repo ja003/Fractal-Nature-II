@@ -212,6 +212,14 @@ public class LocalTerrain : ILocalTerrain {
         return true;
     }
 
+    public void UpdateSize(int terrainWidth, int terrainHeight)
+    {
+        this.terrainWidth = terrainWidth;
+        this.terrainHeight = terrainHeight;
+
+        localTerrainC.UpdateSize(terrainWidth, terrainHeight);
+    }
+
     public Vector3 GetBotLeft()
     {
         return localTerrainC.botLeft;

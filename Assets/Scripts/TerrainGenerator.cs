@@ -30,7 +30,7 @@ public class TerrainGenerator// : ITerrainGenerator
     public TerrainGenerator(int patchSize)
     {
         //initialize(64,3);
-        ds = new DiamondSquare(this);
+        ds = new DiamondSquare(this, patchSize);
         ds2 = new DiamondSquare2(this);
         rt = new RandomTerrain(this);
         this.patchSize = patchSize;
@@ -129,16 +129,19 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         Vector3 centerOnGrid = gm.GetPointOnGrid(center);
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
-        //Debug.Log("pregenerating");
-        //Debug.Log("center: " + center);
-        //Debug.Log("centerOnGrid: " + centerOnGrid);
-        //Debug.Log("visibleArea: " + visibleArea);
-        //Debug.Log("surroundingArea: " + surroundingArea);
+        Debug.Log("pregenerating");
+        Debug.Log("center: " + center);
+        Debug.Log("centerOnGrid: " + centerOnGrid);
+        Debug.Log("visibleArea: " + visibleArea);
+        Debug.Log("surroundingArea: " + surroundingArea);
 
         int x_min = (int)surroundingArea.botLeft.x;
         int z_min = (int)surroundingArea.botLeft.z;
         int x_max = (int)surroundingArea.topRight.x;
         int z_max = (int)surroundingArea.topRight.z;
+
+
+        localTerrain.UpdateSize(patchSize, patchSize);
 
         for (int x = x_min; x <= x_max; x += patchSize)
         {
@@ -160,6 +163,8 @@ public class TerrainGenerator// : ITerrainGenerator
 
         //move back
         localTerrain.MoveVisibleTerrain(center);
+        localTerrain.UpdateSize(terrainWidth, terrainHeight);
+
     }
 
 

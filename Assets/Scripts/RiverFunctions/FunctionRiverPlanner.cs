@@ -61,7 +61,6 @@ public class FunctionRiverPlanner  {
         fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
         
-
         int x_min = (int)restrictedArea.botLeft.x;
         int z_min = (int)restrictedArea.botLeft.z;
         int x_max = (int)restrictedArea.topRight.x;

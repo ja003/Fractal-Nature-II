@@ -63,4 +63,12 @@ public class LocalCoordinates {
         gc.SetValue(x + (int)center.x - terrainWidth / 2, z + (int)center.z - terrainHeight / 2, height, overwrite);
     }
 
+    public void UpdateSize(int terrainWidth, int terrainHeight)
+    {
+        this.terrainWidth = terrainWidth;
+        this.terrainHeight = terrainHeight;
+
+        botLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z - terrainHeight / 2);
+        topRight = new Vector3(center.x + terrainWidth / 2, 0, center.z + terrainHeight / 2);
+    }
 }
