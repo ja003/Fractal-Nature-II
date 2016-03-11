@@ -4,12 +4,12 @@ using System;
 
 public class CameraManager : MonoBehaviour, ICameraManager
 {
-    private GlobalTerrain globalTerrain;
-    private LocalTerrain localTerrain;
+    public GlobalTerrain globalTerrain;
+    public LocalTerrain localTerrain;
 
-    private TerrainGenerator terrainGenerator;
-    private FilterGenerator filterGenerator;
-    private RiverGenerator riverGenerator;
+    public TerrainGenerator terrainGenerator;
+    public FilterGenerator filterGenerator;
+    public RiverGenerator riverGenerator;
     
     private FunctionMathCalculator functionMathCalculator;
     private FunctionDebugger functionDebugger;
@@ -22,13 +22,15 @@ public class CameraManager : MonoBehaviour, ICameraManager
     int terrainWidth;
     int terrainHeight;
     int patchSize; //size of generated terrain patch
+    int scaleTerrainY;
 
     void Start () {
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 500; 
-        terrainHeight = 500;
-        patchSize = 128;
+        terrainWidth = 100; 
+        terrainHeight = 100;
+        patchSize = 64;
+        scaleTerrainY = 20;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
@@ -48,8 +50,10 @@ public class CameraManager : MonoBehaviour, ICameraManager
         gridManager = new GridManager(new Vector3(0,0,0), patchSize, patchSize);
 
         AssignFunctions();
-        terrainGenerator.initialize();
+        terrainGenerator.initialize(scaleTerrainY);
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
+        
+        
         //filterGenerator.PerserveMountains(3, 50, 10);
         //terrainGenerator.build();
 
@@ -108,7 +112,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("7") && lastActionFrame < Time.frameCount - 30)
         {
             FixCameraPosition();
-            Debug.Log("moving to: " + gameObject.transform.position);
+            //Debug.Log("moving to: " + gameObject.transform.position);
             localTerrain.MoveVisibleTerrain(gameObject.transform.position);
             lastActionFrame = Time.frameCount;
         }
@@ -180,12 +184,16 @@ public class CameraManager : MonoBehaviour, ICameraManager
         }
     }
 
+    public void UpdatePatchSize(int patchSize)
+    {
+        this.patchSize = patchSize;
+        terrainGenerator.patchSize = patchSize;
+        gridManager.UpdateSteps(patchSize, patchSize);
+    }
+
     /// <summary>
     /// returns distance of 2 points in X and Z space
     /// </summary>
-    /// <param name="v1"></param>
-    /// <param name="v2"></param>
-    /// <returns></returns>
     float Get2dDistance(Vector3 v1, Vector3 v2)
     {
         return Vector3.Distance(new Vector3(v1.x, 0, v1.z), new Vector3(v2.x, 0, v2.z));

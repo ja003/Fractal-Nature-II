@@ -129,6 +129,8 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         Vector3 centerOnGrid = gm.GetPointOnGrid(center);
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
+        Debug.Log("patchSize: " + patchSize);
+
         Debug.Log("pregenerating");
         Debug.Log("center: " + center);
         Debug.Log("centerOnGrid: " + centerOnGrid);
@@ -152,11 +154,11 @@ public class TerrainGenerator// : ITerrainGenerator
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter); //should be already on grid
                     ds.Initialize(patchSize);
-                    //Debug.Log("generating on: " + movedCenter);
+                    Debug.Log("generating on: " + movedCenter);
                 }
                 else
                 {
-                    //Debug.Log("center defined: " + movedCenter);
+                    Debug.Log("center defined: " + movedCenter);
                 }
             }
         }
@@ -265,8 +267,14 @@ public class TerrainGenerator// : ITerrainGenerator
 
     //CLASS AND OBJECTS INITIALISATION
 
+    public void UpdateScaleY(float scaleY)
+    {
+        scaleTerrain.y = scaleY;
+        build();
+    }
+
     //public void initialize(int patch_size, int patch_count)
-    public void initialize()
+    public void initialize(float scaleY)
     {
 
         //Class Constructor
@@ -282,7 +290,7 @@ public class TerrainGenerator// : ITerrainGenerator
         terrainWidth = localTerrain.terrainWidth;
         terrainHeight= localTerrain.terrainHeight;
 
-        scaleTerrain = new Vector3(terrainWidth, 20, terrainHeight);
+        scaleTerrain = new Vector3(terrainWidth, scaleY, terrainHeight);
         //meshSize =  patchSize * patchCount + 1;
         int meshSizeX =  32 * 2 + 1;
         int meshSizeZ =  64 * 2 + 1;

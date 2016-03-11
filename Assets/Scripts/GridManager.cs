@@ -57,6 +57,12 @@ public class GridManager {
         return new Vertex(x, z);
     }
 
+    public void UpdateSteps(int stepX, int stepZ)
+    {
+        this.stepX = stepX;
+        this.stepZ = stepZ;
+    }
+
     /// <summary>
     /// maps grid point to real coordinates
     /// </summary>

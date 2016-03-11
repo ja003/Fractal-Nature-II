@@ -1,0 +1,4 @@
+GUI
+
+- added GUI 
+- implemented terrain scaling function
