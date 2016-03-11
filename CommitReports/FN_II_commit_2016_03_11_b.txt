@@ -1,0 +1,7 @@
+GUI_02
+
+- terrain generation function
+- controlling of visible size of terrain 
+- TODO: visible area has to have width same as height
+- TODO: maximal visible area is +- 500 (due to Unity mesh)
+-- create more meshes

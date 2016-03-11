@@ -7,10 +7,11 @@ public class GUIMesh {
     int rightMenuOffset;
     int topOffset;
     int buttonHeight;
-    public int yPos;
+    public float yPos;
     int sideOffset;
 
-    float scaleY;
+    public float scaleY;
+    public float visibleArea;
 
     GUIManager gm;
 
@@ -23,14 +24,17 @@ public class GUIMesh {
         topOffset = gm.topOffset;
         buttonHeight = gm.smallButtonHeight;
         sideOffset = 10;
-        scaleY = 20;
+        scaleY = gm.scaleY;
+        visibleArea = gm.visibleArea;
     }
 
     public void OnGui(int yPosition)
     {
+        float buttonWidth = menuWidth / 2 - sideOffset - sideOffset / 2;
+
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 9* buttonHeight), "Mesh Control");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 11 * buttonHeight), "Mesh Control");
 
         yPos += buttonHeight;
 
@@ -38,15 +42,28 @@ public class GUIMesh {
         gm.infiniteTerrain = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - rightMenuOffset, buttonHeight), gm.infiniteTerrain, "  Allow on-the-fly generation");
 
 
-        yPos += buttonHeight; 
-        
+        yPos += buttonHeight;
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2*buttonWidth, buttonHeight), "Visible area = " + gm.visibleArea);
+
+        yPos += buttonHeight;
+        visibleArea = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + sideOffset, yPos + 5,
+                menuWidth - sideOffset - 5,
+                buttonHeight), gm.visibleArea, 64, 500);
+        //if scale has been changed, perform scale action
+        if (GetAreaValue(visibleArea) != gm.visibleArea)
+        {
+            UpdateVisibleArea(GetAreaValue(visibleArea));
+        }
+
+        yPos += buttonHeight;
+
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - rightMenuOffset, buttonHeight),
             "Patch Size = " + gm.patchSize + "x" + gm.patchSize);
         
 
         yPos += buttonHeight + 5;
 
-        float buttonWidth = menuWidth / 2 - sideOffset - sideOffset/2;
 
         // 64x64 patch size
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "64x64"))
@@ -76,13 +93,21 @@ public class GUIMesh {
         yPos += buttonHeight + 5;
 
         // GENERATE
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2*sideOffset, 2* buttonHeight), "GENERATE"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2*sideOffset, 1.5f* buttonHeight), "GENERATE"))
         {
-            Debug.Log("[8]: generating on: " + gm.cm.gameObject.transform.position);
+            //Debug.Log("generating on: " + gm.cm.gameObject.transform.position);
             gm.cm.localTerrain.UpdateVisibleTerrain(gm.cm.gameObject.transform.position);
         }
+        yPos += 1.5f * buttonHeight;
 
-        yPos += 2*buttonHeight;
+        // DELETE meshes
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2 * sideOffset, buttonHeight), "DELETE"))
+        {
+            Debug.Log("DELETE mesh" + gm.cm.gameObject.transform.position);
+            gm.cm.terrainGenerator.destroyMeshes();
+        }
+
+        yPos += buttonHeight;
 
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "Scale = " + (int)gm.scaleY);
         
@@ -105,6 +130,17 @@ public class GUIMesh {
         }*/
     }
 
+    /// <summary>
+    /// transforms float area to even integer number
+    /// </summary>
+    private int GetAreaValue(float area)
+    {
+        int intArea = (int)area;
+        if (intArea % 2 != 0)
+            intArea += 1;
+        return intArea;
+    }
+
     private void UpdatePatchSize(int patchSize)
     {
         gm.UpdatePatchSize(patchSize);
@@ -114,5 +150,11 @@ public class GUIMesh {
     {
         gm.scaleY = scaleY;
         gm.cm.terrainGenerator.UpdateScaleY(scaleY);
+    }
+
+    private void UpdateVisibleArea(int visibleArea)
+    {
+        gm.visibleArea = visibleArea;
+        gm.cm.UpdateVisibleArea(visibleArea);
     }
 }

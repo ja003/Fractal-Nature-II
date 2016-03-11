@@ -27,6 +27,7 @@ public class GUIManager : MonoBehaviour
 
     public int patchSize;
     public float scaleY;
+    public int visibleArea;
 
 
     GUIMenu menu;
@@ -50,16 +51,29 @@ public class GUIManager : MonoBehaviour
         filterFlag = false;
         riverFlag = false;
 
-        scaleY = 1;
+        scaleY = cm.scaleTerrainY;
+        visibleArea = cm.terrainWidth;
+        //visibleArea = 100;
+        patchSize = cm.patchSize;
 
         menu = new GUIMenu(this);
         cameraMenu = new GUICamera(this);
         mesh = new GUIMesh(this);
     }
-
-    // Main update loop
+    
     void Update()
     {
+        if(Time.frameCount <= 1)
+        {
+            scaleY = cm.scaleTerrainY;
+            mesh.scaleY = scaleY;
+
+            visibleArea = cm.terrainWidth;
+            mesh.visibleArea = visibleArea;
+
+            patchSize = cm.patchSize;
+
+        }
     }
 
     public void UpdatePatchSize(int patchSize)
@@ -68,6 +82,9 @@ public class GUIManager : MonoBehaviour
         cm.UpdatePatchSize(patchSize);
     }
 
+    /// <summary>
+    /// show/hide menu objects handler
+    /// </summary>
     public void CascadeVisibility()
     {
         if (!fractalNatureFlag)

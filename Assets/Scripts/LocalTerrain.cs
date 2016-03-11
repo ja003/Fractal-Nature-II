@@ -90,6 +90,14 @@ public class LocalTerrain : ILocalTerrain {
         tg.MoveVisibleTerrain(localTerrainC.center);//only for moving terrain (not generating new)
     }
 
+    public void UpdateVisibleArea(int visibleArea)
+    {
+        terrainWidth = visibleArea;
+        terrainHeight = visibleArea;
+
+        localTerrainC.terrainWidth = terrainWidth;
+        localTerrainC.terrainHeight = terrainHeight;
+    }
 
     /// <summary>
     /// updates coordinates with same parameters

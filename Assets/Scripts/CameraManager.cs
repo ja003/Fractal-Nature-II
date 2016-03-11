@@ -19,10 +19,10 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
     private GridManager gridManager;
 
-    int terrainWidth;
-    int terrainHeight;
-    int patchSize; //size of generated terrain patch
-    int scaleTerrainY;
+    public int terrainWidth;
+    public int terrainHeight;
+    public int patchSize; //size of generated terrain patch
+    public int scaleTerrainY = 15;
 
     void Start () {
 
@@ -30,7 +30,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         terrainWidth = 100; 
         terrainHeight = 100;
         patchSize = 64;
-        scaleTerrainY = 20;
+        scaleTerrainY = 15;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
@@ -189,6 +189,16 @@ public class CameraManager : MonoBehaviour, ICameraManager
         this.patchSize = patchSize;
         terrainGenerator.patchSize = patchSize;
         gridManager.UpdateSteps(patchSize, patchSize);
+    }
+
+    public void UpdateVisibleArea(int visibleArea)
+    {
+        terrainWidth = visibleArea;
+        terrainHeight= visibleArea;
+
+        localTerrain.UpdateVisibleArea(visibleArea);
+
+        terrainGenerator.UpdateVisibleArea(visibleArea);
     }
 
     /// <summary>

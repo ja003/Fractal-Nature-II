@@ -129,13 +129,13 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         Vector3 centerOnGrid = gm.GetPointOnGrid(center);
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
-        Debug.Log("patchSize: " + patchSize);
+        //Debug.Log("patchSize: " + patchSize);
 
-        Debug.Log("pregenerating");
-        Debug.Log("center: " + center);
-        Debug.Log("centerOnGrid: " + centerOnGrid);
-        Debug.Log("visibleArea: " + visibleArea);
-        Debug.Log("surroundingArea: " + surroundingArea);
+        //Debug.Log("pregenerating");
+        //Debug.Log("center: " + center);
+        //Debug.Log("centerOnGrid: " + centerOnGrid);
+        //Debug.Log("visibleArea: " + visibleArea);
+        //Debug.Log("surroundingArea: " + surroundingArea);
 
         int x_min = (int)surroundingArea.botLeft.x;
         int z_min = (int)surroundingArea.botLeft.z;
@@ -154,11 +154,11 @@ public class TerrainGenerator// : ITerrainGenerator
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter); //should be already on grid
                     ds.Initialize(patchSize);
-                    Debug.Log("generating on: " + movedCenter);
+                    //Debug.Log("generating on: " + movedCenter);
                 }
                 else
                 {
-                    Debug.Log("center defined: " + movedCenter);
+                    //Debug.Log("center defined: " + movedCenter);
                 }
             }
         }
@@ -273,7 +273,29 @@ public class TerrainGenerator// : ITerrainGenerator
         build();
     }
 
-    //public void initialize(int patch_size, int patch_count)
+    public void UpdateVisibleArea(int visibleArea)
+    {
+        //terrainWidth = visibleArea;
+        //terrainHeight = visibleArea;
+
+        //vertices = new Vector3[terrainWidth, terrainHeight];
+        destroyMeshes();
+
+
+        build();
+    }
+
+    public void destroyMeshes()
+    {
+
+        for (int i = 0; i < 4; i++)
+        {
+            GameObject.Destroy(myMesh[i]);
+            GameObject.Destroy(myWaterMesh[i]);
+        }
+        initialize(scaleTerrain.y);
+    }
+
     public void initialize(float scaleY)
     {
 
@@ -504,7 +526,7 @@ public class TerrainGenerator// : ITerrainGenerator
         MoveTerrain(localTerrain.localTerrainC.center);
 
         ApplyLayers();
-
+        
         //Function called to update the renderables when changes occur
 
         //Initialise scaling values according to terrain size and user-controlled sizing
