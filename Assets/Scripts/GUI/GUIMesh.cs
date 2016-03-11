@@ -105,6 +105,7 @@ public class GUIMesh {
         {
             Debug.Log("DELETE mesh" + gm.cm.gameObject.transform.position);
             gm.cm.terrainGenerator.destroyMeshes();
+            gm.cm.terrainGenerator.ResetTerrainValues();
         }
 
         yPos += buttonHeight;

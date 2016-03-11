@@ -62,7 +62,7 @@ public class LocalTerrain : ILocalTerrain {
         
 
         //connect river (if it has been generated)
-        if(rg.currentRiver != null)
+        if(rg.currentRiver != null && rg.currentRiver.riverPath.Count > 0)
         {
 
             Debug.Log("connection river");

@@ -3,9 +3,9 @@ using System.Collections;
 
 public class GridManager {
 
-    Vector3 globalCenter;
-    int stepX;
-    int stepZ;
+    public Vector3 globalCenter;
+    public int stepX;
+    public int stepZ;
 
     //TODO: delete stepZ? DS has to have squared area
     public GridManager(Vector3 globalCenter,int stepX, int stepZ)

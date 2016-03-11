@@ -285,6 +285,14 @@ public class TerrainGenerator// : ITerrainGenerator
         build();
     }
 
+    public void ResetTerrainValues()
+    {
+        localTerrain.globalTerrainC.ResetQuadrants();
+
+        riverGenerator.currentRiver.ResetRiver();
+        riverGenerator.globalRiverC.ResetQuadrants();
+    }
+
     public void destroyMeshes()
     {
 
@@ -292,7 +300,13 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             GameObject.Destroy(myMesh[i]);
             GameObject.Destroy(myWaterMesh[i]);
+            GameObject.Destroy(myTerrain[i]);
+            GameObject.Destroy(myWater[i]);
         }
+
+        
+        //TODO: reset filters
+
         initialize(scaleTerrain.y);
     }
 

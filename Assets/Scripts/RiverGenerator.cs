@@ -23,6 +23,8 @@ public class RiverGenerator  {
 
         globalRiverC = new GlobalCoordinates(100);
         localCoordinates = lt.localTerrainC;
+
+        currentRiver = new RiverInfo(this);
         //localRiverC = new LocalCoordinates(globalRiverC, new Vector3(0, 0, 0), 200, 200);
     }
 

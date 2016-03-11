@@ -265,6 +265,12 @@ public class RiverInfo  {
         }
     }
     */
+
+    public void ResetRiver()
+    {
+        riverPath = new List<Vertex>();
+    }
+
     public override string ToString()
     {
         string info = "";
