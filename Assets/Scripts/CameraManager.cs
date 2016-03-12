@@ -24,7 +24,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
     public int patchSize; //size of generated terrain patch
     public int scaleTerrainY = 15;
 
-    void Start () {
+    void Start () { 
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
         terrainWidth = 100; 

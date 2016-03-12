@@ -33,6 +33,7 @@ public class GUIManager : MonoBehaviour
     GUIMenu menu;
     GUICamera cameraMenu;
     GUIMesh mesh;
+    GUIExport export;
 
 
     void Start()
@@ -59,6 +60,7 @@ public class GUIManager : MonoBehaviour
         menu = new GUIMenu(this);
         cameraMenu = new GUICamera(this);
         mesh = new GUIMesh(this);
+        export = new GUIExport(this);
     }
     
     void Update()
@@ -111,6 +113,7 @@ public class GUIManager : MonoBehaviour
         {
             cameraMenu.OnGui(menu.yPos + 5);
             mesh.OnGui(cameraMenu.yPos + 5);
+            export.OnGui(mesh.yPos + 5);
         }
         
 

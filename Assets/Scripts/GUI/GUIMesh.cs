@@ -122,6 +122,7 @@ public class GUIMesh {
         {
             UpdateScaleY(scaleY);
         }
+        yPos += buttonHeight;
 
         /*
         GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, 65), " ");
