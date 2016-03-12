@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GUIExport : MonoBehaviour {
 
@@ -55,7 +56,9 @@ public class GUIExport : MonoBehaviour {
 
         //ObjExporter.MeshToFile(gm.cm.terrainGenerator.myTerrain[0].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_0.obj");
         //ObjExporter.MeshToFile(gm.cm.terrainGenerator.myTerrain[1].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_1.obj");
-
-        ObjExporter.TerrainToFile(gm.cm.globalTerrain, "C:\\Users\\Vukmir\\Desktop\\obj\\gt_01.obj");
+        List<Layer> layers = new List<Layer>();
+        layers.Add(Layer.terrain);
+        layers.Add(Layer.river);
+        ObjExporter.TerrainToFile(gm.cm.layerManager, layers, "C:\\Users\\Vukmir\\Desktop\\obj\\gt_01.obj");
     }
 }

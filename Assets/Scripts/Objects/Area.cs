@@ -3,26 +3,26 @@ using System.Collections;
 
 public class Area {
 
-    public Vector3 botLeft;
-    public Vector3 topRight;
+    public Vertex botLeft;
+    public Vertex topRight;
 
-    public Vector3 topLeft;
-    public Vector3 botRight;
+    public Vertex topLeft;
+    public Vertex botRight;
 
 
-    public Area(Vector3 botLeft,Vector3 topRight)
+    public Area(Vertex botLeft, Vertex topRight)
     {
         this.botLeft = botLeft;
         this.topRight = topRight;
 
-        topLeft = new Vector3(botLeft.x, 0, topRight.z);
-        botRight = new Vector3(topRight.x, 0, botLeft.z);
+        topLeft = new Vertex(botLeft.x, topRight.z);
+        botRight = new Vertex(topRight.x, botLeft.z);
     }
 
     /// <summary>
     /// calculates whether Area contains given point (or lies on border)
     /// </summary>
-    public bool Contains(Vector3 point)
+    public bool Contains(Vertex point)
     {
         return botLeft.x <= point.x && botLeft.z <= point.z &&
             point.x <= topRight.x && point.z <= topRight.z;

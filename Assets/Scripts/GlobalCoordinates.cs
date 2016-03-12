@@ -11,9 +11,12 @@ public class GlobalCoordinates {
     private float[,] quadrant3;
     private float[,] quadrant4;
 
+    public Area definedArea;
 
     public GlobalCoordinates(int quadrantSize)
     {
+        definedArea = new Area(new Vertex(0, 0), new Vertex(0, 0));
+
         globalCenter = 666;
 
         quadrant1 = new float[quadrantSize, quadrantSize];
@@ -94,6 +97,11 @@ public class GlobalCoordinates {
         {
             GetQuandrant(x, z)[Math.Abs(x), Math.Abs(z)] = height;
         }
+
+        if (!definedArea.Contains(new Vertex(x, z)))
+        {
+            UpdateDefinedArea(x, z);
+        }
     }
 
     public void SetValue(Vector3 point, float height, bool overwrite)
@@ -105,6 +113,33 @@ public class GlobalCoordinates {
     public void SetValue(int x, int z, float height)
     {
         SetValue(x, z, height, true);
+    }
+
+
+    public void UpdateDefinedArea(int x, int z)
+    {
+        if (x < definedArea.botLeft.x)
+        {
+            definedArea.botLeft.x = x;
+            definedArea.topLeft.x = x;
+        }
+        if (x > definedArea.topRight.x)
+        {
+            definedArea.topRight.x = x;
+            definedArea.botRight.x = x;
+        }
+
+        if (z < definedArea.botLeft.z)
+        {
+            definedArea.botLeft.z = z;
+            definedArea.topLeft.z = z;
+        }
+        if (z > definedArea.topRight.x)
+        {
+            definedArea.topRight.z = z;
+            definedArea.botRight.z = z;
+        }
+
     }
 
     public bool IsDefined(Vector3 point)

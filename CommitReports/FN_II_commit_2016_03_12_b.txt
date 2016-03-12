@@ -1,0 +1,5 @@
+Layer manager
+
+- implemented layer manager
+-- used to get value from certain layers
+- added river values to output OBJ

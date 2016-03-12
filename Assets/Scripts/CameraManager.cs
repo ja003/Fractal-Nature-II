@@ -7,6 +7,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
     public GlobalTerrain globalTerrain;
     public LocalTerrain localTerrain;
 
+    public LayerManager layerManager;
+
     public TerrainGenerator terrainGenerator;
     public FilterGenerator filterGenerator;
     public RiverGenerator riverGenerator;
@@ -48,10 +50,12 @@ public class CameraManager : MonoBehaviour, ICameraManager
         riverGenerator = new RiverGenerator(localTerrain);
 
         gridManager = new GridManager(new Vector3(0,0,0), patchSize, patchSize);
+        layerManager = new LayerManager();
 
         AssignFunctions();
         terrainGenerator.initialize(scaleTerrainY);
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
+        
         
         
         //filterGenerator.PerserveMountains(3, 50, 10);
@@ -76,6 +80,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionRiverPlanner.AssignFunctions(riverGenerator);
         functionMathCalculator.AssignFunctions(localTerrain);
         functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator);
+
+        layerManager.AssignLayers(globalTerrain.globalTerrainC, riverGenerator.globalRiverC);
     }
 
     int lastActionFrame = 0;

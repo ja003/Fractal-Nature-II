@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEditor;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 public class ObjExporter
 {
@@ -41,23 +42,20 @@ public class ObjExporter
         return sb.ToString();
     }
 
-    public static string TerrainToString(GlobalTerrain t)
+    public static string TerrainToString(LayerManager lm, List<Layer> layers)
     {
         StringBuilder sb = new StringBuilder();
-
-        Vertex botLeft;
-        Vertex topRight;
-
-        int x_min = -10;
-        int x_max = 80;
-        int z_min = -20;
-        int z_max = 70;
-
+        
+        int x_min = lm.terrain.definedArea.botLeft.x;
+        int z_min = lm.terrain.definedArea.botLeft.x;
+        int x_max = lm.terrain.definedArea.topRight.x;
+        int z_max = lm.terrain.definedArea.topRight.z;
+        
         for (int x = x_min; x< x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                sb.Append(string.Format("v {0} {1} {2}\n", x, t.GetHeight(x, z) * 15, z));
+                sb.Append(string.Format("v {0} {1} {2}\n", x, lm.GetValueFromLayers(x, z, layers) * 15, z));
             }
         }
 
@@ -83,11 +81,11 @@ public class ObjExporter
         return sb.ToString();
     }
 
-    public static void TerrainToFile(GlobalTerrain gt, string filename)
+    public static void TerrainToFile(LayerManager layerManager, List<Layer> layers, string filename)
     {
         using (StreamWriter sw = new StreamWriter(filename))
         {
-            sw.Write(TerrainToString(gt));
+            sw.Write(TerrainToString(layerManager, layers));
         }
     }
 

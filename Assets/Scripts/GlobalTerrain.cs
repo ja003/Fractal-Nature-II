@@ -6,10 +6,7 @@ public class GlobalTerrain : IGlobalTerrain
 {
     public GlobalCoordinates globalTerrainC;
 
-    //private float[,] quadrant1rivermap;
-    //private float[,] quadrant2rivermap;
-    //private float[,] quadrant3rivermap;
-    //private float[,] quadrant4rivermap;
+    
 
     public GlobalTerrain(int quadrantSize)
     {
@@ -39,6 +36,7 @@ public class GlobalTerrain : IGlobalTerrain
     {
         globalTerrainC.SetValue(x, z, height, overwrite);
     }
+
 
     public void SetHeight(int x, int z, float height)
     {
