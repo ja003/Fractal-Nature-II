@@ -77,13 +77,14 @@ public class RiverGenerator  {
 
     public void GenerateNewRiver()
     {
+
         Vertex start = ftm.GetLowestRegionCenter(20, 50);//LOCAL!
         Vertex globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
 
         globalStart.height = start.height;
 
         RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
-        Debug.Log(river);
+        //Debug.Log(river);
            
         globalStart.side = fmc.GetOppositeDirection(river.GetLastVertex().side);
         Area restrictedArea = fmc.CalculateRestrictedArea(globalStart);
@@ -93,7 +94,7 @@ public class RiverGenerator  {
         reachedSides.Add(river.GetLastVertex().side);
 
         // 2)find second path
-        Debug.Log(restrictedArea);
+        //Debug.Log(restrictedArea);
         RiverInfo river2 = frp.GetRiverPathFrom(globalStart, reachedSides, restrictedArea);
             
         // connect them

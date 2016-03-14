@@ -606,7 +606,7 @@ public class FunctionTerrainManager {
         bool rightSide = point.x == lt.globalTerrainC.definedArea.topRight.x;
         bool botSide = point.z == lt.globalTerrainC.definedArea.botLeft.z;
 
-        Debug.Log(point + " " + (leftSide || topSide || rightSide || botSide) + " on border");
+        //Debug.Log(point + " " + (leftSide || topSide || rightSide || botSide) + " on border");
 
         return leftSide || topSide || rightSide || botSide;
     }

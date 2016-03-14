@@ -59,6 +59,6 @@ public class GUIExport {
         List<Layer> layers = new List<Layer>();
         layers.Add(Layer.terrain);
         layers.Add(Layer.river);
-        ObjExporter.TerrainToFile(gm.cm.layerManager, layers, "C:\\Users\\Vukmir\\Desktop\\obj\\gt_01.obj");
+        ObjExporter.TerrainToFile(gm.cm.layerManager, layers, "C:\\Users\\ja004\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export\\gt_01.obj");
     }
 }

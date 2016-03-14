@@ -242,9 +242,10 @@ public class TerrainGenerator// : ITerrainGenerator
             for (int z = 0; z < terrainHeight; z++)
             {
                 vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
+                //vertices[x, z].y = 0;
 
                 //fornow
-                vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
+                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
 

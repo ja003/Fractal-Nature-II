@@ -1,0 +1,4 @@
+DS bugfix 
+
+- fixed DS bug in distance assertion
+- WARNING: river width should be dependant on gridStep 

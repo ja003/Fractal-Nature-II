@@ -50,7 +50,7 @@ public class FunctionRiverPlanner  {
         //int z_max = (int)rg.GetTopRight().z;
 
         //return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
-        Debug.Log(rg.lt.globalTerrainC.definedArea);
+        //Debug.Log(rg.lt.globalTerrainC.definedArea);
         return GetRiverPathFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea);
     }
 
@@ -95,7 +95,8 @@ public class FunctionRiverPlanner  {
         //else
            // threshold = step;
 
-        int gridStep = 20; //step between river path points
+        //TODO: cancel default step!!!
+        int gridStep = 30; //step between river path points
         int borderOffset = gridStep + 5;
         
         //bool reachedSide = false;
