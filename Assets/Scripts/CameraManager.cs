@@ -4,6 +4,8 @@ using System;
 
 public class CameraManager : MonoBehaviour, ICameraManager
 {
+    public GUIManager guiManager;
+
     public GlobalTerrain globalTerrain;
     public LocalTerrain localTerrain;
 
@@ -26,7 +28,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
     public int patchSize; //size of generated terrain patch
     public int scaleTerrainY = 15;
 
-    void Start () { 
+    void Start () {
+
+        guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
         terrainWidth = 100; 
@@ -70,8 +74,10 @@ public class CameraManager : MonoBehaviour, ICameraManager
             terrainGenerator, filterGenerator, riverGenerator);
 
         terrainGenerator.AssignFunctions(globalTerrain, localTerrain, 
-            filterGenerator, functionMathCalculator, riverGenerator, gridManager);
+            filterGenerator, functionMathCalculator, riverGenerator, gridManager, guiManager);
+
         filterGenerator.AssignFunctions(functionMathCalculator, localTerrain, functionTerrainManager);
+
         riverGenerator.AssignFunctions(functionTerrainManager, functionRiverPlanner, functionDebugger,
             functionMathCalculator, functionRiverDigger);
 
@@ -151,11 +157,11 @@ public class CameraManager : MonoBehaviour, ICameraManager
             terrainGenerator.build();
             riverGenerator.currentRiver.DrawRiver();
 
-            Debug.Log(terrainGenerator.patchSize);
-            Debug.Log(terrainGenerator.terrainWidth);
-            Debug.Log(localTerrain.terrainWidth);
-            Debug.Log(localTerrain.localTerrainC.terrainWidth);
-            Debug.Log(gridManager.stepX);
+            //Debug.Log(terrainGenerator.patchSize);
+            //Debug.Log(terrainGenerator.terrainWidth);
+            //Debug.Log(localTerrain.terrainWidth);
+            //Debug.Log(localTerrain.localTerrainC.terrainWidth);
+            //Debug.Log(gridManager.stepX);
 
             //localTerrain.MoveVisibleTerrain(gameObject.transform.position);
         }

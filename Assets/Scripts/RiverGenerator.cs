@@ -83,6 +83,7 @@ public class RiverGenerator  {
         globalStart.height = start.height;
 
         RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
+        Debug.Log(river);
            
         globalStart.side = fmc.GetOppositeDirection(river.GetLastVertex().side);
         Area restrictedArea = fmc.CalculateRestrictedArea(globalStart);
@@ -92,6 +93,7 @@ public class RiverGenerator  {
         reachedSides.Add(river.GetLastVertex().side);
 
         // 2)find second path
+        Debug.Log(restrictedArea);
         RiverInfo river2 = frp.GetRiverPathFrom(globalStart, reachedSides, restrictedArea);
             
         // connect them
@@ -116,7 +118,8 @@ public class RiverGenerator  {
     {
         //Debug.Log("currentRiver:"+currentRiver);
         Vertex startPoint = currentRiver.riverPath[0];
-        if (ftm.IsInVisibleterrain(startPoint) && !ftm.IsOnBorder(startPoint))
+        //if (ftm.IsInVisibleterrain(startPoint) && !ftm.IsOnBorder(startPoint))
+        if (ftm.IsInDefinedTerrain(startPoint) && !ftm.IsOnBorder(startPoint))
         {
             //Debug.Log("connection river from start: " + startPoint);
 
@@ -148,7 +151,8 @@ public class RiverGenerator  {
             endPoint = currentRiver.riverPath[0];
         }
 
-        if (ftm.IsInVisibleterrain(endPoint) && !ftm.IsOnBorder(endPoint))
+        //if (ftm.IsInVisibleterrain(endPoint) && !ftm.IsOnBorder(endPoint))
+        if (ftm.IsInDefinedTerrain(endPoint) && !ftm.IsOnBorder(endPoint))
         {
             //Debug.Log("connection river from end: " + endPoint);
             Area restrictArea = fmc.CalculateRestrictedArea(endPoint);

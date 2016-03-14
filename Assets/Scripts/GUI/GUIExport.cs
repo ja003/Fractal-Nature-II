@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GUIExport : MonoBehaviour {
+public class GUIExport {
 
     int menuWidth;
     int rightMenuOffset;

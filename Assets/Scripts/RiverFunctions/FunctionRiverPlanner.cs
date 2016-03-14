@@ -49,7 +49,9 @@ public class FunctionRiverPlanner  {
         //int x_max = (int)rg.GetTopRight().x;
         //int z_max = (int)rg.GetTopRight().z;
 
-        return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
+        //return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
+        Debug.Log(rg.lt.globalTerrainC.definedArea);
+        return GetRiverPathFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea);
     }
 
     /// <summary>

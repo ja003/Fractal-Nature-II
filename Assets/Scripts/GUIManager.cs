@@ -21,6 +21,7 @@ public class GUIManager : MonoBehaviour
     public bool erosionFlag;
     public bool filterFlag;
     public bool riverFlag;
+    public bool terrainProcessing;
 
 
     public bool infiniteTerrain;
@@ -34,6 +35,7 @@ public class GUIManager : MonoBehaviour
     GUICamera cameraMenu;
     GUIMesh mesh;
     GUIExport export;
+    public GUIProgress progress;
 
 
     void Start()
@@ -51,6 +53,7 @@ public class GUIManager : MonoBehaviour
         erosionFlag = false;
         filterFlag = false;
         riverFlag = false;
+        terrainProcessing = false;
 
         scaleY = cm.scaleTerrainY;
         visibleArea = cm.terrainWidth;
@@ -61,6 +64,7 @@ public class GUIManager : MonoBehaviour
         cameraMenu = new GUICamera(this);
         mesh = new GUIMesh(this);
         export = new GUIExport(this);
+        progress = new GUIProgress(this);
     }
     
     void Update()
@@ -75,6 +79,8 @@ public class GUIManager : MonoBehaviour
 
             patchSize = cm.patchSize;
 
+
+            terrainProcessing = false;
         }
     }
 
@@ -114,6 +120,11 @@ public class GUIManager : MonoBehaviour
             cameraMenu.OnGui(menu.yPos + 5);
             mesh.OnGui(cameraMenu.yPos + 5);
             export.OnGui(mesh.yPos + 5);
+        }
+
+        if (terrainProcessing)
+        {
+            progress.OnGui();
         }
         
 

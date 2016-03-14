@@ -449,9 +449,10 @@ public class FunctionMathCalculator {
     /// </summary>
     public Area CalculateRestrictedArea(Vertex point)
     {
+        /*
         Vector3 botLeft = lt.GetBotLeft();
         Vector3 topRight= lt.GetTopRight();
-
+        
         switch (point.side)
         {
             case Direction.top:
@@ -470,7 +471,32 @@ public class FunctionMathCalculator {
                 botLeft = lt.GetBotLeft();
                 topRight = new Vector3(point.x, 0, lt.GetTopRight().z);
                 break;
+        }*/
+
+        Vector3 botLeft = lt.globalTerrainC.definedArea.botLeft;
+        Vector3 topRight = lt.globalTerrainC.definedArea.topRight;
+        Area definedArea = lt.globalTerrainC.definedArea;
+
+        switch (point.side)
+        {
+            case Direction.top:
+                botLeft = new Vector3(definedArea.botLeft.x, 0, point.z);
+                topRight = definedArea.topRight;
+                break;
+            case Direction.right:
+                botLeft = new Vector3(point.x, 0, definedArea.botLeft.z);
+                topRight = definedArea.topRight;
+                break;
+            case Direction.bot:
+                botLeft = definedArea.botLeft;
+                topRight = new Vector3(definedArea.topRight.x, 0, point.z);
+                break;
+            case Direction.left:
+                botLeft = definedArea.botLeft;
+                topRight = new Vector3(point.x, 0, definedArea.topRight.z);
+                break;
         }
+
 
         return new Area(botLeft, topRight);
     }

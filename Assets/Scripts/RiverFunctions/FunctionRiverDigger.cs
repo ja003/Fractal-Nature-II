@@ -126,14 +126,14 @@ public class FunctionRiverDigger {
     /// </summary>
     public void DigRiver(List<Vertex> path)
     {
-        DigRiver(path, 12, 2, 0.5f);
+        DigRiver(path, 15, 2, 1f);
     }
 
     /// <summary>
     /// digs river path
     /// </summary>
     /// <param name="width">width of river corridor</param>
-    /// <param name="widthFactor">defines area around river</param>
+    /// <param name="widthFactor">defines area around river. 1 = only river, 2 = river and close area</param>
     /// <param name="maxDepth">depth in center of river</param>
     public void DigRiver(List<Vertex> path, int width, float widthFactor, float maxDepth)
     {
@@ -209,6 +209,7 @@ public class FunctionRiverDigger {
                         (cornersDistance - distanceFromCorners) >= (PrevNextDistance - distanceFromPrevNext))
                     {
                         globalRiverC.SetValue(x, z, depth);
+                        //globalRiverC.SetValue(x, z, -5);
                     }
                 }
             }
@@ -264,6 +265,7 @@ public class FunctionRiverDigger {
                         if(!globalRiverC.IsDefined(x,z) || depth < globalRiverC.GetValue(x, z))
                         {
                             globalRiverC.SetValue(x, z, depth);
+                            //globalRiverC.SetValue(x, z, -5);
                         }
                     }
                 }

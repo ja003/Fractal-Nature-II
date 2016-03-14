@@ -591,15 +591,22 @@ public class FunctionTerrainManager {
     */
 
     /// <summary>
-    /// checks if given point is on border of visible terrain
+    /// checks if given point is on border of defined terrain
     /// point = global
     /// </summary>
     public bool IsOnBorder(Vector3 point)
     {
-        bool leftSide = point.x == lt.localTerrainC.botLeft.x;
-        bool topSide = point.z == lt.localTerrainC.topRight.z;
-        bool rightSide = point.x == lt.localTerrainC.topRight.x;
-        bool botSide = point.z == lt.localTerrainC.botLeft.z;
+        //bool leftSide = point.x == lt.localTerrainC.botLeft.x;
+        //bool topSide = point.z == lt.localTerrainC.topRight.z;
+        //bool rightSide = point.x == lt.localTerrainC.topRight.x;
+        //bool botSide = point.z == lt.localTerrainC.botLeft.z;
+
+        bool leftSide = point.x == lt.globalTerrainC.definedArea.botLeft.x;
+        bool topSide = point.z == lt.globalTerrainC.definedArea.topRight.z;
+        bool rightSide = point.x == lt.globalTerrainC.definedArea.topRight.x;
+        bool botSide = point.z == lt.globalTerrainC.definedArea.botLeft.z;
+
+        Debug.Log(point + " " + (leftSide || topSide || rightSide || botSide) + " on border");
 
         return leftSide || topSide || rightSide || botSide;
     }
@@ -611,6 +618,15 @@ public class FunctionTerrainManager {
     public bool IsInVisibleterrain(Vector3 point)
     {
         return IsInRegion(point, lt.localTerrainC.botLeft, lt.localTerrainC.topRight);
+    }
+
+    /// <summary>
+    /// check if given point is in defined terrain
+    /// point = global coordinates
+    /// </summary>
+    public bool IsInDefinedTerrain(Vector3 point)
+    {
+        return lt.globalTerrainC.definedArea.Contains(point);
     }
 
     /// <summary>

@@ -4,6 +4,8 @@ using System;
 
 public class TerrainGenerator// : ITerrainGenerator
 {
+    public GUIManager guiManager;
+
     public GlobalTerrain globalTerrain;
     public LocalTerrain localTerrain;
 
@@ -38,7 +40,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
     public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
         FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator,
-        RiverGenerator riverGenerator, GridManager gridManager)
+        RiverGenerator riverGenerator, GridManager gridManager, GUIManager guiManager)
     {
         this.globalTerrain = globalTerrain;
         this.localTerrain = localTerrain;
@@ -50,6 +52,8 @@ public class TerrainGenerator// : ITerrainGenerator
 
         rt.AssignFunctions(fmc);
         ds.AssignFunctions(localTerrain);
+
+        this.guiManager = guiManager;
 
     }
 
@@ -145,6 +149,10 @@ public class TerrainGenerator// : ITerrainGenerator
 
         localTerrain.UpdateSize(patchSize, patchSize);
 
+        //guiManager.terrainProcessing = true;
+        //int stepsNum = ((x_max - x_min) / patchSize) * ((z_max - z_min) / patchSize);
+        //guiManager.progress.SetProgress(stepsNum);
+
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
@@ -160,6 +168,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 {
                     //Debug.Log("center defined: " + movedCenter);
                 }
+                //guiManager.progress.AddToProgress(1);
             }
         }
 
@@ -280,7 +289,6 @@ public class TerrainGenerator// : ITerrainGenerator
 
         //vertices = new Vector3[terrainWidth, terrainHeight];
         destroyMeshes();
-
 
         build();
     }

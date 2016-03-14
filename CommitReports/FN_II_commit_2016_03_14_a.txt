@@ -1,0 +1,5 @@
+Terrain coordinates fix
+
+- added progress bar (not fuctional...probably can't be used)
+- fixed terrain size update in local coordinates 
+- fixed area where river is generated
