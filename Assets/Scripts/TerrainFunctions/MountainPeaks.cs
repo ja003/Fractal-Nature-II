@@ -135,8 +135,8 @@ public class MountainPeaks {
         int randX = Random.Range(area.botLeft.x + offset, area.topRight.x - offset);
         int randZ = Random.Range(area.botLeft.z + offset, area.topRight.z - offset);
 
-        //randX = (int)(area.botLeft.x);
-        //randZ = (int)(area.botLeft.z);
+        randX = (int)(area.botLeft.x);
+        randZ = (int)(area.botLeft.z);
 
         List<Vertex> newPeaks = new List<Vertex>();
         newPeaks.Add(new Vertex(randX, randZ));

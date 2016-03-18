@@ -1,0 +1,5 @@
+DS improvement
+
+- DS is now affected by neighbouring peaks
+- trying to affect modnoise and heigh by position
+-- not great looking results

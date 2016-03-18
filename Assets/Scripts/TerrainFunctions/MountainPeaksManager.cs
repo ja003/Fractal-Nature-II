@@ -68,7 +68,15 @@ public class MountainPeaksManager {
         int z = centerCoordOnGrid.z;
 
         //if (mountainPeaks.IsDefined(x, z))        
+        closestPeaks.AddRange(mountainPeaks.GetValue(x-1, z-1).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x-1, z).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x-1, z+1).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x, z-1).peaks);
         closestPeaks.AddRange(mountainPeaks.GetValue(x, z).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x, z+1).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x+1, z-1).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x+1, z).peaks);
+        closestPeaks.AddRange(mountainPeaks.GetValue(x+1, z+1).peaks);
         if (closestPeaks.Count == 0)
         {
             Debug.Log("!");

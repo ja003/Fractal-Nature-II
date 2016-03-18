@@ -162,9 +162,25 @@ public class DiamondSquare
     /// maps local coordinates to global and sets height
     /// </summary>
     public void SetLocalHeight(int x, int z, float value, bool overwrite)
-    {
+    {/*
+        if(x > 20 && x < 50)
+        {
+            value -= 0.5f;
+        }*/
         lt.SetLocalHeight(x, z, value, overwrite);
     }
+
+    /*
+    public void SetLocalHeight(int x, int z)
+    {
+        float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(0, 0, closestPeaks)) / maxDistance;
+        float value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
+        bool overwrite = false;
+        //value = 1;
+        if (debugPeaks)
+            SetLocalHeight(0, 0, factor, overwrite); //DEBUG PEAKS
+        SetLocalHeight(0, 0, value * factor, overwrite);
+    }*/
 
     float maxDistance = 666;
     
@@ -238,9 +254,11 @@ public class DiamondSquare
         }
         else
         {
-            factor = 2 * (maxDistance - GetSmallestDistanceToPeak(0, 0, closestPeaks)) / maxDistance;
-            value = RandRange(rand, rMin, rMax);
+            factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(0, 0, closestPeaks)) / maxDistance;
+            value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             //value = 1;
+            if(debugPeaks)
+                SetLocalHeight(0, 0, factor, overwrite); //DEBUG PEAKS
             SetLocalHeight(0, 0, value * factor, overwrite);
         }
 
@@ -251,9 +269,11 @@ public class DiamondSquare
         }
         else
         {
-            factor = 2 * (maxDistance - GetSmallestDistanceToPeak(s, 0, closestPeaks)) / maxDistance;
-            value = RandRange(rand, rMin, rMax);
+            factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(s, 0, closestPeaks)) / maxDistance;
+            value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             //value = 1;
+            if (debugPeaks)
+                SetLocalHeight(s, 0, factor, overwrite); //DEBUG PEAKS
             SetLocalHeight(s, 0, value * factor, overwrite);
         }
 
@@ -264,9 +284,11 @@ public class DiamondSquare
         }
         else
         {
-            factor = 2 * (maxDistance - GetSmallestDistanceToPeak(0, s, closestPeaks)) / maxDistance;
-            value = RandRange(rand, rMin, rMax);
+            factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(0, s, closestPeaks)) / maxDistance;
+            value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             //value = 1;
+            if (debugPeaks)
+                SetLocalHeight(0, s, factor, overwrite); //DEBUG PEAKS
             SetLocalHeight(0, s, value * factor, overwrite);
         }
 
@@ -277,12 +299,25 @@ public class DiamondSquare
         }
         else
         {
-            factor = 2 * (maxDistance - GetSmallestDistanceToPeak(s, s, closestPeaks)) / maxDistance;
-            value = RandRange(rand, rMin, rMax);
+            factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(s, s, closestPeaks)) / maxDistance;
+            value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             //value = 1;
+            if (debugPeaks)
+                SetLocalHeight(s,s, factor, overwrite); //DEBUG PEAKS
             SetLocalHeight(s, s, value * factor, overwrite);
         }
     }
+
+
+    float factorConstant = 2;
+    float highFactor = 0.5f;
+    float lowFactor = 1;
+    bool debugPeaks = false;
+    float rMin;
+    float rMax;
+    List<Vertex> closestPeaks;
+    Random rand;
+
 
     public void DiamondSquareGrid(int size, int seed = 0, 
         float rMin = 0, float rMax = 255, float noise = 0.0f)
@@ -298,84 +333,27 @@ public class DiamondSquare
 
         float modNoise = 0.0f;
 
-        List<Vertex> closestPeaks = mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
-        if(closestPeaks.Count > 3 && counter < 10)
-        {
-            UnityEngine.Debug.Log("!");
-            
-        }
-
-        //closestPeaks.Add(new Vertex(0, 0));
-        //closestPeaks.Add(new Vertex(32, 0));
-        //closestPeaks.Add(new Vertex(-32, -32));
-        //mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
-
-        UnityEngine.Debug.Log(lt.localTerrainC.center);
+        this.rMin = rMin;
+        this.rMax = rMax;
+        this.rand = (seed == 0 ? new Random() : new Random(seed));
+        closestPeaks = mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
         
-        foreach(Vertex v in closestPeaks)
-        {
-            UnityEngine.Debug.Log(v);
-        }
-
-        //TODO: there is some bug on the Z-edge, if i put defaultHeight high, border will be high
         float defaultHeight = -20; //only to detect deffects in process. If terrain has some bad height (too high/low), there is some error
         float defaultHeight2 = 20;//debug
 
         bool overwrite = false;
         // Seed the first four corners
-        Random rand = (seed == 0 ? new Random() : new Random(seed));
+        
         float neighbourhood = 666;
 
 
         float factor = 666;
 
         SetupCorners(rand, rMin, rMax, s, overwrite, closestPeaks);
-        
-        /*
-			* Use temporary named variables to simplify equations
-			* 
-			* s0 . d0. s1
-			*  . . . . . 
-			* d1 . cn. d2
-			*  . . . . . 
-			* s2 . d3. s3
-			* 
-			* */
-        float s0, s1, s2, s3, d0, d1, d2, d3, cn;
 
-        //copy border values...shouldnt be necessary
-        /*
-        for(int x = 0; x < s; x++)
-        {
-            for (int z = 0; z < s; z+= s-1)
-            {
-                if (lt.GetNeighbourHeight(x, z) != 666)
-                {
-                    neighbourhood = lt.GetNeighbourHeight(x, z);
-                    SetLocalHeight(x, z, neighbourhood, overwrite);
-                    if (counter < 20)
-                    {
-                        UnityEngine.Debug.Log("setting  [" + x + "," + z + "]: " + neighbourhood);
-                        counter++;
-                    }
-                }
-                if (lt.GetNeighbourHeight(z,x) != 666)
-                {
-                    neighbourhood = lt.GetNeighbourHeight(z,x);
-                    SetLocalHeight(z, x, neighbourhood, overwrite);
-                    if (counter < 20)
-                    {
-                        UnityEngine.Debug.Log("setting  [" + z + "," + x + "]: " + neighbourhood);
-                        counter++;
-                    }
-                }
-            }
-        }
-        */
+        float s0, s1, s2, s3, d0, d1, d2, d3, cn;
+        
         float height = 0;
-        float factorConstant = 2;
-        float highFactor = 0.5f;
-        float lowFactor = 1;
 
         for (int i = s; i > 1; i /= 2)
         {
@@ -391,19 +369,15 @@ public class DiamondSquare
                     s1 = lt.GetLocalHeight(x + i, z, defaultHeight);
                     s2 = lt.GetLocalHeight(x, z + i, defaultHeight);
                     s3 = lt.GetLocalHeight(x + i, z + i, defaultHeight);
-                    // cn
-                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + (i / 2), closestPeaks)) / maxDistance;
-                    modNoise = modNoiseOrig * factor;
 
-                    height = ((s0 + s1 + s2 + s3) / 4.0f)
-                            + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
-
-                    //SetLocalHeight(x + (i / 2), z + (i / 2), factor, overwrite);//DEBUG PEAKS
+                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + (i / 2), closestPeaks)) / maxDistance;
+                    modNoise = GetModNoise(x + (i / 2), z + (i / 2), modNoiseOrig);
+                    height = GetHeight(x + (i / 2), z + (i / 2),(s0 + s1 + s2 + s3) / 4.0f, modNoise);
                     SetLocalHeight(x + (i / 2), z + (i / 2), height, overwrite);
                 }
             }
             counter = 0;
-
+             
             // squares
             for (int z = 0; z < s; z += i)
             {
@@ -424,28 +398,28 @@ public class DiamondSquare
                     d3 = z >= s - i ? (cn + s2 + s3) / 3.0f :
                         (cn + s2 + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f;
                     
-                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x+ (i / 2), z, closestPeaks)) / maxDistance;
-                    modNoise = modNoiseOrig * factor;
-                    height = d0 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
-                    //SetLocalHeight(x + (i / 2), z, factor, overwrite);//DEBUG PEAKS
+
+                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x+ (i / 2), z, closestPeaks)) / maxDistance;
+                    modNoise = GetModNoise(x + (i / 2), z, modNoiseOrig); 
+                    height = GetHeight(x + (i / 2), z, d0, modNoise);
                     SetLocalHeight(x + (i / 2), z, height, overwrite);
 
-                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z + (i / 2), closestPeaks)) / maxDistance;
-                    modNoise = modNoiseOrig * factor;
-                    height = d1 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
-                    //SetLocalHeight(x, z + (i / 2), factor, overwrite);//DEBUG PEAKS
+
+                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z + (i / 2), closestPeaks)) / maxDistance;
+                    modNoise = GetModNoise(x, z + (i / 2), modNoiseOrig);
+                    height = GetHeight(x, z + (i / 2), d1, modNoise);
                     SetLocalHeight(x, z + (i / 2), height, overwrite);
 
-                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + i, z + (i / 2), closestPeaks)) / maxDistance;
-                    modNoise = modNoiseOrig * factor;
-                    height = d2 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
-                    //SetLocalHeight(x + i, z + (i / 2), factor, overwrite);//DEBUG PEAKS
+
+                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + i, z + (i / 2), closestPeaks)) / maxDistance;
+                    modNoise = GetModNoise(x + i, z + (i / 2), modNoiseOrig);
+                    height = GetHeight(x + i, z + (i / 2), d2, modNoise);
                     SetLocalHeight(x + i, z + (i / 2), height, overwrite);
 
-                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + i, closestPeaks)) / maxDistance;
-                    modNoise = modNoiseOrig * factor;
-                    height = d3 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
-                    //SetLocalHeight(x + (i / 2), z + i, factor, overwrite);//DEBUG PEAKS
+
+                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + i, closestPeaks)) / maxDistance;
+                    modNoise = GetModNoise(x + (i / 2), z + i, modNoiseOrig);
+                    height = GetHeight(x + (i / 2), z + i,d3, modNoise);
                     SetLocalHeight(x + (i / 2), z + i, height, overwrite);
                     
                 }
@@ -454,6 +428,48 @@ public class DiamondSquare
         //UnityEngine.Debug.Log("Diamond square complete");
     }
 
+    public float GetHeight(int x, int z, float initValue, float modNoise)
+    {
+        if (debugPeaks)
+        {
+            float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
+            return factor;
+        }
+        /*
+        if ((x > 20 && x < 50) ||(z > 30 && z < 60))
+        {
+            lowFactor = 3;
+        }
+        else
+        {
+            lowFactor = 1;
+        }*/
+        float height = initValue + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
+        
+        return height;
+    }
+
+    public float GetModNoise(int x, int z, float modNoiseOrig)
+    {
+        float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
+
+        float modNoise = modNoiseOrig * factor;
+        /*if ((x > 20 && x < 50) || (z > 30 && z < 60))
+        {
+            modNoise /= (2*factor*factor);
+            //modNoise -= factor;
+            if (modNoise < 0)
+                modNoise = 0;
+        }*/
+        /*if(counter < 5)
+        {
+            counter++;
+            UnityEngine.Debug.Log(factor);
+            UnityEngine.Debug.Log(modNoise);
+        }*/
+
+        return modNoise;
+    }
 
     //float[][] ds;
 
