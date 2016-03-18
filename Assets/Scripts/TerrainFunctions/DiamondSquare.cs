@@ -16,7 +16,7 @@ public class DiamondSquare
     int patchSize = 0;
 
     TerrainGenerator tg;
-    MountainPeaksManager mountainPeaksManager;
+    public MountainPeaksManager mountainPeaksManager;
 
     public DiamondSquare(TerrainGenerator terrainGenerator, int patchSize)
     {
@@ -27,6 +27,8 @@ public class DiamondSquare
     public void AssignFunctions(LocalTerrain localTerrain)
     {
         lt = localTerrain;
+        UnityEngine.Debug.Log(lt);
+        UnityEngine.Debug.Log(tg.gm);
         mountainPeaksManager = new MountainPeaksManager(tg.gm);
     }
 
@@ -183,6 +185,11 @@ public class DiamondSquare
             {
                 distance = d;
             }
+            /*if(counter < 20 && globalX > -64 && globalZ > -64)
+            {
+                UnityEngine.Debug.Log(globalX + "," + globalZ + ":" + peak + "," + distance);
+                counter++;
+            }*/
             /*if (x >= 30 && x < 34 && z >= 30 && z < 34)
             {
                 UnityEngine.Debug.Log(x+","+z+":"+peak);
@@ -291,14 +298,23 @@ public class DiamondSquare
 
         float modNoise = 0.0f;
 
-        List<Vertex> closestPeaks = 
-            mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
+        List<Vertex> closestPeaks = mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
+        if(closestPeaks.Count > 3 && counter < 10)
+        {
+            UnityEngine.Debug.Log("!");
+            
+        }
 
-        //UnityEngine.Debug.Log(lt.localTerrainC.center);
+        //closestPeaks.Add(new Vertex(0, 0));
+        //closestPeaks.Add(new Vertex(32, 0));
+        //closestPeaks.Add(new Vertex(-32, -32));
+        //mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
+
+        UnityEngine.Debug.Log(lt.localTerrainC.center);
         
         foreach(Vertex v in closestPeaks)
         {
-            //UnityEngine.Debug.Log(v);
+            UnityEngine.Debug.Log(v);
         }
 
         //TODO: there is some bug on the Z-edge, if i put defaultHeight high, border will be high
@@ -357,6 +373,9 @@ public class DiamondSquare
         }
         */
         float height = 0;
+        float factorConstant = 2;
+        float highFactor = 0.5f;
+        float lowFactor = 1;
 
         for (int i = s; i > 1; i /= 2)
         {
@@ -373,14 +392,14 @@ public class DiamondSquare
                     s2 = lt.GetLocalHeight(x, z + i, defaultHeight);
                     s3 = lt.GetLocalHeight(x + i, z + i, defaultHeight);
                     // cn
-                    factor = 2 * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + (i / 2), closestPeaks)) / maxDistance;
+                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + (i / 2), closestPeaks)) / maxDistance;
                     modNoise = modNoiseOrig * factor;
 
                     height = ((s0 + s1 + s2 + s3) / 4.0f)
-                            + RandRange(rand, -modNoise, modNoise);
+                            + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
 
+                    //SetLocalHeight(x + (i / 2), z + (i / 2), factor, overwrite);//DEBUG PEAKS
                     SetLocalHeight(x + (i / 2), z + (i / 2), height, overwrite);
-                    //SetLocalHeight(x + (i / 2), z + (i / 2), factor, overwrite);
                 }
             }
             counter = 0;
@@ -405,29 +424,30 @@ public class DiamondSquare
                     d3 = z >= s - i ? (cn + s2 + s3) / 3.0f :
                         (cn + s2 + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f;
                     
-                    factor = 2 * (maxDistance - GetSmallestDistanceToPeak(x+ (i / 2), z, closestPeaks)) / maxDistance;
+                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x+ (i / 2), z, closestPeaks)) / maxDistance;
                     modNoise = modNoiseOrig * factor;
-                    height = d0 + RandRange(rand, -modNoise, modNoise);
+                    height = d0 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
+                    //SetLocalHeight(x + (i / 2), z, factor, overwrite);//DEBUG PEAKS
                     SetLocalHeight(x + (i / 2), z, height, overwrite);
-                    //SetLocalHeight(x + (i / 2), z, factor, overwrite);
 
-                    factor = 2 * (maxDistance - GetSmallestDistanceToPeak(x, z + (i / 2), closestPeaks)) / maxDistance;
+                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z + (i / 2), closestPeaks)) / maxDistance;
                     modNoise = modNoiseOrig * factor;
-                    height = d1 + RandRange(rand, -modNoise, modNoise);
+                    height = d1 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
+                    //SetLocalHeight(x, z + (i / 2), factor, overwrite);//DEBUG PEAKS
                     SetLocalHeight(x, z + (i / 2), height, overwrite);
-                    //SetLocalHeight(x, z + (i / 2), factor, overwrite);
 
-                    factor = 2 * (maxDistance - GetSmallestDistanceToPeak(x + i, z + (i / 2), closestPeaks)) / maxDistance;
+                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + i, z + (i / 2), closestPeaks)) / maxDistance;
                     modNoise = modNoiseOrig * factor;
-                    height = d2 + RandRange(rand, -modNoise, modNoise);
+                    height = d2 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
+                    //SetLocalHeight(x + i, z + (i / 2), factor, overwrite);//DEBUG PEAKS
                     SetLocalHeight(x + i, z + (i / 2), height, overwrite);
-                    //SetLocalHeight(x + i, z + (i / 2), factor, overwrite);
 
-                    factor = 2 * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + i, closestPeaks)) / maxDistance;
+                    factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + i, closestPeaks)) / maxDistance;
                     modNoise = modNoiseOrig * factor;
-                    height = d3 + RandRange(rand, -modNoise, modNoise);
+                    height = d3 + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
+                    //SetLocalHeight(x + (i / 2), z + i, factor, overwrite);//DEBUG PEAKS
                     SetLocalHeight(x + (i / 2), z + i, height, overwrite);
-                    //SetLocalHeight(x + (i / 2), z + i, factor, overwrite);
+                    
                 }
             }
         }

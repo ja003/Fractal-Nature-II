@@ -1,0 +1,4 @@
+River digging
+
+- river depth is now influenced by original terrain height
+- TODO: use filtered terrain

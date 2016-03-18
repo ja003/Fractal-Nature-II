@@ -13,12 +13,14 @@ public class MountainPeaksCoordinates {
     
 
     GridManager gm;
+    MountainPeaksManager mpm;
 
-    public MountainPeaksCoordinates(int quadrantSize, GridManager gridManager)
+    public MountainPeaksCoordinates(int quadrantSize, GridManager gridManager, MountainPeaksManager mountainPeaksManager)
     {
         gm = gridManager;
-
-        globalCenter = new MountainPeaks(0,0, gm.GetPointArea(0,0));
+        mpm = mountainPeaksManager;
+        
+        globalCenter = new MountainPeaks(0,0, gm.GetPointArea(0,0), mpm);
 
         quadrant1 = new MountainPeaks[quadrantSize, quadrantSize];
         quadrant2 = new MountainPeaks[quadrantSize, quadrantSize];
@@ -30,6 +32,26 @@ public class MountainPeaksCoordinates {
         InitialiseQuadrant(quadrant3, 3);
         InitialiseQuadrant(quadrant4, 4);
     } 
+    
+
+    /// <summary>
+    /// generates initial peaks on all defined areas
+    /// </summary>
+    /// <param name="quadrantSize"></param>
+    public void InitializePeaks(int quadrantSize)
+    {
+        globalCenter.GeneratePeaks();
+        for (int x = 0; x < quadrantSize; x++)
+        {
+            for (int z = 0; z < quadrantSize; z++)
+            {
+                quadrant1[x, z].GeneratePeaks();
+                quadrant2[x, z].GeneratePeaks();
+                quadrant3[x, z].GeneratePeaks();
+                quadrant4[x, z].GeneratePeaks();
+            }
+        }
+    }
     
 
 
@@ -58,7 +80,8 @@ public class MountainPeaksCoordinates {
             catch (IndexOutOfRangeException e)
             {
                 Debug.Log(x + "," + z + " OUT");
-                return new MountainPeaks(x,z,gm.GetPointArea(x,z));
+                return globalCenter;
+                //return new MountainPeaks(x,z,gm.GetPointArea(x,z), mpm);
             }
         }
     }
@@ -106,9 +129,7 @@ public class MountainPeaksCoordinates {
     
     public bool IsDefined(int x, int z)
     {
-        if (GetValue(x, z).gridCoordinates.x == 666)
-            return false;
-        return true;
+        return GetValue(x, z).peaks.Count > 0;
     }
 
 
@@ -224,13 +245,13 @@ public class MountainPeaksCoordinates {
                 else
                 {
                     if (quadrantNumber == 1)
-                        newQuadrant[x, z] = new MountainPeaks(x, z, gm.GetPointArea(x, z));
+                        newQuadrant[x, z] = new MountainPeaks(x, z, gm.GetPointArea(x, z), mpm);
                     else if (quadrantNumber == 2)
-                        newQuadrant[x, z] = new MountainPeaks(-x, z, gm.GetPointArea(-x, z));
+                        newQuadrant[x, z] = new MountainPeaks(-x, z, gm.GetPointArea(-x, z), mpm);
                     else if (quadrantNumber == 3)
-                        newQuadrant[x, z] = new MountainPeaks(-x, -z, gm.GetPointArea(-x, -z));
+                        newQuadrant[x, z] = new MountainPeaks(-x, -z, gm.GetPointArea(-x, -z), mpm);
                     else if (quadrantNumber == 4)
-                        newQuadrant[x, z] = new MountainPeaks(x, -z, gm.GetPointArea(x, -z));
+                        newQuadrant[x, z] = new MountainPeaks(x, -z, gm.GetPointArea(x, -z), mpm);
                 }
             }
         }
@@ -245,13 +266,13 @@ public class MountainPeaksCoordinates {
             for (int z = 0; z < Math.Sqrt(quadrant.Length); z++)
             {
                 if(quadrantNumber == 1)
-                    quadrant[x, z] = new MountainPeaks(x,z, gm.GetPointArea(x,z));
+                    quadrant[x, z] = new MountainPeaks(x,z, gm.GetPointArea(x,z),mpm);
                 else if (quadrantNumber == 2)
-                    quadrant[x, z] = new MountainPeaks(-x, z, gm.GetPointArea(-x, z));
+                    quadrant[x, z] = new MountainPeaks(-x, z, gm.GetPointArea(-x, z), mpm);
                 else if (quadrantNumber == 3)
-                    quadrant[x, z] = new MountainPeaks(-x, -z, gm.GetPointArea(-x, -z));
+                    quadrant[x, z] = new MountainPeaks(-x, -z, gm.GetPointArea(-x, -z), mpm);
                 else if (quadrantNumber == 4)
-                    quadrant[x, z] = new MountainPeaks(x, -z, gm.GetPointArea(x, -z));
+                    quadrant[x, z] = new MountainPeaks(x, -z, gm.GetPointArea(x, -z), mpm);
             }
         }
     }

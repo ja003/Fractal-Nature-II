@@ -50,9 +50,9 @@ public class GUIManager : MonoBehaviour
         smallButtonHeight = 20;
 
         fractalNatureFlag = true;
-        generalSettingsFlag = false;
+        generalSettingsFlag = true;
         erosionMenuFlag = false;
-        filterMenuFlag = true;
+        filterMenuFlag = false;
         riverMenuFlag = false;
         terrainProcessing = false;
 

@@ -14,6 +14,8 @@ public class RiverInfo  {
     public Vertex rightVertex;
     public Vertex botVertex;
     public Vertex leftVertex;
+
+    public Vertex lowestPoint;
     
     public FunctionRiverPlanner frp;
     public FunctionDebugger fd;
@@ -35,6 +37,19 @@ public class RiverInfo  {
         ftm = rg.ftm;
         fmc = rg.fmc;
         reachedSides = new List<Direction>();
+
+        lowestPoint = new Vertex(666, 666, 666);
+    }
+
+    /// <summary>
+    /// checks if point has lower height that river's lowest point
+    /// </summary>
+    public void UpdateLowestPoint(Vertex point)
+    {
+        if(lowestPoint.height > point.height)
+        {
+            lowestPoint = point;
+        }
     }
 
     public void UpdateReachedSides()

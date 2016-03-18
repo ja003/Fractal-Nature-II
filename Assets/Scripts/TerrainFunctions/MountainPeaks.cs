@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class MountainPeaks {
 
+    MountainPeaksManager mpm;
     public Vertex gridCoordinates;
     public Area area;
     public List<Vertex> peaks;
@@ -17,11 +18,13 @@ public class MountainPeaks {
     /// <summary>
     /// structure holds x peaks in certain area
     /// </summary>
-    public MountainPeaks(int gridX, int gridZ, Area area)
+    public MountainPeaks(int gridX, int gridZ, Area area, MountainPeaksManager mountainPeaksManager)
     {
         gridCoordinates = new Vertex(gridX, gridZ);
         this.area = area;
         peaks = new List<Vertex>();
+        mpm = mountainPeaksManager;
+        //GeneratePeaks();
     }
 
     /// <summary>
@@ -121,18 +124,31 @@ public class MountainPeaks {
     }
 
     /// <summary>
-    /// generates 1 peak in the middle of area
-    /// TODO: make random
+    /// generates 1 peak on random position of area
     /// </summary>
     public void GeneratePeaks()
     {
-        int x = (int)(area.botLeft.x + area.topRight.x) / 2;
-        int z = (int)(area.botLeft.z + area.topRight.z) / 2;
-        peaks.Add(new Vertex(x, z));
+        //int x = (int)(area.botLeft.x + area.topRight.x) / 2;
+        //int z = (int)(area.botLeft.z + area.topRight.z) / 2;
+
+        int offset = 10;
+        int randX = Random.Range(area.botLeft.x + offset, area.topRight.x - offset);
+        int randZ = Random.Range(area.botLeft.z + offset, area.topRight.z - offset);
+
+        //randX = (int)(area.botLeft.x);
+        //randZ = (int)(area.botLeft.z);
+
+        List<Vertex> newPeaks = new List<Vertex>();
+        newPeaks.Add(new Vertex(randX, randZ));
+        AddPeaks(newPeaks);
+        mpm.UpdateNeighbourhood(gridCoordinates.x, gridCoordinates.z, newPeaks);
     }
 
     public override string ToString()
     {
-        return gridCoordinates + "on: " + area + " | " + peaks[0];
+        string peak = "";
+        if (peaks.Count > 0)
+            peak = peaks[0].ToString();
+        return gridCoordinates + "on: " + area + " | " + peak;
     }
 }

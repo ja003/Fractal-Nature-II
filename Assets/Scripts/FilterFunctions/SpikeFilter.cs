@@ -43,9 +43,9 @@ public class SpikeFilter {
                     float height = lt.gt.GetHeight(x, z);
 
                     if (height < average - epsilon)
-                        fg.SetGlobalValue(x, z, -(height-(average - epsilon)), false, globalFilterSpikeC);
+                        fg.SetGlobalValue(x, z, height-(average - epsilon), false, globalFilterSpikeC);
                     else if (height > average + epsilon)
-                        fg.SetGlobalValue(x, z, -(height-(average + epsilon)), false, globalFilterSpikeC);
+                        fg.SetGlobalValue(x, z, height-(average + epsilon), false, globalFilterSpikeC);
                 }
             }
         }

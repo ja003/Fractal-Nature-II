@@ -218,16 +218,19 @@ public class FunctionRiverPlanner  {
             borderOffset, reachedSide,
             x_min, x_max, z_min, z_max)); //add new node which lies exactly on border
 
+        RiverInfo river = new RiverInfo(rg);
+
         while (pathIndex != 0)//recursively add all vertices of found path
         {
             finalPath.Add(reachableNodes[pathIndex].vertex);
             pathIndex = reachableNodes[pathIndex].parentIndex;
+            river.UpdateLowestPoint(reachableNodes[pathIndex].vertex);
         }
         finalPath.Add(start);
         finalPath.Reverse();
         
         
-        RiverInfo river = new RiverInfo(rg);
+        
         river.riverPath = finalPath;
 
         reachedSides.Add(reachedSide);

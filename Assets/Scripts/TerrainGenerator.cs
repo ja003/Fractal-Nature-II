@@ -159,6 +159,8 @@ public class TerrainGenerator// : ITerrainGenerator
         //int stepsNum = ((x_max - x_min) / patchSize) * ((z_max - z_min) / patchSize);
         //guiManager.progress.SetProgress(stepsNum);
 
+        //ds.Initialize(patchSize);
+        
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
@@ -167,7 +169,10 @@ public class TerrainGenerator// : ITerrainGenerator
                 if (!localTerrain.globalTerrainC.IsDefinedArea(movedCenter, 1))
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
+                    //ds.mountainPeaksManager.GeneratePeaks(x, z);
                     ds.Initialize(patchSize);
+
+                    
                     //Debug.Log("generating on: " + movedCenter);
                 }
                 else

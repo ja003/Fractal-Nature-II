@@ -53,7 +53,7 @@ public class RiverGenerator  {
 
         RiverInfo defaultRiver = new RiverInfo(this);
         defaultRiver.riverPath = tempList;
-        frd.DigRiver(defaultRiver.riverPath);
+        frd.DigRiver(defaultRiver);
 
 
         List<Vertex> tempList2 = new List<Vertex>();
@@ -65,7 +65,7 @@ public class RiverGenerator  {
         RiverInfo defaultRiver2 = new RiverInfo(this);
         defaultRiver2.riverPath = tempList2;
         defaultRiver.ConnectWith(defaultRiver2);
-        frd.DigRiver(defaultRiver.riverPath);
+        frd.DigRiver(defaultRiver);
 
         
 
@@ -105,7 +105,7 @@ public class RiverGenerator  {
 
         Debug.Log(currentRiver);
         //frd.DistortPath(currentRiver.riverPath, 10);
-        frd.DigRiver(currentRiver.riverPath);
+        frd.DigRiver(currentRiver);
 
 
     }
@@ -180,7 +180,7 @@ public class RiverGenerator  {
 
         Debug.Log("connected river:" + currentRiver);
 
-        frd.DigRiver(currentRiver.riverPath);
+        frd.DigRiver(currentRiver);
     }
 
     /// <summary>
