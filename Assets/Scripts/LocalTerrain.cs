@@ -53,21 +53,49 @@ public class LocalTerrain : ILocalTerrain {
     /// <param name="cameraPosition"></param>
     public void UpdateVisibleTerrain(Vector3 cameraPosition)
     {
-        MoveVisibleTerrain(cameraPosition);
+        MoveVisibleTerrain(cameraPosition, false);
 
-        tg.GenerateTerrainOn(localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
+        if (!fg.ftm.IsDefinedTerrainArea(GetVisibleArea()))
+        {
+            Debug.Log(GetVisibleArea() + " not defined!");
+            tg.GenerateTerrainOn(localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
+
+            //connect river (if it has been generated)
+            if (rg.currentRiver != null && rg.currentRiver.riverPath.Count > 0)
+            {
+
+                Debug.Log("connection river");
+                rg.GenerateConnectingRiver();
+            }
+        }
+
+        //generate filter if selected
+        if (tg.filterAverageLayer)
+        {
+            tg.filterGenerator.af.GenerateAverageFilterInRegion(GetVisibleArea());
+        }
+
+        if (tg.filterMedianLayer)
+        {
+            tg.filterGenerator.mdf.GenerateMedianFilterInRegion(GetVisibleArea());
+        }
+
+        if (tg.filterSpikeLayer)
+        {
+            tg.filterGenerator.sf.GenerateSpikeFilterInRegion(GetVisibleArea(), tg.filterGenerator.sf.lastEpsilon);
+        }
+
+        if (tg.filterGaussianLayer)
+        {
+            tg.filterGenerator.gf.ApplyGaussianBlurOnRegion(tg.filterGenerator.gf.lastBlurFactor, 
+                tg.filterGenerator.gf.lastKernelSize, GetVisibleArea());
+        }
 
         //fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
 
-        
 
-        //connect river (if it has been generated)
-        if(rg.currentRiver != null && rg.currentRiver.riverPath.Count > 0)
-        {
 
-            Debug.Log("connection river");
-            rg.GenerateConnectingRiver();
-        }
+
 
         tg.build();
 
@@ -81,13 +109,14 @@ public class LocalTerrain : ILocalTerrain {
     /// <summary>
     /// moves local center
     /// </summary>
-    public void MoveVisibleTerrain(Vector3 newCenter)
+    public void MoveVisibleTerrain(Vector3 newCenter, bool build)
     {
         UpdateLocalCoordinates(newCenter,
             new Vector3(newCenter.x - terrainWidth / 2, 0, newCenter.z - terrainHeight / 2),
             new Vector3(newCenter.x + terrainWidth / 2, 0, newCenter.z + terrainHeight / 2));
         
-        tg.MoveVisibleTerrain(localTerrainC.center);//only for moving terrain (not generating new)
+        if(build)
+            tg.MoveVisibleTerrain(localTerrainC.center);//only for moving terrain (not generating new)
     }
 
     /// <summary>

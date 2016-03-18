@@ -14,16 +14,22 @@ public class FilterGenerator// : IFilterGenerator
     public GlobalCoordinates globalFilterMountainC;
     public GlobalCoordinates globalFilterAverageC;
     public GlobalCoordinates globalFilterMedianC;
+    public GlobalCoordinates globalFilterSpikeC;
+    public GlobalCoordinates globalFilterGaussianC;
 
     public MountainFilter mf;
     public AverageFilter af;
     public MedianFilter mdf;
+    public SpikeFilter sf;
+    public GaussianFilter gf;
 
     public FilterGenerator(int quadrantSize, LocalTerrain localTerrain)
     {
         globalFilterMountainC = new GlobalCoordinates(100);
         globalFilterAverageC = new GlobalCoordinates(100);
         globalFilterMedianC = new GlobalCoordinates(100);
+        globalFilterSpikeC = new GlobalCoordinates(100);
+        globalFilterGaussianC = new GlobalCoordinates(100);
 
         lt = localTerrain;
         localCoordinates = lt.localTerrainC;
@@ -35,6 +41,8 @@ public class FilterGenerator// : IFilterGenerator
         mf = new MountainFilter(this);
         af = new AverageFilter(this);
         mdf = new MedianFilter(this);
+        sf = new SpikeFilter(this);
+        gf = new GaussianFilter(this);
     }
 
     public void AssignFunctions(FunctionMathCalculator functionMathCalculator, 
@@ -47,6 +55,8 @@ public class FilterGenerator// : IFilterGenerator
         mf.AssignFunctions(lt, fmc, globalFilterMountainC);
         af.AssignFunctions(lt, fmc, globalFilterAverageC);
         mdf.AssignFunctions(lt, fmc, globalFilterMedianC, ftm);
+        sf.AssignFunctions(lt, fmc, globalFilterSpikeC);
+        gf.AssignFunctions(lt, fmc, globalFilterGaussianC);
     }
     
     /// <summary>
@@ -94,6 +104,8 @@ public class FilterGenerator// : IFilterGenerator
         mf.ResetFilter();
         af.ResetFilter();
         mdf.ResetFilter();
+        sf.ResetFilter();
+        gf.ResetFilter();
     }
     /*
     public void UpdateLocalCoordinates(Vector3 center, Vector3 botLeft, Vector3 topRight)

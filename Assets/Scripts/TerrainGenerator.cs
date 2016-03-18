@@ -24,6 +24,12 @@ public class TerrainGenerator// : ITerrainGenerator
     public int terrainHeight;
     public int patchSize;
 
+    public bool terrainLayer = true;
+    public bool riverLayer = true;
+    public bool filterAverageLayer = false;
+    public bool filterMedianLayer = false;
+    public bool filterSpikeLayer = false;
+    public bool filterGaussianLayer = false;
 
     int individualMeshWidth;
     int individualMeshHeight;
@@ -160,7 +166,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 Vector3 movedCenter = new Vector3(x, 0, z);
                 if (!localTerrain.globalTerrainC.IsDefinedArea(movedCenter, 1))
                 {
-                    localTerrain.MoveVisibleTerrain(movedCenter); //should be already on grid
+                    localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
                     ds.Initialize(patchSize);
                     //Debug.Log("generating on: " + movedCenter);
                 }
@@ -173,12 +179,15 @@ public class TerrainGenerator// : ITerrainGenerator
         }
 
         //move back
-        localTerrain.MoveVisibleTerrain(center);
+        localTerrain.MoveVisibleTerrain(center, false);
         localTerrain.UpdateSize(terrainWidth, terrainHeight);
 
     }
 
-
+    /// <summary>
+    /// generates terrain around given center
+    /// and pregenerates neighbouring regions
+    /// </summary>
     public void GenerateTerrainOn(Vector3 center)//Vector3 botLeft, Vector3 topRight)
     {
         ///functional RANDOM terrin generator
@@ -241,16 +250,27 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
+                if(terrainLayer)
+                    vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
                 //vertices[x, z].y = 0;
+
+                if(riverLayer)
+                    vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
 
                 //fornow
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
-                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
+                if(filterAverageLayer)
+                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
 
-                //fornow
-                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
+                if (filterMedianLayer)
+                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
+
+                if (filterSpikeLayer)
+                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterSpikeC);
+
+                if (filterGaussianLayer)
+                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterGaussianC);
 
                 /*
                 if(riverGenerator.GetLocalValue(x, z) != 0)
@@ -264,7 +284,6 @@ public class TerrainGenerator// : ITerrainGenerator
                 }
 
                 //vertices[x, z].y = 0;
-                vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
 
                 //if (riverGenerator.GetLocalValue(x, z) != 0 && counter < 100)
                 //{
@@ -300,6 +319,8 @@ public class TerrainGenerator// : ITerrainGenerator
 
         riverGenerator.currentRiver.ResetRiver();
         riverGenerator.globalRiverC.ResetQuadrants();
+
+        filterGenerator.ResetFilters();
     }
 
     public void destroyMeshes()
@@ -557,8 +578,14 @@ public class TerrainGenerator// : ITerrainGenerator
 
         int meshIndex = 0;
 
-        //Rebuild mesh data
-        for (int i = 0; i < 2; i++)
+        //for color mapping
+        float valueRange = globalTerrain.globalTerrainC.globalMax - globalTerrain.globalTerrainC.globalMin;
+        float minusValue = 0;
+        if (globalTerrain.globalTerrainC.globalMin < 0)
+            minusValue = -globalTerrain.globalTerrainC.globalMin;
+
+            //Rebuild mesh data
+            for (int i = 0; i < 2; i++)
         {
             for (int j = 0; j < 2; j++)
             {
@@ -581,8 +608,18 @@ public class TerrainGenerator// : ITerrainGenerator
                                 z + individualMeshHeight * i - i);
 
                         //Set heightmap texture pixel
-                        float this_color = vertices[x + individualMeshWidth * j, z + 
-                            individualMeshHeight * i].y;
+                        //float this_color = vertices[x + individualMeshWidth * j, z + 
+                        //individualMeshHeight * i].y;
+                        float this_color = 
+                            (localTerrain.GetLocalHeight(x + j*individualMeshWidth, z + i*individualMeshHeight)
+                            + minusValue) / valueRange;
+                        if (counter < 50 && (this_color < 0 || this_color > 1) && this_color < 50)
+                        {
+                            
+                            Debug.Log(localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshHeight) + ":" + this_color);
+                            counter++;
+                        }
+
                         heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i, 
                             new Color(this_color, this_color, this_color));
 
@@ -620,7 +657,7 @@ public class TerrainGenerator// : ITerrainGenerator
             }
         }
 
-
+        counter = 0;
 
         ///mark axis
         Color markColor = new Color(1, 0, 0);

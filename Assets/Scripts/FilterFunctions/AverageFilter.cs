@@ -23,20 +23,26 @@ public class AverageFilter {
     /// <summary>
     /// generates average filter on given region
     /// </summary>
-    public void GenerateAverageFilterInRegion(Vector3 botLeft, Vector3 topRight)
+    public void GenerateAverageFilterInRegion(Area region)
     {
-        int x_min = (int)botLeft.x;
-        int z_min = (int)botLeft.z;
+        Debug.Log("average on " + region);
 
-        int x_max = (int)topRight.x;
-        int z_max = (int)topRight.z;
+        int x_min = region.botLeft.x;
+        int z_min = region.botLeft.z;
+
+        int x_max = region.topRight.x;
+        int z_max = region.topRight.z;
 
 
         for (int x = x_min; x < x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - lt.gt.GetNeighbourAverage(x, z, 2), false, globalFilterAverageC);
+                if (!globalFilterAverageC.IsDefined(x, z))
+                {
+                    fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) -
+                        lt.gt.GetNeighbourAverage(x, z, 2), false, globalFilterAverageC);
+                }
             }
         }
     }

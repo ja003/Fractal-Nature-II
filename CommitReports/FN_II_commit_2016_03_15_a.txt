@@ -1,0 +1,5 @@
+On fly generation
+
+- added on flight generation option
+- added control if terrain is defined
+-- fastens terrain movement process

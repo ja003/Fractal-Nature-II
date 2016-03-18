@@ -1,13 +1,17 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR 
+using UnityEngine;
+#endif
 using System.Collections;
+#if UNITY_EDITOR 
 using UnityEditor;
+#endif
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
 public class ObjExporter
 {
-
+#if UNITY_EDITOR 
     public static string MeshToString(MeshFilter mf)
     {
         Mesh m = mf.mesh;
@@ -41,6 +45,7 @@ public class ObjExporter
 
         return sb.ToString();
     }
+#endif
 
     public static string TerrainToString(LayerManager lm, List<Layer> layers)
     {
@@ -88,7 +93,7 @@ public class ObjExporter
             sw.Write(TerrainToString(layerManager, layers));
         }
     }
-
+#if UNITY_EDITOR
     public static void MeshToFile(MeshFilter mf, string filename)
     {
         using (StreamWriter sw = new StreamWriter(filename))
@@ -96,4 +101,5 @@ public class ObjExporter
             sw.Write(MeshToString(mf));
         }
     }
+#endif
 }

@@ -1,0 +1,7 @@
+Filters
+
+- implemented average filter
+- implemented median filter
+- implemented spike filter
+- implemented gaussian filter
+- fixed terrain coloring

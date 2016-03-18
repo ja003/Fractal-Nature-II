@@ -39,7 +39,7 @@ public class GUIMesh {
         yPos += buttonHeight;
 
         // 'On-the-fly' mesh generation toggle
-        gm.infiniteTerrain = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - rightMenuOffset, buttonHeight), gm.infiniteTerrain, "  Allow on-the-fly generation");
+        gm.onFlyGeneration = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - rightMenuOffset, buttonHeight), gm.onFlyGeneration, "  Allow on-the-fly generation");
 
 
         yPos += buttonHeight;

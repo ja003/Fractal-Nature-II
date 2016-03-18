@@ -36,7 +36,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         terrainWidth = 100; 
         terrainHeight = 100;
         patchSize = 64;
-        scaleTerrainY = 15;
+        scaleTerrainY = 12;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
@@ -106,11 +106,11 @@ public class CameraManager : MonoBehaviour, ICameraManager
     void Update () {
 
         //generate terrain when camera gets close to border
-        if(Get2dDistance(gameObject.transform.position, localTerrain.localTerrainC.center) > 70)
+        if(guiManager.onFlyGeneration && Get2dDistance(gameObject.transform.position, localTerrain.localTerrainC.center) > 70)
         {
             //FixCameraPosition(); //no need now
-            //Debug.Log("moving to center: " + gameObject.transform.position);
-            //localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
+            Debug.Log("moving to center: " + gameObject.transform.position);
+            localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
         }
 
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
@@ -125,7 +125,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             FixCameraPosition();
             //Debug.Log("moving to: " + gameObject.transform.position);
-            localTerrain.MoveVisibleTerrain(gameObject.transform.position);
+            localTerrain.MoveVisibleTerrain(gameObject.transform.position, true);
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 30)
@@ -144,7 +144,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             Debug.Log("averaging");
 
-            filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight);
+            filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.GetVisibleArea());
             lastActionFrame = Time.frameCount;
         }
 

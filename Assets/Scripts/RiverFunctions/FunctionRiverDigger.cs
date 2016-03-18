@@ -126,7 +126,7 @@ public class FunctionRiverDigger {
     /// </summary>
     public void DigRiver(List<Vertex> path)
     {
-        DigRiver(path, 10, 2, 0.8f);
+        DigRiver(path, 15, 1, 0.8f);
     }
 
     /// <summary>

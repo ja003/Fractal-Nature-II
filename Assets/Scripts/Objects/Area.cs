@@ -27,7 +27,7 @@ public class Area {
         return botLeft.x <= point.x && botLeft.z <= point.z &&
             point.x <= topRight.x && point.z <= topRight.z;
     }
-
+    
     public override string ToString()
     {
         return "[" + botLeft.x + "," + botLeft.z + "],[" + topRight.x + "," + topRight.z + "]";

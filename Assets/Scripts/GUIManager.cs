@@ -18,13 +18,13 @@ public class GUIManager : MonoBehaviour
 
     public bool fractalNatureFlag;
     public bool generalSettingsFlag;
-    public bool erosionFlag;
-    public bool filterFlag;
-    public bool riverFlag;
+    public bool erosionMenuFlag;
+    public bool filterMenuFlag;
+    public bool riverMenuFlag;
     public bool terrainProcessing;
 
 
-    public bool infiniteTerrain;
+    public bool onFlyGeneration;
 
     public int patchSize;
     public float scaleY;
@@ -36,6 +36,7 @@ public class GUIManager : MonoBehaviour
     GUIMesh mesh;
     GUIExport export;
     public GUIProgress progress;
+    GUIFilters filter;
 
 
     void Start()
@@ -49,10 +50,10 @@ public class GUIManager : MonoBehaviour
         smallButtonHeight = 20;
 
         fractalNatureFlag = true;
-        generalSettingsFlag = true;
-        erosionFlag = false;
-        filterFlag = false;
-        riverFlag = false;
+        generalSettingsFlag = false;
+        erosionMenuFlag = false;
+        filterMenuFlag = true;
+        riverMenuFlag = false;
         terrainProcessing = false;
 
         scaleY = cm.scaleTerrainY;
@@ -65,6 +66,7 @@ public class GUIManager : MonoBehaviour
         mesh = new GUIMesh(this);
         export = new GUIExport(this);
         progress = new GUIProgress(this);
+        filter = new GUIFilters(this);
     }
     
     void Update()
@@ -100,9 +102,21 @@ public class GUIManager : MonoBehaviour
             generalSettingsFlag = false;
             //meshControlFlag = false;
         }
-        if (fractalNatureFlag && !erosionFlag && !filterFlag && !riverFlag)
+        if (fractalNatureFlag && !erosionMenuFlag && !filterMenuFlag && !riverMenuFlag)
         {
             generalSettingsFlag = true;
+        }
+        else
+        {
+            generalSettingsFlag = false;
+        }
+        if (fractalNatureFlag && !erosionMenuFlag && !generalSettingsFlag && !riverMenuFlag)
+        {
+            filterMenuFlag = true;
+        }
+        else
+        {
+            filterMenuFlag = false;
         }
     }
 
@@ -125,6 +139,11 @@ public class GUIManager : MonoBehaviour
         if (terrainProcessing)
         {
             progress.OnGui();
+        }
+
+        if (filterMenuFlag)
+        {
+            filter.OnGui(menu.yPos + 5);
         }
         
 

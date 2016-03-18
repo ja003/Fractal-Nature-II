@@ -12,12 +12,17 @@ public class GlobalCoordinates {
     private float[,] quadrant4;
 
     public Area definedArea;
+    public float globalMax;
+    public float globalMin;
 
     public GlobalCoordinates(int quadrantSize)
     {
         definedArea = new Area(new Vertex(0, 0), new Vertex(0, 0));
 
         globalCenter = 666;
+
+        globalMax = -666;
+        globalMin = 666;
 
         quadrant1 = new float[quadrantSize, quadrantSize];
         quadrant2 = new float[quadrantSize, quadrantSize];
@@ -102,6 +107,13 @@ public class GlobalCoordinates {
         {
             UpdateDefinedArea(x, z);
         }
+
+        if (height > globalMax)
+            globalMax = height;
+        else if (height < globalMin)
+            globalMin = height;
+
+
     }
 
     public void SetValue(Vector3 point, float height, bool overwrite)

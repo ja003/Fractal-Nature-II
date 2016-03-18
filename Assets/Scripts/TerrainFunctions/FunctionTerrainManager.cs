@@ -630,6 +630,19 @@ public class FunctionTerrainManager {
     }
 
     /// <summary>
+    /// checks if corner points of given area are defined
+    /// </summary>
+    public bool IsDefinedTerrainArea(Area area)
+    {
+        bool botLeft = lt.globalTerrainC.IsDefined(area.botLeft);
+        bool topLeft = lt.globalTerrainC.IsDefined(area.topLeft);
+        bool topRight = lt.globalTerrainC.IsDefined(area.topRight);
+        bool botRight = lt.globalTerrainC.IsDefined(area.botRight);
+
+        return botLeft && topLeft && topRight && botRight;
+    }
+
+    /// <summary>
     /// determines wheter point lies in region defined by botLeft and topRight
     /// </summary>
     public bool IsInRegion(Vector3 point, Vector3 botLeft, Vector3 topRight)
