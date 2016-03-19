@@ -33,9 +33,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 100; 
-        terrainHeight = 100;
-        patchSize = 64;
+        terrainWidth = 150; 
+        terrainHeight = 150;
+        patchSize = 128;
         scaleTerrainY = 12;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);

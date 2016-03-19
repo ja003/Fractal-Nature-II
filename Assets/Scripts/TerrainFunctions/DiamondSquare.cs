@@ -435,15 +435,15 @@ public class DiamondSquare
             float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
             return factor;
         }
-        /*
-        if ((x > 20 && x < 50) ||(z > 30 && z < 60))
+        
+        if (x < 64)
         {
-            lowFactor = 3;
+            //lowFactor = 4;
         }
         else
         {
             lowFactor = 1;
-        }*/
+        }
         float height = initValue + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
         
         return height;
@@ -454,13 +454,17 @@ public class DiamondSquare
         float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
 
         float modNoise = modNoiseOrig * factor;
-        /*if ((x > 20 && x < 50) || (z > 30 && z < 60))
+        //if ((x > 10 && x <= 30))
+        //{
+        //    modNoise += factor;
+        //}
+        if (x < 64)
         {
-            modNoise /= (2*factor*factor);
+            //modNoise /= (2*factor*factor);
             //modNoise -= factor;
-            if (modNoise < 0)
-                modNoise = 0;
-        }*/
+            //if (modNoise < 0)
+                //modNoise = 0;
+        }
         /*if(counter < 5)
         {
             counter++;

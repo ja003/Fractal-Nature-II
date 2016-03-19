@@ -126,7 +126,7 @@ public class FunctionRiverDigger {
     /// </summary>
     public void DigRiver(RiverInfo river)
     {
-        DigRiver(river, 15, 2, 0.8f);
+        DigRiver(river, 15, 2, 0.6f);
     }
 
     RiverInfo currentRiver; //river which is being digged

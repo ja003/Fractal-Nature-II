@@ -1,0 +1,4 @@
+River GUI
+
+- added river GUI
+- added possibility to store more rivers

@@ -138,7 +138,7 @@ public class GUIMenu
                     gm.riverMenuFlag = false;
                 }
                 break;
-
         }
+        //Debug.Log(gm);
     }
 }

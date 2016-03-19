@@ -16,6 +16,9 @@ public class RiverGenerator  {
     public FunctionRiverDigger frd;
 
     public RiverInfo currentRiver;
+    public List<RiverInfo> rivers;
+
+    public GUIRiver riverGui;
 
     public RiverGenerator(LocalTerrain localTerrain)
     {
@@ -25,6 +28,8 @@ public class RiverGenerator  {
         localCoordinates = lt.localTerrainC;
 
         currentRiver = new RiverInfo(this);
+
+        rivers = new List<RiverInfo>();
         //localRiverC = new LocalCoordinates(globalRiverC, new Vector3(0, 0, 0), 200, 200);
     }
 
@@ -74,6 +79,11 @@ public class RiverGenerator  {
         defaultRiver.DrawRiver();
     }
 
+    public void DeleteRiverAt(int i)
+    {
+        rivers.RemoveAt(i);
+        riverGui.riverFlags.RemoveAt(i);
+    }
 
     public void GenerateNewRiver()
     {
@@ -101,13 +111,19 @@ public class RiverGenerator  {
         river.ConnectWith(river2);
         river.DrawRiver();
 
-        currentRiver = river;
+        //currentRiver = river;
 
-        Debug.Log(currentRiver);
+        //Debug.Log(currentRiver);
         //frd.DistortPath(currentRiver.riverPath, 10);
-        frd.DigRiver(currentRiver);
+        //frd.DigRiver(currentRiver);
 
+        rivers.Add(river);
+        frd.DigRiver(rivers[rivers.Count - 1]);
 
+        riverGui.riverFlags.Add(true);
+
+        Debug.Log(rivers.Count);
+        Debug.Log(riverGui.riverFlags.Count);
     }
 
     /// <summary>
