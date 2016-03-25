@@ -15,6 +15,11 @@ public class GUIRiver
     public float scaleY;
     public float visibleArea;
 
+    public float width;
+    public float depth;
+    public float areaEffect;
+
+
     GUIManager gm;
 
     public List<bool> riverFlags;
@@ -37,20 +42,53 @@ public class GUIRiver
         rg.riverGui = this;
 
         riverFlags = new List<bool>();
+
+        width = 15;
+        areaEffect = 1;
+        depth = 0.2f;
     }
 
     public void OnGui(int yPosition)
     {
         float buttonWidth = menuWidth - sideOffset - sideOffset / 2;
+        float buttonWidth2 = menuWidth / 2 - sideOffset - sideOffset / 2;
 
         yPos = yPosition;
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "Generate new river"))
         {
-            rg.GenerateNewRiver();
+            rg.GenerateNewRiver(width, areaEffect, depth);
             gm.cm.terrainGenerator.build();
         }
 
         yPos += buttonHeight + 5;
+
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 4.5f * buttonHeight), "parameters");
+
+        yPos += buttonHeight + 2;
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight), "width: " + (int)width);
+        width = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth2, yPos + 5,
+                menuWidth - sideOffset - buttonWidth2 - 5,
+                buttonHeight), width, 8f, 20f);
+
+        yPos += buttonHeight + 2;
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight), 
+            "area: " + (int)areaEffect + "." + (int)((areaEffect - (int)areaEffect) * 100));
+        areaEffect = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth2, yPos + 5,
+                menuWidth - sideOffset - buttonWidth2 - 5,
+                buttonHeight), areaEffect, 0.5f, 2);
+
+        yPos += buttonHeight + 2;
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight),
+            "depth: " + (int)depth + "." + (int)((depth - (int)depth) * 100));
+        depth = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth2, yPos + 5,
+                menuWidth - sideOffset - buttonWidth2 - 5,
+                buttonHeight), depth, 0, 1.5f);
+
+
+        yPos += buttonHeight + 10;
 
         GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 11 * buttonHeight), "rivers");
         yPos += buttonHeight;

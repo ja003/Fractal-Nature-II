@@ -1,2 +1,5 @@
-Multiple rivers
+Multiple rivers (2)
 
+- rivers now store values seperately
+- disabled possibility to connect river to river (bad results)
+- added terrain roughness control

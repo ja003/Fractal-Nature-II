@@ -5,11 +5,13 @@ using System.Collections.Generic;
 public class LayerManager {
 
     public GlobalCoordinates terrain;
+    public RiverGenerator rg;
     public GlobalCoordinates filterXXX;
 
-    public void AssignLayers(GlobalCoordinates terrain)
+    public void AssignLayers(GlobalCoordinates terrain, RiverGenerator riverGenerator)
     {
         this.terrain = terrain;
+        rg = riverGenerator;
     }
 
     public float GetValueFromLayers(int x, int z, List<Layer> layers)
@@ -31,11 +33,15 @@ public class LayerManager {
 
         if (layers.Contains(Layer.river))
         {
-            /*v = river.GetValue(x, z);
-            if (v != 666)
+            foreach(RiverInfo river in rg.rivers)
             {
-                value += v;
-            }*/
+                v = river.globalRiverC.GetValue(x, z);
+                if (v != 666)
+                {
+                    value += v;
+                }
+            }
+            
         }
         return value;
     }

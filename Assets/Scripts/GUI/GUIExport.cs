@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class GUIExport {
 
@@ -9,10 +10,20 @@ public class GUIExport {
     int topOffset;
     int buttonHeight;
     public float yPos;
+    public float yPos2;
     int sideOffset;
 
     public float scaleY;
     public float visibleArea;
+
+    bool exportMenuVisible;
+
+    bool exportRiver;
+    bool exportFilter;
+    bool exportTerrain;
+
+    string path;
+    string name;
 
     GUIManager gm;
 
@@ -27,6 +38,10 @@ public class GUIExport {
         sideOffset = 10;
         scaleY = gm.scaleY;
         visibleArea = gm.visibleArea;
+
+        path = "C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export";
+        path = "C:\\Users\\Vukmir\\Desktop\\obj";
+        name = "";
     }
 
     public void OnGui(float yPosition)
@@ -41,7 +56,48 @@ public class GUIExport {
 
         if (GUI.Button(new Rect(Screen.width - menuWidth + 10, yPos, buttonWidth, buttonHeight), "EXPORT MESH"))
         {
-            Export();
+            //Export();
+            exportMenuVisible = !exportMenuVisible;
+        }
+
+
+        if (exportMenuVisible)
+        {
+            yPos2 = 0;
+            float menu2Width = 2 * menuWidth;
+
+            GUI.Box(new Rect(Screen.width - menu2Width, yPos2, menuWidth - rightMenuOffset, buttonHeight * 5), "Export");
+            yPos2 += buttonHeight/2;
+
+            //"C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export"
+            GUI.TextField(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight/2), path);
+            yPos2 += buttonHeight/2 + 2;
+            if (GUI.Button(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight/2), "..."))
+            {
+                path = EditorUtility.SaveFolderPanel("Select destination","","");
+            }
+            yPos2 += buttonHeight / 2 + 2;
+            GUI.Label(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth/2, buttonHeight/2),"name: ");
+            name = GUI.TextArea(new Rect(Screen.width - menu2Width + buttonWidth/2, yPos2, buttonWidth/2, buttonHeight / 2), name);
+            
+
+
+
+            yPos2 += buttonHeight/2 + 2;
+            exportTerrain = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight/2), gm.onFlyGeneration, "  terrain");
+            yPos2 += buttonHeight / 2 + 2;
+
+            exportRiver = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight / 2), gm.onFlyGeneration, "  river");
+            yPos2 += buttonHeight / 2 + 2;
+
+            exportFilter = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight / 2), gm.onFlyGeneration, "  filter");
+            yPos2 += buttonHeight / 2 + 3;
+
+            if (GUI.Button(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight), "EXPORT"))
+            {
+                Export();
+            }
+
         }
     }
 
@@ -59,6 +115,12 @@ public class GUIExport {
         List<Layer> layers = new List<Layer>();
         layers.Add(Layer.terrain);
         layers.Add(Layer.river);
-        ObjExporter.TerrainToFile(gm.cm.layerManager, layers, "C:\\Users\\ja004\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export\\gt_01.obj");
+
+        if(name.Length == 0)
+        {
+            name = "default_name";
+        }
+
+        ObjExporter.TerrainToFile(gm.cm.layerManager, layers, path + "\\" + name + ".obj");
     }
 }

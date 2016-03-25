@@ -125,7 +125,8 @@ public class FunctionRiverDigger {
     /// </summary>
     public void DigRiver(RiverInfo river)
     {
-        DigRiver(river, 15, 1, 0.6f);
+        //DigRiver(river, 15, 1, 0.6f);
+        DigRiver(river, (int)river.width, river.areaEffect, river.depth);
     }
 
     RiverInfo currentRiver; //river which is being digged
@@ -134,10 +135,18 @@ public class FunctionRiverDigger {
     /// digs river path
     /// </summary>
     /// <param name="width">width of river corridor</param>
-    /// <param name="widthFactor">defines area around river. 1 = only river, 2 = river and close area</param>
+    /// <param name="widthFactor">also "areaEffect". defines area around river. 1 = only river, 2 = river and close area</param>
     /// <param name="maxDepth">depth in center of river</param>
     public void DigRiver(RiverInfo river, int width, float widthFactor, float maxDepth)
     {
+        //optimize areaEffect
+        if (widthFactor > 1 && widthFactor < 1.5f)
+            widthFactor = 1;
+        else if (widthFactor >= 1.5)
+            widthFactor = 2;
+
+        widthFactor = 2;//for current depth function (aTan) it is neccesarry to have bigger area effect
+
         //DigCorners(path, width, widthFactor, maxDepth);
         currentRiver = river;
         List<Vertex> path = river.riverPath;
@@ -301,7 +310,8 @@ public class FunctionRiverDigger {
             counter++;
         }
 
-        return MySinc(distance, width, (dif + 1)*maxDepth);
+        //return MySinc(distance, width, (dif + 1)*maxDepth);
+        return MyArctan(distance, width, (dif + 1) * maxDepth);
     }
     
     int counter = 0;
@@ -312,12 +322,19 @@ public class FunctionRiverDigger {
         {
             return -depth;
         }
-        double r = -(depth/ Math.PI) * Math.Sin(x * Math.PI / width) / x * width;
-        if (Double.IsNaN(r) && counter < 10)
+        double r = -(depth/ Math.PI) * (Math.Sin(x * Math.PI / width) / x) * width;
+
+        if(counter < 10)
+        {
+            Debug.Log(x + "," + width + "," + depth + " = " + r);
+            counter++;
+        }
+
+        /*if (Double.IsNaN(r) && counter < 10)
         {
             Debug.Log("NaN");
             counter++;
-        }
+        }*/
         return (float)r;
         /*
         return (float)(-
@@ -326,6 +343,11 @@ public class FunctionRiverDigger {
             /(x / Math.PI))
             *(float)(width* widthFactor / Math.PI);
             */
+    }
+
+    public float MyArctan(float x, float width, float depth)
+    {
+        return depth * Mathf.Atan(Mathf.Abs(x) - width / 2) - depth * (Mathf.PI / 2);
     }
 
 }

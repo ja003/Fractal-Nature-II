@@ -88,7 +88,7 @@ public class RiverGenerator  {
         riverGui.riverFlags.RemoveAt(i);
     }
 
-    public void GenerateNewRiver()
+    public void GenerateNewRiver(float width, float areaEffect, float depth)
     {
 
         Vertex start = ftm.GetLowestRegionCenter(20, 20);//LOCAL!
@@ -120,6 +120,10 @@ public class RiverGenerator  {
 
         //frd.DistortPath(currentRiver.riverPath, 10);
         //frd.DigRiver(currentRiver);
+
+        river.width = width;
+        river.areaEffect = areaEffect;
+        river.depth = depth;
 
         rivers.Add(river);
         frd.DigRiver(rivers[rivers.Count - 1]);

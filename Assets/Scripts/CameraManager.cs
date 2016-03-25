@@ -86,7 +86,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionMathCalculator.AssignFunctions(localTerrain);
         functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator, riverGenerator);
 
-        layerManager.AssignLayers(globalTerrain.globalTerrainC);
+        layerManager.AssignLayers(globalTerrain.globalTerrainC, riverGenerator);
     }
 
     int lastActionFrame = 0;

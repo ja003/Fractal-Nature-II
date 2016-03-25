@@ -26,6 +26,10 @@ public class RiverInfo  {
 
     public GlobalCoordinates globalRiverC;
 
+    public float width;
+    public float areaEffect;
+    public float depth;
+
     public RiverInfo(RiverGenerator rg)
     {
         riverPath = new List<Vertex>();

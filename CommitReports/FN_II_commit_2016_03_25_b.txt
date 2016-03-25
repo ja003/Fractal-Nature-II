@@ -1,0 +1,6 @@
+River depth function 
+
+- added select export destination option
+- added control of river parameters
+- implemented new depth function based on arctan function 
+
