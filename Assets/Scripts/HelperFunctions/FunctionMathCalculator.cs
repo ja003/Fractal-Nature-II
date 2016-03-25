@@ -152,7 +152,7 @@ public class FunctionMathCalculator {
     /// boundaries starts on starting point and ends on opposite side of the reached side
     /// </summary>
     /// MAYBE OBSOLETE
-    public void DetermineBoundaries(Vertex start, RiverInfo river,
+    /*public void DetermineBoundaries(Vertex start, RiverInfo river,
          ref int x_min, ref int z_min, ref int x_max, ref int z_max)
     {
         //Debug.Log("FROM");
@@ -182,7 +182,7 @@ public class FunctionMathCalculator {
         //Debug.Log(z_min);
         //Debug.Log(x_max);
         //Debug.Log(z_max);
-    }
+    }*/
 
     public Direction GetOppositeDirection(Direction direction)
     {

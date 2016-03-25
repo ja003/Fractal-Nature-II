@@ -61,12 +61,18 @@ public class LocalTerrain : ILocalTerrain {
             tg.GenerateTerrainOn(localTerrainC.center); //localCoordinates.botLeft, localCoordinates.topRight);
 
             //connect river (if it has been generated)
+            foreach(RiverInfo river in rg.rivers)
+            {
+                Debug.Log("connection river");
+                rg.GenerateConnectingRiver(river);
+            }
+            /*
             if (rg.currentRiver != null && rg.currentRiver.riverPath.Count > 0)
             {
 
                 Debug.Log("connection river");
                 rg.GenerateConnectingRiver();
-            }
+            }*/
         }
 
         //generate filter if selected
@@ -100,9 +106,9 @@ public class LocalTerrain : ILocalTerrain {
         tg.build();
 
         //draw river (if it has been generated)
-        if (rg.currentRiver != null)
+        foreach (RiverInfo river in rg.rivers)
         {
-            rg.currentRiver.DrawRiver();
+            river.DrawRiver();
         }
     }
 
@@ -154,7 +160,7 @@ public class LocalTerrain : ILocalTerrain {
 
     }
 
-    public Vector3 GetGlobalCoordinate(int x, int z)
+    public Vertex GetGlobalCoordinate(int x, int z)
     {
         return new Vector3(x + (int)localTerrainC.center.x - terrainWidth / 2, 0, z + (int)localTerrainC.center.z - terrainHeight / 2);
     }

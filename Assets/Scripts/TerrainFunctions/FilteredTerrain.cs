@@ -62,9 +62,9 @@ public class FilteredTerrain {
         float river = 0;
         if (!ignoreLayers.Contains(Layer.river))
         {            
-            river = rg.globalRiverC.GetValue(x, z);
+            /*river = rg.globalRiverC.GetValue(x, z);
             if (river == 666)
-                river = 0;
+                river = 0;*/
         }
 
         return terrain - filterMountain - filterMedian - filterAverage - river;

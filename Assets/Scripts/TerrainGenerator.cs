@@ -31,6 +31,8 @@ public class TerrainGenerator// : ITerrainGenerator
     public bool filterSpikeLayer = false;
     public bool filterGaussianLayer = false;
 
+    public float rougness = 3;
+
     int individualMeshWidth;
     int individualMeshHeight;
     public Vector3 scaleTerrain;
@@ -78,57 +80,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
         build();
     }
-
-    /// <summary>
-    /// checks if corners of defined region (by center) are defined
-    /// if not, region with center in the corner is generated
-    /// </summary>
-    /*public void PregenerateRegions(Vector3 center)
-    {
-        Vector3 top = new Vector3(center.x, 0, center.z + terrainHeight / 2);
-        Vector3 right = new Vector3(center.x + terrainWidth / 2, 0, center.z);
-        Vector3 bot = new Vector3(center.x, 0, center.z - terrainHeight / 2);
-        Vector3 left = new Vector3(center.x - terrainWidth / 2, 0, center.z);
-
-        Vector3 botLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z - terrainHeight / 2);
-        Vector3 topLeft = new Vector3(center.x - terrainWidth / 2, 0, center.z + terrainHeight / 2);
-        Vector3 topRight = new Vector3(center.x + terrainWidth / 2, 0, center.z + terrainHeight / 2);
-        Vector3 botRight = new Vector3(center.x + terrainWidth / 2, 0, center.z - terrainHeight / 2);
-        
-        if (!localTerrain.globalTerrainC.IsDefinedArea(center, 1))
-        {
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(center));
-            ds.Initialize(patchSize);
-        }
-        
-
-        
-        if (!localTerrain.globalTerrainC.IsDefinedArea(botLeft,1))
-        {
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botLeft));
-            ds.Initialize(patchSize);
-        }
-        if (!localTerrain.globalTerrainC.IsDefinedArea(topRight, 1))
-        {
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topRight));
-            ds.Initialize(patchSize);
-        }
-
-        if (!localTerrain.globalTerrainC.IsDefinedArea(topLeft, 1))
-        {
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(topLeft));
-            ds.Initialize(patchSize);
-        }        
-        if (!localTerrain.globalTerrainC.IsDefinedArea(botRight, 1))
-        {
-            localTerrain.MoveVisibleTerrain(gm.GetCenterOnGrid(botRight));
-            ds.Initialize(patchSize);
-        }
-
-        //move back
-        localTerrain.MoveVisibleTerrain(center);
-    }
-    */
+    
 
 
     //// <summary>
@@ -155,12 +107,6 @@ public class TerrainGenerator// : ITerrainGenerator
 
         localTerrain.UpdateSize(patchSize, patchSize);
 
-        //guiManager.terrainProcessing = true;
-        //int stepsNum = ((x_max - x_min) / patchSize) * ((z_max - z_min) / patchSize);
-        //guiManager.progress.SetProgress(stepsNum);
-
-        //ds.Initialize(patchSize);
-        
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
@@ -170,7 +116,8 @@ public class TerrainGenerator// : ITerrainGenerator
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
                     //ds.mountainPeaksManager.GeneratePeaks(x, z);
-                    ds.Initialize(patchSize);
+                    rougness += UnityEngine.Random.Range(-0.2f, 0.3f);
+                    ds.Initialize(patchSize, rougness);
 
                     
                     //Debug.Log("generating on: " + movedCenter);
@@ -182,7 +129,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 //guiManager.progress.AddToProgress(1);
             }
         }
-
+        
         //move back
         localTerrain.MoveVisibleTerrain(center, false);
         localTerrain.UpdateSize(terrainWidth, terrainHeight);
@@ -259,8 +206,14 @@ public class TerrainGenerator// : ITerrainGenerator
                     vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
                 //vertices[x, z].y = 0;
 
+                foreach(RiverInfo river in riverGenerator.rivers)
+                {
+                    if(riverGenerator.riverGui.riverFlags[riverGenerator.rivers.IndexOf(river)])
+                        vertices[x, z].y += riverGenerator.GetLocalValue(river, x, z);
+                }
+                /*
                 if(riverLayer)
-                    vertices[x, z].y += riverGenerator.GetLocalValue(x, z);
+                    vertices[x, z].y += riverGenerator.GetLocalValue(x, z);*/
 
                 //fornow
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
@@ -282,11 +235,6 @@ public class TerrainGenerator// : ITerrainGenerator
                 {
                     //Debug.Log(riverGenerator.GetLocalValue(x, z));
                 }*/
-                if ( Double.IsNaN(riverGenerator.GetLocalValue(x, z)) && counter < 10)
-                {
-                    Debug.Log("[" + x + "," + z + "]: NaN");
-                    counter++;
-                }
 
                 //vertices[x, z].y = 0;
 
@@ -322,8 +270,7 @@ public class TerrainGenerator// : ITerrainGenerator
     {
         localTerrain.globalTerrainC.ResetQuadrants();
 
-        riverGenerator.currentRiver.ResetRiver();
-        riverGenerator.globalRiverC.ResetQuadrants();
+        riverGenerator.ResetRivers();
 
         filterGenerator.ResetFilters();
     }

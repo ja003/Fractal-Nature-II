@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class RiverInfo  {
 
     public List<Vertex> riverPath;
-    public bool reachTop;
-    public bool reachRight;
-    public bool reachBot;
-    public bool reachLeft;
+    //public bool reachTop;
+    //public bool reachRight;
+    //public bool reachBot;
+    //public bool reachLeft;
 
     public Vertex topVertex;
     public Vertex rightVertex;
@@ -24,13 +24,15 @@ public class RiverInfo  {
 
     public List<Direction> reachedSides;
 
+    public GlobalCoordinates globalRiverC;
+
     public RiverInfo(RiverGenerator rg)
     {
         riverPath = new List<Vertex>();
-        reachTop = false;
-        reachRight = false;
-        reachBot = false;
-        reachLeft = false;
+        //reachTop = false;
+        //reachRight = false;
+        //reachBot = false;
+        //reachLeft = false;
 
         fd = rg.fd;
         frp = rg.frp;
@@ -39,6 +41,26 @@ public class RiverInfo  {
         reachedSides = new List<Direction>();
 
         lowestPoint = new Vertex(666, 666, 666);
+
+        globalRiverC = new GlobalCoordinates(100);
+    }
+
+    /// <summary>
+    /// returns closest vertex from path to given coordinates
+    /// </summary>
+    public Vertex GetClosestVertexTo(Vertex point)
+    {
+        float distance = 666;
+        Vertex closestVertex = riverPath[0];
+        foreach(Vertex v in riverPath)
+        {
+            if(Vector3.Distance(v, point) < distance)
+            {
+                closestVertex = v;
+            }
+            distance = Vector3.Distance(v, point);
+        }
+        return closestVertex;
     }
 
     /// <summary>
@@ -51,7 +73,7 @@ public class RiverInfo  {
             lowestPoint = point;
         }
     }
-
+    /*
     public void UpdateReachedSides()
     {
         if (reachTop && !reachedSides.Contains(Direction.top))
@@ -70,7 +92,7 @@ public class RiverInfo  {
         {
             reachedSides.Add(Direction.left);
         }
-    }
+    }*/
     
     public Vertex GetLastVertex()
     {
@@ -160,6 +182,7 @@ public class RiverInfo  {
     }
     */
 
+        /*
     public void SetReachedSide(Direction side)
     {
         switch (side)
@@ -196,7 +219,7 @@ public class RiverInfo  {
                 reachLeft = false;
                 break;
         }
-    }
+    }*/
 
     /// <summary>
     /// reverse direction of the riverPath and swaps reached sid
@@ -213,32 +236,38 @@ public class RiverInfo  {
         {
             riverPath.RemoveAt(0);
             riverPath.Reverse();
+            riverPath.AddRange(river2.riverPath);
+            riverPath.Reverse();
         }
         else if (GetLastVertex().EqualsCoordinates(river2.riverPath[0]))
         {
             river2.riverPath.RemoveAt(0);
+            riverPath.AddRange(river2.riverPath);
         }
         else if (riverPath[0].EqualsCoordinates(river2.GetLastVertex()))
         {
             riverPath.RemoveAt(0);
             riverPath.Reverse();
             river2.riverPath.Reverse();
+            riverPath.AddRange(river2.riverPath);
+            riverPath.Reverse();
         }
         else if (GetLastVertex().EqualsCoordinates(river2.GetLastVertex()))
         {
             river2.riverPath.RemoveAt(river2.riverPath.Count - 1);
             river2.riverPath.Reverse();
+            riverPath.AddRange(river2.riverPath);
         }
         else
         {
             Debug.Log("RIVERS DONT HAVE COMMON END POINT");
         }
-        riverPath.AddRange(river2.riverPath);
+        
 
-        reachTop = reachTop || river2.reachTop;
-        reachRight = reachRight || river2.reachRight;
-        reachBot = reachBot || river2.reachBot;
-        reachLeft = reachLeft || river2.reachLeft;
+        //reachTop = reachTop || river2.reachTop;
+        //reachRight = reachRight || river2.reachRight;
+        //reachBot = reachBot || river2.reachBot;
+        //reachLeft = reachLeft || river2.reachLeft;
     }
     /*
     private void UpdateRiverValues(int diffX, int diffZ)
@@ -289,10 +318,10 @@ public class RiverInfo  {
     public override string ToString()
     {
         string info = "";
-        info += "reachTop: " + reachTop + "\n";
-        info += "reachRight: " + reachRight + "\n";
-        info += "reachBot: " + reachBot + "\n";
-        info += "reachLeft: " + reachLeft + "\n";
+        //info += "reachTop: " + reachTop + "\n";
+        //info += "reachRight: " + reachRight + "\n";
+        //info += "reachBot: " + reachBot + "\n";
+        //info += "reachLeft: " + reachLeft + "\n";
         foreach(Vertex v in riverPath)
         {
             info += riverPath.IndexOf(v)+": " + v + "\n";

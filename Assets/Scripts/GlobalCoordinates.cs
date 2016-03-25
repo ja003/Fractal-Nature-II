@@ -146,7 +146,7 @@ public class GlobalCoordinates {
             definedArea.botLeft.z = z;
             definedArea.topLeft.z = z;
         }
-        if (z > definedArea.topRight.x)
+        if (z > definedArea.topRight.z)
         {
             definedArea.topRight.z = z;
             definedArea.botRight.z = z;

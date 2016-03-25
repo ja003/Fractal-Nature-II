@@ -45,7 +45,7 @@ public class Vertex
         }
 
         // Return true if the fields match:
-        return x == v.x && z == v.z && height == v.height;
+        return x == v.x && z == v.z;// && height == v.height; //!!! TODO: is ot ok?
     }
 
     /// <summary>

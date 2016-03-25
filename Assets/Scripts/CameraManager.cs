@@ -59,9 +59,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         AssignFunctions();
         terrainGenerator.initialize(scaleTerrainY);
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
-        
-        
-        
+
+
         //filterGenerator.PerserveMountains(3, 50, 10);
         //terrainGenerator.build();
 
@@ -85,9 +84,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionRiverDigger.AssignFunctions(riverGenerator);
         functionRiverPlanner.AssignFunctions(riverGenerator);
         functionMathCalculator.AssignFunctions(localTerrain);
-        functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator);
+        functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator, riverGenerator);
 
-        layerManager.AssignLayers(globalTerrain.globalTerrainC, riverGenerator.globalRiverC);
+        layerManager.AssignLayers(globalTerrain.globalTerrainC);
     }
 
     int lastActionFrame = 0;
@@ -150,13 +149,19 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("3") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("river");
-
+            Debug.Log("draw rivers");
+            /*
             riverGenerator.GenerateNewRiver();
             lastActionFrame = Time.frameCount;
-            terrainGenerator.build();
-            riverGenerator.currentRiver.DrawRiver();
+            terrainGenerator.build();*/
 
+
+            foreach (RiverInfo river in riverGenerator.rivers)
+            {
+                river.DrawRiver();
+            }
+
+            lastActionFrame = Time.frameCount;
             //Debug.Log(terrainGenerator.patchSize);
             //Debug.Log(terrainGenerator.terrainWidth);
             //Debug.Log(localTerrain.terrainWidth);
@@ -174,10 +179,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("1") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("color");
-            riverGenerator.currentRiver.DrawRiver();
-            terrainGenerator.build();
-            lastActionFrame = Time.frameCount;
+
         }
 
         if (Input.GetKey("l") && lastActionFrame < Time.frameCount - 30)

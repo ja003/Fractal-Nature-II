@@ -9,7 +9,7 @@ public class FunctionRiverDigger {
     public LocalTerrain lt;
 
     public LocalCoordinates lc;
-    public GlobalCoordinates globalRiverC;
+    //public GlobalCoordinates globalRiverC;
 
     //GlobalCoordinates depthField;
     //GlobalCoordinates distField;
@@ -17,7 +17,6 @@ public class FunctionRiverDigger {
     public FunctionMathCalculator fmc;
     public FunctionTerrainManager ftm;
     public FunctionDebugger fd;
-
     
 
     public FunctionRiverDigger()
@@ -29,7 +28,7 @@ public class FunctionRiverDigger {
         this.rg = rg;
 
         lc = rg.localCoordinates;
-        globalRiverC = rg.globalRiverC;
+        //globalRiverC = rg.globalRiverC;
 
         lt = rg.lt;
         fmc = rg.fmc;
@@ -126,7 +125,7 @@ public class FunctionRiverDigger {
     /// </summary>
     public void DigRiver(RiverInfo river)
     {
-        DigRiver(river, 15, 2, 0.6f);
+        DigRiver(river, 15, 1, 0.6f);
     }
 
     RiverInfo currentRiver; //river which is being digged
@@ -212,10 +211,10 @@ public class FunctionRiverDigger {
                         PrevNextDistance = fmc.GetDistance(v2, next);
                     }
 
-                    if (depth < globalRiverC.GetValue(x, z) && 
+                    if (depth < currentRiver.globalRiverC.GetValue(x, z) && 
                         (cornersDistance - distanceFromCorners) >= (PrevNextDistance - distanceFromPrevNext))
                     {
-                        globalRiverC.SetValue(x, z, depth);
+                        currentRiver.globalRiverC.SetValue(x, z, depth);
                         //globalRiverC.SetValue(x, z, -5);
                     }
                 }
@@ -269,9 +268,9 @@ public class FunctionRiverDigger {
                         pointNextDistance >= cornerNextDistance) {
                         float depth = GetDepth(lt.globalTerrainC.GetValue(x, z), distance, width, maxDepth);
                         //if (depth < globalRiverC.GetValue(x, z))
-                        if(!globalRiverC.IsDefined(x,z) || depth < globalRiverC.GetValue(x, z))
+                        if(!currentRiver.globalRiverC.IsDefined(x,z) || depth < currentRiver.globalRiverC.GetValue(x, z))
                         {
-                            globalRiverC.SetValue(x, z, depth);
+                            currentRiver.globalRiverC.SetValue(x, z, depth);
                             //globalRiverC.SetValue(x, z, -5);
                         }
                     }
@@ -293,7 +292,7 @@ public class FunctionRiverDigger {
 
         if (currentRiver.lowestPoint.height == 666 && counter < 10)
         {
-            Debug.Log("?");
+            //Debug.Log("?");
             counter++;
         }
         if (origHeight == 666 && counter < 10)

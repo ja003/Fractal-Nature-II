@@ -11,6 +11,7 @@ public class GUIMesh {
     int sideOffset;
 
     public float scaleY;
+    public float roughness;
     public float visibleArea;
 
     GUIManager gm;
@@ -24,6 +25,7 @@ public class GUIMesh {
         topOffset = gm.topOffset;
         buttonHeight = gm.smallButtonHeight;
         sideOffset = 10;
+        roughness = gm.cm.terrainGenerator.rougness;
         scaleY = gm.scaleY;
         visibleArea = gm.visibleArea;
     }
@@ -34,7 +36,7 @@ public class GUIMesh {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 11 * buttonHeight), "Mesh Control");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 13 * buttonHeight), "Mesh Control");
 
         yPos += buttonHeight;
 
@@ -88,6 +90,22 @@ public class GUIMesh {
         if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2 * sideOffset, yPos, buttonWidth, buttonHeight), "512x512"))
         {
             UpdatePatchSize(512);
+        }
+
+        yPos += buttonHeight + 5;
+        
+        //ROUGNESS
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 4*sideOffset, buttonHeight), "Roughness = " + (int)roughness
+            + "." + (int)((roughness - (int)roughness)*100));
+
+        roughness = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth + 3*sideOffset, yPos + 5,
+                menuWidth - 4*sideOffset - buttonWidth - 5,
+                buttonHeight), roughness, 0, 5);
+
+        if (roughness != gm.cm.terrainGenerator.rougness)
+        {
+            gm.cm.terrainGenerator.rougness = roughness;
         }
 
         yPos += buttonHeight + 5;

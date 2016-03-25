@@ -7,5 +7,6 @@ public enum Direction
     right,
     bot,
     left,
+    river,
     none
 }

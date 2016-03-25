@@ -63,6 +63,7 @@ public class GUIRiver
             if (riverFlag != riverFlags[i])
             {
                 riverFlags[i] = riverFlag;
+                gm.cm.terrainGenerator.build();
             }
 
             GUI.Label(new Rect(Screen.width - menuWidth +  3 * sideOffset, yPos, buttonWidth/3, buttonHeight), "river " + i);
@@ -70,6 +71,7 @@ public class GUIRiver
             if (GUI.Button(new Rect(Screen.width - menuWidth + 3 * sideOffset + buttonWidth/3, yPos, 3*sideOffset, buttonHeight), "X"))
             {
                 rg.DeleteRiverAt(i);
+                gm.cm.terrainGenerator.build();
             }
 
             

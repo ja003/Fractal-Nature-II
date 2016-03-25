@@ -50,26 +50,32 @@ public class FunctionRiverPlanner  {
         //int z_max = (int)rg.GetTopRight().z;
 
         //return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
-        //Debug.Log(rg.lt.globalTerrainC.definedArea);
+        Debug.Log(rg.lt.globalTerrainC.definedArea);
         return GetRiverPathFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea);
+    }
+
+    public RiverInfo GetRiverPathFrom(Vertex start, List<Direction> reachedSides,
+        Area restrictedArea)
+    {
+        return GetRiverPathFrom(start, reachedSides, restrictedArea, new RiverInfo(rg));
     }
 
     /// <summary>
     /// find river path from given starting point on restricted area
     /// </summary>
     public RiverInfo GetRiverPathFrom(Vertex start, List<Direction> reachedSides,
-        Area restrictedArea)
+        Area restrictedArea, RiverInfo ignoreRiver)
     {
         fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
         
-        int x_min = (int)restrictedArea.botLeft.x;
-        int z_min = (int)restrictedArea.botLeft.z;
-        int x_max = (int)restrictedArea.topRight.x;
-        int z_max = (int)restrictedArea.topRight.z;
+        int x_min = restrictedArea.botLeft.x;
+        int z_min = restrictedArea.botLeft.z;
+        int x_max = restrictedArea.topRight.x;
+        int z_max = restrictedArea.topRight.z;
 
         //Debug.Log("start: " + start);
-        //Debug.Log("ON");
+        //Debug.Log("on");
         //Debug.Log(x_min);
         //Debug.Log(z_min);
         //Debug.Log(x_max);
@@ -89,6 +95,14 @@ public class FunctionRiverPlanner  {
         
         List<FloodNode> reachableNodes = new List<FloodNode>();
         reachableNodes.Add(new FloodNode(start, 0));
+        /*foreach(Vertex v in ignoreNodes)
+        {
+            FloodNode fn = new FloodNode(v, 666);
+            fn.processed = true;
+            fn.vertex.side = Direction.none;
+            reachableNodes.Add(fn);
+        }*/
+
         float threshold;
         //if (start.height > 0)
             threshold = start.height + step;
@@ -107,8 +121,6 @@ public class FunctionRiverPlanner  {
         {
             for (int i = 0; i < reachableNodes.Count; i++)
             {
-                //Debug.Log(i + " - threshold: " + threshold);
-
                 FloodNode currentNode = reachableNodes[i];
                 if (!currentNode.processed)
                 {
@@ -124,7 +136,13 @@ public class FunctionRiverPlanner  {
                         Debug.Log(z);
 
                     }*/
-
+                    if (rg.IsRiverDefined(x,z) && rg.GetRiverOn(x, z) != ignoreRiver)
+                    {
+                        reachedSide = Direction.river;
+                        currentNode.vertex.side = Direction.river;
+                        finalIndex = i;
+                        break;
+                    }
 
                     reachedSide = fmc.GetReachedSide(x, z, borderOffset, x_min, z_min, x_max, z_max);
                     if (reachedSide != Direction.none)
@@ -181,9 +199,12 @@ public class FunctionRiverPlanner  {
                         }
                         foreach (Vertex v in neighbours)
                         {
-                            if (v.height < threshold && !reachableNodes.Contains(new FloodNode(v, i)))
+                            if (!rg.IsRiverDefined(v.x, v.z)) //remove if river can connect to river (right now doesn't look well)
                             {
-                                reachableNodes.Add(new FloodNode(v, i));
+                                if (v.height < threshold && !ignoreRiver.riverPath.Contains(v) && !reachableNodes.Contains(new FloodNode(v, i)))
+                                {
+                                    reachableNodes.Add(new FloodNode(v, i));
+                                }
                             }
                         }
                     }
@@ -214,10 +235,20 @@ public class FunctionRiverPlanner  {
         
         int pathIndex = finalIndex;
         List<Vertex> finalPath = new List<Vertex>();
-        finalPath.Add(fmc.GetVertexOnBorder(reachableNodes[finalIndex].vertex, 
-            borderOffset, reachedSide,
-            x_min, x_max, z_min, z_max)); //add new node which lies exactly on border
 
+        if (reachedSide == Direction.river)
+        {
+            Vertex lastVertex = reachableNodes[pathIndex].vertex;
+            reachableNodes[pathIndex].vertex.side = Direction.none;
+            finalPath.Add(rg.GetRiverOn(lastVertex.x, lastVertex.z).GetClosestVertexTo(lastVertex));
+            finalPath[0].side = Direction.river;
+        }
+        else
+        {
+            finalPath.Add(fmc.GetVertexOnBorder(reachableNodes[finalIndex].vertex,
+                borderOffset, reachedSide,
+                x_min, x_max, z_min, z_max)); //add new node which lies exactly on border
+        }
         RiverInfo river = new RiverInfo(rg);
 
         while (pathIndex != 0)//recursively add all vertices of found path
@@ -234,7 +265,7 @@ public class FunctionRiverPlanner  {
         river.riverPath = finalPath;
 
         reachedSides.Add(reachedSide);
-        foreach(Direction side in reachedSides)
+        /*foreach(Direction side in reachedSides)
         {
             switch (reachedSide)
             {
@@ -251,7 +282,7 @@ public class FunctionRiverPlanner  {
                     river.reachLeft = true;
                     break;
             }
-        }
+        }*/
         return river;
     }
 

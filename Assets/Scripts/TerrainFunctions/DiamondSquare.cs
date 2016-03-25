@@ -7,7 +7,7 @@ public class DiamondSquare
     int[] indices;
 
     Random random;
-    int roughness = 4;
+    int roughness = 2;
     //int gridSize = 257;
     int seed = 0;
     
@@ -32,12 +32,12 @@ public class DiamondSquare
         mountainPeaksManager = new MountainPeaksManager(tg.gm);
     }
 
-    public void Initialize(int patchSize)
+    public void Initialize(int patchSize, float roughness)
     {
         random = new Random();
         seed = random.Next(100);
         
-        GenerateTerrain(patchSize);
+        GenerateTerrain(patchSize, roughness);
     }
 
     // TODO: break these off into a util class
@@ -61,17 +61,7 @@ public class DiamondSquare
     {
         return (a & (a - 1)) == 0;
     }
-
-    /*
-    *	Generates a grid of VectorPositionColor elements as a 2D greyscale representation of terrain by the
-    *	Diamond-square algorithm: http://en.wikipedia.org/wiki/Diamond-square_algorithm
-    * 
-    *	Arguments: 
-    *		int size - the width or height of the grid being passed in.  Should be of the form (2 ^ n) + 1
-    *		int seed - an optional seed for the random generator
-    *		float rMin/rMax - the min and max height values for the terrain (defaults to 0 - 255 for greyscale)
-    *		float noise - the roughness of the resulting terrain
-    * */
+    
     public float[][] DiamondSquareGridOLD(int size, int seed = 0, float rMin = 0, float rMax = 255, float noise = 0.0f)
     {
         // Fail if grid size is not of the form (2 ^ n) - 1 or if min/max values are invalid
@@ -93,16 +83,6 @@ public class DiamondSquare
         grid[0][s] = RandRange(rand, rMin, rMax);
         grid[s][s] = RandRange(rand, rMin, rMax);
 
-        
-			//* Use temporary named variables to simplify equations
-			//* 
-			//* s0 . d0. s1
-			//*  . . . . . 
-			//* d1 . cn. d2
-			//*  . . . . . 
-			//* s2 . d3. s3
-			//* 
-			//* 
         float s0, s1, s2, s3, d0, d1, d2, d3, cn;
 
         for (int i = s; i > 1; i /= 2)
@@ -310,7 +290,7 @@ public class DiamondSquare
 
 
     float factorConstant = 2;
-    float highFactor = 0.5f;
+    float highFactor = 1;
     float lowFactor = 1;
     bool debugPeaks = false;
     float rMin;
@@ -436,14 +416,6 @@ public class DiamondSquare
             return factor;
         }
         
-        if (x < 64)
-        {
-            //lowFactor = 4;
-        }
-        else
-        {
-            lowFactor = 1;
-        }
         float height = initValue + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
         
         return height;
@@ -477,13 +449,13 @@ public class DiamondSquare
 
     //float[][] ds;
 
-    public void GenerateTerrain(int patchSize)
+    public void GenerateTerrain(int patchSize, float roughness)
     {
     //    UnityEngine.Debug.Log("!!!");
     //    UnityEngine.Debug.Log(tg.localTerrain.localTerrainC.center);
         maxDistance = (float)Math.Sqrt(patchSize * patchSize + patchSize * patchSize);
 
-        DiamondSquareGrid(patchSize, seed, 0, 2, roughness / 5.0f);
+        DiamondSquareGrid(patchSize, seed, -1, 1, roughness / 5.0f);
     }
     /*
     public void CopyValues()

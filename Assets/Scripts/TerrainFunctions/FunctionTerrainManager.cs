@@ -8,16 +8,18 @@ public class FunctionTerrainManager {
 
     public FunctionMathCalculator fmc;
     public LocalTerrain lt;
+    public RiverGenerator rg;
 
     public FunctionTerrainManager()
     {
 
     }
 
-    public void AssignFunctions(LocalTerrain localTerrain, FunctionMathCalculator functionMathCalculator)
+    public void AssignFunctions(LocalTerrain localTerrain, FunctionMathCalculator functionMathCalculator, RiverGenerator riverGenerator)
     {
         lt = localTerrain;
         fmc = functionMathCalculator;
+        rg = riverGenerator;
     }
 
     /// <summary>
@@ -177,7 +179,8 @@ public class FunctionTerrainManager {
     */
 
     /// <summary>
-    /// finds point on visible terrain with lowest neighbourhood 
+    /// used to find lowest region for river generation
+    /// finds point on visible terrain with lowest neighbourhood where no river is defined
     /// returns local point
     /// </summary>
     public Vertex GetLowestRegionCenter(int radius, int offset)
@@ -188,23 +191,36 @@ public class FunctionTerrainManager {
         {
             for (int z = offset; z < lt.terrainHeight - offset; z += radius/2)
             {
-                double sum = 0;
-                for (int i = x - radius; i < x + radius; i++)
-                {
-                    for (int j = z - radius; j < z + radius; j++)
-                    {
-                        sum += lt.GetLocalHeight(x, z);
+                /* bool riverDefined = false;
 
-                        //if (CheckBounds(i, j))
-                        //    sum += vertices[i, j].y;
-                        //else
-                        //    sum += 1;
-                    }
-                }
-                if (sum < lowestSum)
+                 foreach(RiverInfo river in rg.rivers)
+                 {
+                     if (river.globalRiverC.IsDefined(lt.GetGlobalCoordinate(x, z)))
+                     {
+                         riverDefined = true;
+                     }
+                 }*/
+                Vertex globalC = lt.GetGlobalCoordinate(x, z);
+                if (!rg.IsRiverDefined(globalC.x, globalC.z))
                 {
-                    lowestSum = sum;
-                    lowestRegionCenter.Rewrite(x, z, lt.GetLocalHeight(x, z));
+                    double sum = 0;
+                    for (int i = x - radius; i < x + radius; i++)
+                    {
+                        for (int j = z - radius; j < z + radius; j++)
+                        {
+                            sum += lt.GetLocalHeight(x, z);
+
+                            //if (CheckBounds(i, j))
+                            //    sum += vertices[i, j].y;
+                            //else
+                            //    sum += 1;
+                        }
+                    }
+                    if (sum < lowestSum)
+                    {
+                        lowestSum = sum;
+                        lowestRegionCenter.Rewrite(x, z, lt.GetLocalHeight(x, z));
+                    }
                 }
 
             }
