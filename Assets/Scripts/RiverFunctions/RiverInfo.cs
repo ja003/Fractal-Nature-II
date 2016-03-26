@@ -26,6 +26,8 @@ public class RiverInfo  {
 
     public GlobalCoordinates globalRiverC;
 
+    public int gridStep;
+
     public float width;
     public float areaEffect;
     public float depth;
@@ -101,6 +103,17 @@ public class RiverInfo  {
     public Vertex GetLastVertex()
     {
         return riverPath[riverPath.Count - 1];
+    }
+
+    /// <summary>
+    /// set default values for this river
+    /// values are determined only by experience
+    /// </summary>
+    public void SetDefaultValues()
+    {
+        width = 15;
+        areaEffect = 2;
+        depth = 0.2f;
     }
 
     /*

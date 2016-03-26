@@ -24,7 +24,7 @@ public class SpikeFilter {
 
     public void GenerateSpikeFilterInRegion(Area region, float epsilon)
     {
-        Debug.Log("spikes on " + region + " with " + epsilon);
+        //Debug.Log("spikes on " + region + " with " + epsilon);
 
         int x_min = region.botLeft.x;
         int z_min = region.botLeft.z;

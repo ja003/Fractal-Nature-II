@@ -15,9 +15,9 @@ public class GUIRiver
     public float scaleY;
     public float visibleArea;
 
-    public float width;
-    public float depth;
-    public float areaEffect;
+    //public float width;
+    //public float depth;
+    //public float areaEffect;
 
 
     GUIManager gm;
@@ -25,6 +25,9 @@ public class GUIRiver
     public List<bool> riverFlags;
 
     RiverGenerator rg;
+
+    RiverInfo selectedRiver;
+    RiverInfo defaultRiver;
 
     public GUIRiver(GUIManager gm)
     {
@@ -43,9 +46,14 @@ public class GUIRiver
 
         riverFlags = new List<bool>();
 
-        width = 15;
-        areaEffect = 1;
-        depth = 0.2f;
+        //width = 15;
+        //areaEffect = 1;
+        //depth = 0.2f;
+
+        defaultRiver = new RiverInfo(rg);
+        defaultRiver.SetDefaultValues();
+        selectedRiver = defaultRiver;
+
     }
 
     public void OnGui(int yPosition)
@@ -54,9 +62,9 @@ public class GUIRiver
         float buttonWidth2 = menuWidth / 2 - sideOffset - sideOffset / 2;
 
         yPos = yPosition;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "Generate new river"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, buttonHeight), "Generate new river"))
         {
-            rg.GenerateNewRiver(width, areaEffect, depth);
+            rg.GenerateNewRiver(selectedRiver.width, selectedRiver.areaEffect, selectedRiver.depth);
             gm.cm.terrainGenerator.build();
         }
 
@@ -65,27 +73,29 @@ public class GUIRiver
         GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 4.5f * buttonHeight), "parameters");
 
         yPos += buttonHeight + 2;
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight), "width: " + (int)width);
-        width = GUI.HorizontalSlider(new Rect(
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight), 
+            "width: " + (int)selectedRiver.width);
+        selectedRiver.width = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + buttonWidth2, yPos + 5,
                 menuWidth - sideOffset - buttonWidth2 - 5,
-                buttonHeight), width, 8f, 20f);
+                buttonHeight), selectedRiver.width, 8f, 20f);
 
         yPos += buttonHeight + 2;
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight), 
-            "area: " + (int)areaEffect + "." + (int)((areaEffect - (int)areaEffect) * 100));
-        areaEffect = GUI.HorizontalSlider(new Rect(
+            "area: " + (int)selectedRiver.areaEffect + "." + (int)((selectedRiver.areaEffect - (int)selectedRiver.areaEffect) * 100));
+        selectedRiver.areaEffect = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + buttonWidth2, yPos + 5,
                 menuWidth - sideOffset - buttonWidth2 - 5,
-                buttonHeight), areaEffect, 0.5f, 2);
+                buttonHeight), selectedRiver.areaEffect, 0.5f, 2);
 
         yPos += buttonHeight + 2;
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth2, buttonHeight),
-            "depth: " + (int)depth + "." + (int)((depth - (int)depth) * 100));
-        depth = GUI.HorizontalSlider(new Rect(
+            "depth: " + (int)selectedRiver.depth + "." + 
+            (int)((selectedRiver.depth - (int)selectedRiver.depth) * 100));
+        selectedRiver.depth = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + buttonWidth2, yPos + 5,
                 menuWidth - sideOffset - buttonWidth2 - 5,
-                buttonHeight), depth, 0, 1.5f);
+                buttonHeight), selectedRiver.depth, 0, 0.5f);
 
 
         yPos += buttonHeight + 10;
@@ -104,10 +114,31 @@ public class GUIRiver
                 gm.cm.terrainGenerator.build();
             }
 
-            GUI.Label(new Rect(Screen.width - menuWidth +  3 * sideOffset, yPos, buttonWidth/3, buttonHeight), "river " + i);
-            
-            if (GUI.Button(new Rect(Screen.width - menuWidth + 3 * sideOffset + buttonWidth/3, yPos, 3*sideOffset, buttonHeight), "X"))
+            //GUI.Label(new Rect(Screen.width - menuWidth +  3 * sideOffset, yPos, buttonWidth/3, buttonHeight), "river " + i);
+            if (GUI.Button(new Rect(Screen.width - menuWidth + 3 * sideOffset, yPos, buttonWidth / 2, buttonHeight), "river" + i))
             {
+                selectedRiver = rg.rivers[i];
+            }
+
+            if (GUI.Button(new Rect(Screen.width - menuWidth + 7 * sideOffset + buttonWidth / 3, yPos, 3 * sideOffset, buttonHeight), "O"))
+            {
+                selectedRiver = rg.rivers[i];
+                selectedRiver.globalRiverC.ResetQuadrants();
+                rg.frd.DigRiver(selectedRiver);
+                gm.cm.terrainGenerator.build();
+            }
+
+            if (GUI.Button(new Rect(Screen.width - menuWidth + 10 * sideOffset + buttonWidth/3, yPos, 3*sideOffset, buttonHeight), "X"))
+            {
+                if(i != 0)
+                {
+                    selectedRiver = rg.rivers[i];
+                }
+                else //reset to default values
+                {
+                    defaultRiver.SetDefaultValues();
+                    selectedRiver = defaultRiver;
+                }
                 rg.DeleteRiverAt(i);
                 gm.cm.terrainGenerator.build();
             }

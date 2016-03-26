@@ -607,6 +607,24 @@ public class FunctionTerrainManager {
     */
 
     /// <summary>
+    /// returns sum of defined region
+    /// </summary>
+    public float GetNeighbourhoodSum(Vertex point, int radius, int step)
+    {
+        float sum = 0;
+        for(int x = point.x - radius;x<point.x + radius; x += step)
+        {
+            for (int z = point.z - radius; z < point.z + radius; z += step)
+            {
+                float v = lt.globalTerrainC.GetValue(x, z);
+                if (v != 666)
+                    sum += v;
+            }
+        }
+        return sum;
+    }
+
+    /// <summary>
     /// checks if given point is on border of defined terrain
     /// point = global
     /// </summary>

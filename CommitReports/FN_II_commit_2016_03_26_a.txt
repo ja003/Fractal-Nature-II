@@ -1,0 +1,6 @@
+River controls
+
+- added possibility to change river parameters and redig it
+- improved river path distrtion method
+- fixed river nodes being too close to each other
+

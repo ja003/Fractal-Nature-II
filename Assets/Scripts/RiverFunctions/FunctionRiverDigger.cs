@@ -37,9 +37,9 @@ public class FunctionRiverDigger {
     }
 
     /// <summary>
-    /// randomly distort all path nodes bot first and last
+    /// randomly distort all but first and last path nodes 
     /// </summary>
-    public void DistortPath(List<Vertex> path, int maxDistort)
+    public void DistortPath2(List<Vertex> path, int maxDistort)
     {
         System.Random rnd = new System.Random();
         //foreach (Vertex v in path)
@@ -53,9 +53,43 @@ public class FunctionRiverDigger {
     }
 
     /// <summary>
+    /// distorts path based on close terrain values
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="maxDistort"></param>
+    public void DistortPath(List<Vertex> path, int maxDistort, int gridStep)
+    {
+        for (int i = 1; i < path.Count - 1; i++)
+        {
+            //do not disturn if nodes are too close to each other
+            if(!(Vector3.Distance(path[i], path[i-1]) < (gridStep/2) ||
+                Vector3.Distance(path[i], path[i + 1]) < (gridStep / 2)))
+            {
+                Vertex v = path[i];
+                Vector3 orientation = ((Vector3)path[i + 1] - path[i - 1]).normalized;
+                Vector3 normal = new Vector3(-orientation.z, 0, orientation.x);
+                Vertex v1 = v - normal * maxDistort;
+                float d = 0;
+                float neighbSum = 666;
+                for(float c = 0; c < 2 * maxDistort; c += maxDistort/10)
+                {
+                    float sum = ftm.GetNeighbourhoodSum(v1 + normal * c, 10, 2);
+                    if(sum < neighbSum)
+                    {
+                        neighbSum = sum;
+                        d = c;
+                    }
+                }
+                v.Rewrite((int)(v.x + d * normal.x), (int)(v.z + d * normal.z), v.height);
+            }
+        }
+    }
+
+
+    /// <summary>
     /// function for determine "strength" of each river path nodes
     /// </summary>
-    public List<float> AssignWidthToPoints(List<Vertex> path, float minWidth)
+    /*public List<float> AssignWidthToPoints(List<Vertex> path, float minWidth)
     {
         List<float> sumOfPointNeighb = new List<float>();
         float totalSum = 0;
@@ -87,10 +121,10 @@ public class FunctionRiverDigger {
         
         return finalWidthValues;
     }
+    */
 
-    
 
-    public float GetLocalWidth(Vertex point, Vertex v1, Vertex v2,float w1,float w2)
+    private float GetLocalWidth(Vertex point, Vertex v1, Vertex v2,float w1,float w2)
     {
         if (v1.CoordinatesEquals(v2))
         {
@@ -168,7 +202,7 @@ public class FunctionRiverDigger {
     /// <summary>
     /// digs river path (not corners)
     /// </summary>
-    public void DigRiverPath(List<Vertex> path, int width, float widthFactor, float maxDepth)
+    private void DigRiverPath(List<Vertex> path, int width, float widthFactor, float maxDepth)
     {
         for (int i = 0; i < path.Count - 1; i++)
         {
@@ -187,7 +221,7 @@ public class FunctionRiverDigger {
     /// </summary>
     /// <param name="previous">node before v1</param>
     /// <param name="next">node after v2</param>
-    public void DigRiverPart(Vertex v1, Vertex v2,Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
+    private void DigRiverPart(Vertex v1, Vertex v2,Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
     {
         Vertex botLeft = fmc.CalculateBotLeft(v1, v2, width, widthFactor);
         Vertex topRight = fmc.CalculateTopRight(v1, v2, width, widthFactor);
@@ -234,7 +268,7 @@ public class FunctionRiverDigger {
     /// <summary>
     /// dig corners
     /// </summary>
-    public void DigCorners(List<Vertex> path, int width, float widthFactor, float depth)
+    private void DigCorners(List<Vertex> path, int width, float widthFactor, float depth)
     {
         for (int i = 0; i < path.Count; i++)
         {
@@ -252,7 +286,7 @@ public class FunctionRiverDigger {
     /// gigs only certain angle of corner
     /// the angle is determined by sharpness of the path (from prev->corner->next sequence)
     /// </summary>
-    public void DigCorner(Vertex corner, Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
+    private void DigCorner(Vertex corner, Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
     {
         Vertex botLeft = new Vertex(corner.x - (int)(widthFactor * width), 
             corner.z - (int)(widthFactor * width));
@@ -288,12 +322,12 @@ public class FunctionRiverDigger {
         }
     }
 
-    
+
 
     /// <summary>
     /// calls depth function (currently MySinc)
     /// </summary>
-    public float GetDepth(float origHeight, float distance, float width, float maxDepth)
+    private float GetDepth(float origHeight, float distance, float width, float maxDepth)
     {
         float dif = origHeight - currentRiver.lowestPoint.height;
         if (dif < 0)
@@ -316,7 +350,7 @@ public class FunctionRiverDigger {
     
     int counter = 0;
 
-    public float MySinc(float x, float width, float depth)
+    private float MySinc(float x, float width, float depth)
     {
         if(x == 0 || width == 0)
         {
@@ -345,7 +379,7 @@ public class FunctionRiverDigger {
             */
     }
 
-    public float MyArctan(float x, float width, float depth)
+    private float MyArctan(float x, float width, float depth)
     {
         return depth * Mathf.Atan(Mathf.Abs(x) - width / 2) - depth * (Mathf.PI / 2);
     }

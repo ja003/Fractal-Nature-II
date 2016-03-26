@@ -247,7 +247,8 @@ public class FunctionRiverPlanner  {
         {
             finalPath.Add(fmc.GetVertexOnBorder(reachableNodes[finalIndex].vertex,
                 borderOffset, reachedSide,
-                x_min, x_max, z_min, z_max)); //add new node which lies exactly on border
+                x_min, x_max, z_min, z_max)); //add new node which lies exactly on border            
+
         }
         RiverInfo river = new RiverInfo(rg);
 
@@ -258,11 +259,24 @@ public class FunctionRiverPlanner  {
             river.UpdateLowestPoint(reachableNodes[pathIndex].vertex);
         }
         finalPath.Add(start);
+
+        //if added border node is too close to next node, delete the next one
+        if (finalPath.Count > 1 &&
+            Vector3.Distance(finalPath[0], finalPath[1]) < gridStep / 2)
+        {
+            //Debug.Log("removing " + finalPath[1]);
+            //Debug.Log("too close to " + finalPath[0]);
+            finalPath.RemoveAt(1);
+        }
+
+
         finalPath.Reverse();
         
         
         
         river.riverPath = finalPath;
+
+        river.gridStep = gridStep;
 
         reachedSides.Add(reachedSide);
         /*foreach(Direction side in reachedSides)

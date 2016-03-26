@@ -514,6 +514,7 @@ public class TerrainGenerator// : ITerrainGenerator
             }
         }
     }
+    
 
     public void build()
     {
@@ -536,8 +537,8 @@ public class TerrainGenerator// : ITerrainGenerator
         if (globalTerrain.globalTerrainC.globalMin < 0)
             minusValue = -globalTerrain.globalTerrainC.globalMin;
 
-            //Rebuild mesh data
-            for (int i = 0; i < 2; i++)
+        //Rebuild mesh data
+        for (int i = 0; i < 2; i++)
         {
             for (int j = 0; j < 2; j++)
             {
@@ -644,15 +645,7 @@ public class TerrainGenerator// : ITerrainGenerator
         endOf = verticesOut[3][individualMeshWidth * individualMeshHeight - 1];
         startOf = verticesOut[0][0];
         middleOf = (startOf + endOf) / 2;
-
-        for(int x = 0; x < 10; x++)
-        {
-            for(int z = 0; z < 10; z++)
-            {
-                //Debug.Log(vertices[x, z].y);
-            }
-        }
-        //localTerrain.PrintValues(0, 10);
+        
 
 
     }

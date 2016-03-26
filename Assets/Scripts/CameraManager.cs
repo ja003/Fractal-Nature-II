@@ -108,7 +108,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if(guiManager.onFlyGeneration && Get2dDistance(gameObject.transform.position, localTerrain.localTerrainC.center) > 70)
         {
             //FixCameraPosition(); //no need now
-            Debug.Log("moving to center: " + gameObject.transform.position);
+            //Debug.Log("moving to center: " + gameObject.transform.position);
             localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
         }
 
