@@ -97,7 +97,7 @@ public class RiverGenerator  {
 
         globalStart.height = start.height;
 
-        RiverInfo river = frp.GetRiverPathFrom(globalStart, new List<Direction>());
+        RiverInfo river = frp.GetRiverFrom(globalStart, new List<Direction>());
         //Debug.Log(river);
            
         globalStart.side = fmc.GetOppositeDirection(river.GetLastVertex().side);
@@ -109,7 +109,7 @@ public class RiverGenerator  {
 
         // 2)find second path
         //Debug.Log(restrictedArea);
-        RiverInfo river2 = frp.GetRiverPathFrom(globalStart, reachedSides, restrictedArea, river);
+        RiverInfo river2 = frp.GetRiverFrom(globalStart, reachedSides, restrictedArea, river);
         //Debug.Log(river2);
 
         // connect them
@@ -155,7 +155,7 @@ public class RiverGenerator  {
             reachedSides.Add(fmc.GetOppositeDirection(startPoint.side));
 
             RiverInfo startRiver =
-                frp.GetRiverPathFrom(startPoint, reachedSides, restrictArea, river);
+                frp.GetRiverFrom(startPoint, reachedSides, restrictArea, river);
             frd.DistortPath(startRiver.riverPath, startRiver.gridStep/3, startRiver.gridStep);
             //Debug.Log("startRiver:" + startRiver);
             river.ConnectWith(startRiver);
@@ -189,7 +189,7 @@ public class RiverGenerator  {
             reachedSides.Add(fmc.GetOppositeDirection(endPoint.side));
 
             RiverInfo endRiver =
-                frp.GetRiverPathFrom(endPoint, reachedSides, restrictArea, river);
+                frp.GetRiverFrom(endPoint, reachedSides, restrictArea, river);
             frd.DistortPath(endRiver.riverPath, endRiver.gridStep / 3, endRiver.gridStep);
             //Debug.Log("endRiver:" + endRiver);
             river.ConnectWith(endRiver);

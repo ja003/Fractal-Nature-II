@@ -15,7 +15,7 @@ public class MountainPeaksManager {
         this.gridManager = gridManager;
         mountainPeaks = new MountainPeaksCoordinates(20, gridManager, this);
         mountainPeaks.InitializePeaks(20);
-        Debug.Log(mountainPeaks);
+        //Debug.Log(mountainPeaks);
     }
 
     /// <summary>

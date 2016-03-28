@@ -136,6 +136,28 @@ public class TerrainGenerator// : ITerrainGenerator
 
     }
 
+    public void GenerateDefaultTerrain()
+    {
+        int size = 150;
+        for(int x = -size; x < size; x++)
+        {
+            for (int z = -size; z < size; z++)
+            {
+                localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
+                if(x >= -10 && x <= 10 && z > -100 && z < 100)
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+                if(x > -30 && x < 30 && z >= -100 && z <= -80)
+                {
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+                }
+                if (x > -30 && x < 30 && z <= 100 && z >= 90)
+                {
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// generates terrain around given center
     /// and pregenerates neighbouring regions
@@ -145,8 +167,8 @@ public class TerrainGenerator// : ITerrainGenerator
         ///functional RANDOM terrin generator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
-        PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
-
+        //PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
+        GenerateDefaultTerrain();
 
         //ds.Initialize();
 

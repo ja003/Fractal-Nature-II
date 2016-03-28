@@ -33,8 +33,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 150; 
-        terrainHeight = 150;
+        terrainWidth = 300; 
+        terrainHeight = 300;
         patchSize = 128;
         scaleTerrainY = 12;
 
@@ -179,9 +179,18 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("1") && lastActionFrame < Time.frameCount - 30)
         {
+            Vertex start = new Vertex(-100, 0);
+            start.height = localTerrain.globalTerrainC.GetValue(start.x, start.z);
+            Vertex end = new Vertex(100, 0);
+            end.height = localTerrain.globalTerrainC.GetValue(end.x, end.z);
 
+            RiverInfo river = riverGenerator.frp.GetRiverFromTo(start, end);
+            Debug.Log(river);
+            river.DrawRiver();
+            lastActionFrame = Time.frameCount;
         }
 
+        //L
         if (Input.GetKey("l") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("procedural texture");

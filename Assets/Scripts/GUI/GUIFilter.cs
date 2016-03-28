@@ -12,7 +12,6 @@ public class GUIFilters
     int sideOffset;
 
     public float scaleY;
-    public float visibleArea;
 
     public bool averageFilter;
     public bool medianFilter;
@@ -41,7 +40,6 @@ public class GUIFilters
         buttonHeight = gm.smallButtonHeight;
         sideOffset = 10;
         scaleY = gm.scaleY;
-        visibleArea = gm.visibleArea;
     }
 
     public void OnGui(int yPosition)

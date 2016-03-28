@@ -27,8 +27,8 @@ public class DiamondSquare
     public void AssignFunctions(LocalTerrain localTerrain)
     {
         lt = localTerrain;
-        UnityEngine.Debug.Log(lt);
-        UnityEngine.Debug.Log(tg.gm);
+        //UnityEngine.Debug.Log(lt);
+        //UnityEngine.Debug.Log(tg.gm);
         mountainPeaksManager = new MountainPeaksManager(tg.gm);
     }
 

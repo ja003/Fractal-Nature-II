@@ -626,6 +626,7 @@ public class FunctionTerrainManager {
 
     /// <summary>
     /// checks if given point is on border of defined terrain
+    /// (not only same coordinates as defined area)
     /// point = global
     /// </summary>
     public bool IsOnBorder(Vector3 point)
@@ -634,15 +635,22 @@ public class FunctionTerrainManager {
         //bool topSide = point.z == lt.localTerrainC.topRight.z;
         //bool rightSide = point.x == lt.localTerrainC.topRight.x;
         //bool botSide = point.z == lt.localTerrainC.botLeft.z;
+        bool definedPoint = lt.globalTerrainC.IsDefined(point);
 
-        bool leftSide = point.x == lt.globalTerrainC.definedArea.botLeft.x;
-        bool topSide = point.z == lt.globalTerrainC.definedArea.topRight.z;
-        bool rightSide = point.x == lt.globalTerrainC.definedArea.topRight.x;
-        bool botSide = point.z == lt.globalTerrainC.definedArea.botLeft.z;
+        bool definedTop = lt.globalTerrainC.IsDefined(point + new Vector3(0, 0, 1));
+        bool definedRight = lt.globalTerrainC.IsDefined(point + new Vector3(1, 0, 1));
+        bool definedBot = lt.globalTerrainC.IsDefined(point + new Vector3(0, 0, -1));
+        bool definedLeft = lt.globalTerrainC.IsDefined(point + new Vector3(-1, 0, 0));
+
+        return definedPoint && (!definedTop || !definedRight || !definedBot || !definedLeft);
+        //bool leftSide = point.x == lt.globalTerrainC.definedArea.botLeft.x;
+        //bool topSide = point.z == lt.globalTerrainC.definedArea.topRight.z;
+        //bool rightSide = point.x == lt.globalTerrainC.definedArea.topRight.x;
+        //bool botSide = point.z == lt.globalTerrainC.definedArea.botLeft.z;
 
         //Debug.Log(point + " " + (leftSide || topSide || rightSide || botSide) + " on border");
 
-        return leftSide || topSide || rightSide || botSide;
+        //return leftSide || topSide || rightSide || botSide;
     }
 
     /// <summary>

@@ -51,14 +51,14 @@ public class GUIManager : MonoBehaviour
         smallButtonHeight = 20;
 
         fractalNatureFlag = true;
-        generalSettingsFlag = false;
+        generalSettingsFlag = true;
         erosionMenuFlag = false;
         filterMenuFlag = false;
-        riverMenuFlag = true;
+        riverMenuFlag = false;
         terrainProcessing = false;
 
         scaleY = cm.scaleTerrainY;
-        visibleArea = cm.terrainWidth;
+        visibleArea = cm.terrainWidth * 2;
         //visibleArea = 100;
         patchSize = cm.patchSize;
 

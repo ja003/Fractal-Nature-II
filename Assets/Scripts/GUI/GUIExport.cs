@@ -14,7 +14,6 @@ public class GUIExport {
     int sideOffset;
 
     public float scaleY;
-    public float visibleArea;
 
     bool exportMenuVisible;
 
@@ -37,7 +36,6 @@ public class GUIExport {
         buttonHeight = gm.menuButtonHeight;
         sideOffset = 10;
         scaleY = gm.scaleY;
-        visibleArea = gm.visibleArea;
 
         path = "C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export";
         path = "C:\\Users\\Vukmir\\Desktop\\obj";
