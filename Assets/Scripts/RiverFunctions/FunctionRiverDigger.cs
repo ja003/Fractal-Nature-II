@@ -57,7 +57,7 @@ public class FunctionRiverDigger {
     /// </summary>
     /// <param name="path"></param>
     /// <param name="maxDistort"></param>
-    public void DistortPath(List<Vertex> path, int maxDistort, int gridStep)
+    public void DistortPath(List<Vertex> path, float maxDistort, int gridStep)
     {
         for (int i = 1; i < path.Count - 1; i++)
         {

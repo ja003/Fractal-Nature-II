@@ -40,7 +40,7 @@ public class GUIMenu
             if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "General Settings"))
             {
                 SetMenuFlag(MenuEnum.generalSettings, !gm.generalSettingsFlag);
-                Debug.Log("generalSettingsFlag: " + gm.generalSettingsFlag);
+                //Debug.Log("generalSettingsFlag: " + gm.generalSettingsFlag);
             }
 
             yPos += buttonHeight;
@@ -49,7 +49,7 @@ public class GUIMenu
             if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset - menuWidth / 2, buttonHeight), "Filters"))
             {
                 SetMenuFlag(MenuEnum.filters, !gm.filterMenuFlag);
-                Debug.Log("filterMenuFlag: " + gm.filterMenuFlag);
+                //Debug.Log("filterMenuFlag: " + gm.filterMenuFlag);
             }
 
             //Erosion menu button

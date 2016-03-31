@@ -1,0 +1,7 @@
+Mountain peaks application
+
+- mountain peaks applied more effectively to diamond square
+- added possibility to control river grid step
+- added SimplifyRiver function
+- implemented new river path finding method GetRiverPathFromTo
+- improved river drawing 

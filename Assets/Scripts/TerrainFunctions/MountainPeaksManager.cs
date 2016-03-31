@@ -80,7 +80,8 @@ public class MountainPeaksManager {
         if (closestPeaks.Count == 0)
         {
             Debug.Log("!");
-            closestPeaks.Add(new Vertex(0, 0));
+            //closestPeaks.Add(new Vertex(0, 0));
+            closestPeaks.Add(center);
         }
         //closestPeaks.Add(mountainPeaks.GetValue(x, z).peaks[0]);
 

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class CameraManager : MonoBehaviour, ICameraManager
 {
@@ -33,8 +34,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 300; 
-        terrainHeight = 300;
+        terrainWidth = 150; 
+        terrainHeight = 150;
         patchSize = 128;
         scaleTerrainY = 12;
 
@@ -141,9 +142,15 @@ public class CameraManager : MonoBehaviour, ICameraManager
         }
         if (Input.GetKey("4") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("averaging");
+            Debug.Log("color peaks");
 
-            filterGenerator.af.GenerateAverageFilterInRegion(localTerrain.GetVisibleArea());
+            List<Vertex> closestPeaks = 
+                terrainGenerator.ds.mountainPeaksManager.GetClosestPeaks(localTerrain.localTerrainC.center);
+            foreach(Vertex v in closestPeaks)
+            {
+                riverGenerator.fd.ColorPixel(v.x, v.z, 3, riverGenerator.fd.greenColor);
+            }
+
             lastActionFrame = Time.frameCount;
         }
 
@@ -172,17 +179,27 @@ public class CameraManager : MonoBehaviour, ICameraManager
         }
         if (Input.GetKey("2") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("default river");
+            Debug.Log("default river"); 
             riverGenerator.GenerateDefaultRiver();
             lastActionFrame = Time.frameCount;
         }
 
         if (Input.GetKey("1") && lastActionFrame < Time.frameCount - 30)
         {
-            Vertex start = new Vertex(-100, 0);
+            Vertex start = new Vertex(-140, -140);
             start.height = localTerrain.globalTerrainC.GetValue(start.x, start.z);
-            Vertex end = new Vertex(100, 0);
+            Vertex end = new Vertex(140, 140);
             end.height = localTerrain.globalTerrainC.GetValue(end.x, end.z);
+
+            if(riverGenerator.rivers.Count > 0)
+            {
+                start = riverGenerator.rivers[riverGenerator.rivers.Count - 1].riverPath[0];
+                start.height = localTerrain.globalTerrainC.GetValue(start.x, start.z);
+                end = riverGenerator.rivers[riverGenerator.rivers.Count - 1].GetLastVertex();
+                end.height = localTerrain.globalTerrainC.GetValue(end.x, end.z);
+
+            }
+
 
             RiverInfo river = riverGenerator.frp.GetRiverFromTo(start, end);
             Debug.Log(river);

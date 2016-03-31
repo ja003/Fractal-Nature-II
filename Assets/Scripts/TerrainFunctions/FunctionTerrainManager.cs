@@ -158,6 +158,77 @@ public class FunctionTerrainManager {
         return neighbours;
     }
 
+    /// <summary>
+    /// returns 8 neighbours
+    /// operates on global coordinates
+    /// </summary>
+    public List<Vertex> Get8Neighbours(Vertex center, int step)
+    {
+        List<Vertex> neighbours = new List<Vertex>();
+        int x = center.x;
+        int z = center.z;
+        //left
+        neighbours.Add(new Vertex(x - step, z, lt.GetGlobalHeight(x - step, z))); 
+        //up
+        neighbours.Add(new Vertex(x, z + step, lt.GetGlobalHeight(x, z + step))); 
+        //righ
+        neighbours.Add(new Vertex(x + step, z, lt.GetGlobalHeight(x + step, z))); 
+        //down
+        neighbours.Add(new Vertex(x, z - step, lt.GetGlobalHeight(x, z - step))); 
+
+        //leftUp
+        neighbours.Add(new Vertex(x - step, z + step, lt.GetGlobalHeight(x - step, z + step))); 
+        //rightUp
+        neighbours.Add(new Vertex(x + step, z + step, lt.GetGlobalHeight(x + step, z + step))); 
+        //righDown
+        neighbours.Add(new Vertex(x + step, z - step, lt.GetGlobalHeight(x + step, z - step))); 
+        //leftDown
+        neighbours.Add(new Vertex(x - step, z - step, lt.GetGlobalHeight(x - step, z - step)));
+
+        return neighbours;
+    }
+
+    /// <summary>
+    /// returns 4 neighbours
+    /// operates on global coordinates
+    /// </summary>
+    public List<Vertex> Get4Neighbours(Vertex center, int step)
+    {
+        List<Vertex> neighbours = new List<Vertex>();
+        int x = center.x;
+        int z = center.z;
+        //left
+        neighbours.Add(new Vertex(x - step, z, lt.GetGlobalHeight(x - step, z)));
+        //up
+        neighbours.Add(new Vertex(x, z + step, lt.GetGlobalHeight(x, z + step)));
+        //righ
+        neighbours.Add(new Vertex(x + step, z, lt.GetGlobalHeight(x + step, z)));
+        //down
+        neighbours.Add(new Vertex(x, z - step, lt.GetGlobalHeight(x, z - step)));
+        
+        return neighbours;
+    }
+
+    /// <summary>
+    /// checks if linew between v1 and v2 contains higher values than threshold
+    /// </summary>
+    public bool IsOnContour(Vertex v1, Vertex v2, float threshold)
+    {
+        Vector3 dir = ((Vector3)v2 - v1).normalized;
+        float dist = fmc.GetDistance(v1, v2);
+        Vector3 currentV = v1;
+        Vertex current = v1;
+        for (int j = 0; j < dist; j++)
+        {
+            if (current.height > threshold)
+                return false;
+            currentV = currentV + dir;
+            current = currentV;
+            current.height = lt.globalTerrainC.GetValue(current.x, current.z);
+        }
+        return true;
+    }
+
     /*
     //obsolete!!!
     public List<Vertex> Get4Neighbours(Vertex center, int step, int offset)

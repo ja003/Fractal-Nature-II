@@ -25,7 +25,7 @@ public class GUIMesh {
         topOffset = gm.topOffset;
         buttonHeight = gm.smallButtonHeight;
         sideOffset = 10;
-        roughness = gm.cm.terrainGenerator.rougness;
+        roughness = gm.cm.terrainGenerator.roughness;
         scaleY = gm.scaleY;
         visibleArea = gm.visibleArea;
     }
@@ -103,9 +103,9 @@ public class GUIMesh {
                 menuWidth - 4*sideOffset - buttonWidth - 5,
                 buttonHeight), roughness, 0, 5);
 
-        if (roughness != gm.cm.terrainGenerator.rougness)
+        if (roughness != gm.cm.terrainGenerator.roughness)
         {
-            gm.cm.terrainGenerator.rougness = roughness;
+            gm.cm.terrainGenerator.roughness = roughness;
         }
 
         yPos += buttonHeight + 5;

@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class TerrainGenerator// : ITerrainGenerator
+public class TerrainGenerator
 {
     public GUIManager guiManager;
 
@@ -15,7 +15,7 @@ public class TerrainGenerator// : ITerrainGenerator
     public DiamondSquare ds;
     public DiamondSquare2 ds2;
     public RandomTerrain rt;
-    
+
     public FunctionMathCalculator fmc;
 
     public GridManager gm;
@@ -31,7 +31,7 @@ public class TerrainGenerator// : ITerrainGenerator
     public bool filterSpikeLayer = false;
     public bool filterGaussianLayer = false;
 
-    public float rougness = 3;
+    public float roughness = 3;
 
     int individualMeshWidth;
     int individualMeshHeight;
@@ -55,7 +55,7 @@ public class TerrainGenerator// : ITerrainGenerator
         this.filterGenerator = filterGenerator;
         this.riverGenerator = riverGenerator;
         fmc = functionMathCalculator;
-        
+
         gm = gridManager;
 
         rt.AssignFunctions(fmc);
@@ -80,7 +80,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
         build();
     }
-    
+
 
 
     //// <summary>
@@ -107,6 +107,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
         localTerrain.UpdateSize(patchSize, patchSize);
 
+        int i = 0;
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
@@ -116,10 +117,14 @@ public class TerrainGenerator// : ITerrainGenerator
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
                     //ds.mountainPeaksManager.GeneratePeaks(x, z);
-                    rougness += UnityEngine.Random.Range(-0.2f, 0.3f);
-                    ds.Initialize(patchSize, rougness);
+                    roughness += UnityEngine.Random.Range(-0.3f, 0.2f);
+                    if (roughness < 1)
+                        roughness += 0.3f;
+                    //rougness = i;
+                    //i++;
+                    ds.Initialize(patchSize, roughness);
 
-                    
+
                     //Debug.Log("generating on: " + movedCenter);
                 }
                 else
@@ -129,7 +134,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 //guiManager.progress.AddToProgress(1);
             }
         }
-        
+
         //move back
         localTerrain.MoveVisibleTerrain(center, false);
         localTerrain.UpdateSize(terrainWidth, terrainHeight);
@@ -139,21 +144,31 @@ public class TerrainGenerator// : ITerrainGenerator
     public void GenerateDefaultTerrain()
     {
         int size = 150;
-        for(int x = -size; x < size; x++)
+        for (int x = -size; x < size; x++)
         {
             for (int z = -size; z < size; z++)
             {
                 localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
-                if(x >= -10 && x <= 10 && z > -100 && z < 100)
+                if (x >= 30 && x <= 50 && z > -120)
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if(x > -30 && x < 30 && z >= -100 && z <= -80)
-                {
+                if (x >= -50 && x <= -30 && z < 120)
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                }
-                if (x > -30 && x < 30 && z <= 100 && z >= 90)
-                {
+                if (x >= -120 && x <= -30 && z > -20 && z < 20)
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                }
+                if (x >= 30 && x <= 120 && z > -20 && z < 20)
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+
+                /*int h = 30;
+                if (x >= -4*h && x <= -3*h && z > -5*h && z < h)
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+                if (x >= -2 * h && x <= -h && z > -4*h && z < 5*h)
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+                if (x >= h && x <= 2*h && z > -4*h && z < 5*h)
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
+                if (x >= 3* h && x <= 4 * h && z > -5*h && z < h)
+                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);*/
+
+
             }
         }
     }
@@ -167,8 +182,8 @@ public class TerrainGenerator// : ITerrainGenerator
         ///functional RANDOM terrin generator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
-        //PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
-        GenerateDefaultTerrain();
+        PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
+        //GenerateDefaultTerrain();
 
         //ds.Initialize();
 
@@ -180,7 +195,7 @@ public class TerrainGenerator// : ITerrainGenerator
         //AssignHeightsToVertices();
 
         applyProceduralTex(true, sandColor, sandLimit, sandStrength, sandCoverage, true, grassColor, grassStrength, true, snowColor, snowLimit, snowStrength, snowCoverage, true, rockColor, slopeLimit, slopeStrength, noiseTexValue);
-        
+
     }
 
     public void FixUnsetValues()
@@ -220,17 +235,17 @@ public class TerrainGenerator// : ITerrainGenerator
     /// </summary>
     public void ApplyLayers()
     {
-        for(int x = 0; x < terrainWidth; x++)
+        for (int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainHeight; z++)
             {
-                if(terrainLayer)
+                if (terrainLayer)
                     vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
                 //vertices[x, z].y = 0;
 
-                foreach(RiverInfo river in riverGenerator.rivers)
+                foreach (RiverInfo river in riverGenerator.rivers)
                 {
-                    if(riverGenerator.riverGui.riverFlags[riverGenerator.rivers.IndexOf(river)])
+                    if (riverGenerator.riverGui.riverFlags[riverGenerator.rivers.IndexOf(river)])
                         vertices[x, z].y += riverGenerator.GetLocalValue(river, x, z);
                 }
                 /*
@@ -240,7 +255,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 //fornow
                 //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
 
-                if(filterAverageLayer)
+                if (filterAverageLayer)
                     vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
 
                 if (filterMedianLayer)
@@ -308,7 +323,7 @@ public class TerrainGenerator// : ITerrainGenerator
             GameObject.Destroy(myWater[i]);
         }
 
-        
+
         //TODO: reset filters
 
         initialize(scaleTerrain.y);
@@ -328,15 +343,15 @@ public class TerrainGenerator// : ITerrainGenerator
         //while the meshSize is the renderable 2^i X 2^i mesh.
         //terrainSize = patchSize * patchCount + patchCount;
         terrainWidth = localTerrain.terrainWidth;
-        terrainHeight= localTerrain.terrainHeight;
+        terrainHeight = localTerrain.terrainHeight;
 
         scaleTerrain = new Vector3(terrainWidth, scaleY, terrainHeight);
         //meshSize =  patchSize * patchCount + 1;
-        int meshSizeX =  32 * 2 + 1;
-        int meshSizeZ =  64 * 2 + 1;
+        int meshSizeX = 32 * 2 + 1;
+        int meshSizeZ = 64 * 2 + 1;
         //individualMeshSize = meshSize / 2 + 1;
-        individualMeshWidth = terrainWidth/2; 
-        individualMeshHeight = terrainHeight/2;
+        individualMeshWidth = terrainWidth / 2;
+        individualMeshHeight = terrainHeight / 2;
 
         //Textures initialisation
         //heightMap = new Texture2D(meshSize, meshSize, TextureFormat.RGBA32, false);
@@ -408,7 +423,7 @@ public class TerrainGenerator// : ITerrainGenerator
         //vertsScale = new Vector3(scaleTerrain.x / (terrainSize - 1), scaleTerrain.y, scaleTerrain.z / (terrainSize - 1));
         uvScale = new Vector2(1.0f / (terrainWidth - 1), 1.0f / (terrainWidth - 1));
         waterUvScale = new Vector2(1.0f / (individualMeshWidth - 1), 1.0f / (individualMeshWidth - 1));
-        vertsScale = new Vector3(scaleTerrain.x / (terrainWidth- 1), scaleTerrain.y, scaleTerrain.z / (terrainWidth - 1));
+        vertsScale = new Vector3(scaleTerrain.x / (terrainWidth - 1), scaleTerrain.y, scaleTerrain.z / (terrainWidth - 1));
 
         //Initialising primary height map to null
         //for (int z = 0; z < terrainSize; z++)
@@ -465,9 +480,11 @@ public class TerrainGenerator// : ITerrainGenerator
                             Debug.Log(x + "," + z + " OUT");
                             Debug.Log(meshIndex);
                         }
-                        try {
+                        try
+                        {
                             verticesOut[meshIndex][(z * individualMeshHeight) + x].Scale(vertsScale);
-                        }catch(IndexOutOfRangeException e)
+                        }
+                        catch (IndexOutOfRangeException e)
                         {
                             Debug.Log("!");
                         }
@@ -527,7 +544,7 @@ public class TerrainGenerator// : ITerrainGenerator
     /// </summary>
     public void MoveTerrain(Vector3 center)
     {
-        for(int x = 0; x < terrainWidth; x++)
+        for (int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainWidth; z++)
             {
@@ -536,7 +553,7 @@ public class TerrainGenerator// : ITerrainGenerator
             }
         }
     }
-    
+
 
     public void build()
     {
@@ -545,11 +562,11 @@ public class TerrainGenerator// : ITerrainGenerator
         MoveTerrain(localTerrain.localTerrainC.center);
 
         ApplyLayers();
-        
+
         //Function called to update the renderables when changes occur
 
         //Initialise scaling values according to terrain size and user-controlled sizing
-        vertsScale = new Vector3(scaleTerrain.x / (terrainWidth- 1), scaleTerrain.y, scaleTerrain.z / (terrainHeight - 1));
+        vertsScale = new Vector3(scaleTerrain.x / (terrainWidth - 1), scaleTerrain.y, scaleTerrain.z / (terrainHeight - 1));
 
         int meshIndex = 0;
 
@@ -575,7 +592,7 @@ public class TerrainGenerator// : ITerrainGenerator
                         verticesOut[meshIndex][(z * individualMeshHeight) + x].Scale(vertsScale);
 
                         //Set normals
-                        normals[meshIndex][(z * individualMeshHeight) + x] = 
+                        normals[meshIndex][(z * individualMeshHeight) + x] =
                             getNormalAt(vertices[
                                 x + individualMeshWidth * j - j,
                                 z + individualMeshHeight * i - i],
@@ -585,17 +602,17 @@ public class TerrainGenerator// : ITerrainGenerator
                         //Set heightmap texture pixel
                         //float this_color = vertices[x + individualMeshWidth * j, z + 
                         //individualMeshHeight * i].y;
-                        float this_color = 
-                            (localTerrain.GetLocalHeight(x + j*individualMeshWidth, z + i*individualMeshHeight)
+                        float this_color =
+                            (localTerrain.GetLocalHeight(x + j * individualMeshWidth, z + i * individualMeshHeight)
                             + minusValue) / valueRange;
-                        if (counter < 50 && (this_color < 0 || this_color > 1) && this_color < 50)
+                        if (counter < 10 && (this_color < 0 || this_color > 1) && this_color < 50)
                         {
-                            
+
                             Debug.Log(localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshHeight) + ":" + this_color);
                             counter++;
                         }
 
-                        heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i, 
+                        heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
                             new Color(this_color, this_color, this_color));
 
                         //Set water data if water is present
@@ -644,7 +661,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 heightMap.SetPixel(z, x, new Color(1, 0, 1));
             }
         }
-        heightMap.SetPixel(patchWidth, patchHeight, new Color(1,0,0));
+        heightMap.SetPixel(patchWidth, patchHeight, new Color(1, 0, 0));
 
         //Apply changes to heighmap teture
         heightMap.Apply();
@@ -667,7 +684,7 @@ public class TerrainGenerator// : ITerrainGenerator
         endOf = verticesOut[3][individualMeshWidth * individualMeshHeight - 1];
         startOf = verticesOut[0][0];
         middleOf = (startOf + endOf) / 2;
-        
+
 
 
     }
@@ -885,8 +902,9 @@ public class TerrainGenerator// : ITerrainGenerator
         if (!overwrite && localTerrain.GetLocalHeight(x, z) != 666)
             return;
 
-        if (CheckBounds(x, z)) {
-            if (vertices[x, z].y == 666) 
+        if (CheckBounds(x, z))
+        {
+            if (vertices[x, z].y == 666)
             {
                 vertices[x, z].y = height;
                 //localTerrain.SetHeight(x, z, height, false);
@@ -915,13 +933,13 @@ public class TerrainGenerator// : ITerrainGenerator
     /// <returns></returns>
     public float GetVertexHeight(int x, int z)
     {
-        
+
         if (localTerrain.GetLocalHeight(x, z) != 666)
             return localTerrain.GetLocalHeight(x, z);
         else
             return 0;
-        
-        
+
+
         if (!CheckBounds(x, z))
         {
             if (globalTerrain.GetHeight(x, z) != 666)
@@ -930,7 +948,7 @@ public class TerrainGenerator// : ITerrainGenerator
                 return 0;
         }
 
-        if(vertices[x, z].y == 666)
+        if (vertices[x, z].y == 666)
         {
             return 0;
         }
@@ -938,9 +956,9 @@ public class TerrainGenerator// : ITerrainGenerator
         {
             return vertices[x, z].y;
         }
-        
+
     }
-    
+
     /*
     private void initDiamondSquare(Vector3 start, float scale)
     {
@@ -1120,7 +1138,7 @@ public class TerrainGenerator// : ITerrainGenerator
         }
     }
     */
-    
+
     //PROCEDURAL TEXTURES MODEL
 
     public void setTexture(bool flag)
@@ -1229,13 +1247,13 @@ public class TerrainGenerator// : ITerrainGenerator
                     index++;
                 }
 
-                if (xVal > 0 && zVal < terrainWidth- 1)
+                if (xVal > 0 && zVal < terrainWidth - 1)
                 {
                     allCol = tempTexture.GetPixel(xVal - 1, zVal + 1);
                     index++;
                 }
 
-                if (xVal < terrainWidth - 1 && zVal < terrainHeight- 1)
+                if (xVal < terrainWidth - 1 && zVal < terrainHeight - 1)
                 {
                     allCol = tempTexture.GetPixel(xVal + 1, zVal + 1);
                     index++;
@@ -1521,7 +1539,7 @@ public class TerrainGenerator// : ITerrainGenerator
 
     */
 
-        //HELPER FUNCTIONS
+    //HELPER FUNCTIONS
     public void ColorPixel(int x, int z, int offset, Color color)
     {
         for (int _x = x - offset; _x <= x + offset; _x++)
@@ -1646,7 +1664,7 @@ public class TerrainGenerator// : ITerrainGenerator
         objPosition.y /= vertsScale.y;
         objPosition.z /= vertsScale.z;
 
-        if (objPosition.x > terrainWidth- 1) objPosition.x = terrainWidth - 1;
+        if (objPosition.x > terrainWidth - 1) objPosition.x = terrainWidth - 1;
         else
             if (objPosition.x < 0) objPosition.x = 0;
 
@@ -1663,7 +1681,7 @@ public class TerrainGenerator// : ITerrainGenerator
         //Return new position
         return newPos;
     }
-    
+
 
     private float findSlope(int xVal, int zVal)
     {
@@ -1688,7 +1706,7 @@ public class TerrainGenerator// : ITerrainGenerator
         else
             neighbH[2] = GetVertexHeight(xVal, zVal);//vertices[xVal, yVal].y;
 
-        if (zVal < terrainHeight- 1)
+        if (zVal < terrainHeight - 1)
             neighbH[3] = GetVertexHeight(xVal, zVal + 1);// vertices[xVal, yVal + 1].y;
         else
             neighbH[3] = GetVertexHeight(xVal, zVal);// vertices[xVal, yVal].y;
@@ -1762,7 +1780,7 @@ public class TerrainGenerator// : ITerrainGenerator
     //int patchCount;
     //int meshSize;
     //int individualMeshSize;
-    
+
     Vector2 uvScale;
     Vector3 vertsScale;
     Vector2 waterUvScale;
@@ -1789,7 +1807,7 @@ public class TerrainGenerator// : ITerrainGenerator
     public float[,] S; //sediment
     public Vector2[,] V; //velocity
     public Vector4[,] F; //outflow flux
-    
+
 
     //Wind parameters
     Vector2 windStrength = new Vector2(0.0f, 0.0f);

@@ -27,6 +27,7 @@ public class RiverInfo  {
     public GlobalCoordinates globalRiverC;
 
     public int gridStep;
+    public float threshold;
 
     public float width;
     public float areaEffect;
@@ -113,7 +114,8 @@ public class RiverInfo  {
     {
         width = 15;
         areaEffect = 2;
-        depth = 0.2f;
+        depth = 0.1f;
+        gridStep = 30;
     }
 
     /*
@@ -360,6 +362,18 @@ public class RiverInfo  {
             //fd.ColorPixel(localX, localZ, 3, fd.pinkColor);
             fd.ColorPixel(v.x, v.z, 3, fd.pinkColor);
         }
+        for(int i = 0; i < riverPath.Count-1; i++)
+        {
+            //fd.ColorLine(riverPath[i], riverPath[i + 1], 2, fd.redColor);
+            Vector3 dir = ((Vector3)riverPath[i + 1] - riverPath[i]).normalized;
+            float dist = ftm.fmc.GetDistance(riverPath[i + 1], riverPath[i]);
+            for(int j = 0; j < dist; j++)
+            {
+                fd.ColorPixel(riverPath[i].x + (int)(dir.x * j), riverPath[i].z + (int)(dir.z * j), 2, fd.redColor);
+            }
+
+        }
+
     }
     
 

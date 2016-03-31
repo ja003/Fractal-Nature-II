@@ -40,24 +40,24 @@ public class FunctionRiverPlanner  {
     /// <summary>
     /// find river path from given starting point on visible area
     /// </summary>
-    public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides)
+    public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides, int gridStep)
     {
         //return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
         //Debug.Log(rg.lt.globalTerrainC.definedArea);
-        return GetRiverFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea);
+        return GetRiverFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea, gridStep);
     }
 
     public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides,
-        Area restrictedArea)
+        Area restrictedArea, int gridStep)
     {
-        return GetRiverFrom(start, reachedSides, restrictedArea, new RiverInfo(rg));
+        return GetRiverFrom(start, reachedSides, restrictedArea, new RiverInfo(rg), gridStep);
     }
 
     /// <summary>
     /// find river path from given starting point on restricted area
     /// </summary>
     public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides,
-        Area restrictedArea, RiverInfo ignoreRiver)
+        Area restrictedArea, RiverInfo ignoreRiver, int gridStep)
     {
         fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
@@ -103,7 +103,7 @@ public class FunctionRiverPlanner  {
            // threshold = step;
 
         //TODO: cancel default step!!!
-        int gridStep = 30; //step between river path points
+        //int gridStep = 30; //step between river path points
         int borderOffset = gridStep + 5;
         
         //bool reachedSide = false;
@@ -297,32 +297,153 @@ public class FunctionRiverPlanner  {
     {
         Debug.Log("getting river from " + start + " to " + end);
         int gridStep = 20;
+        float e = 0.2f;
 
-        List<Vertex> path = GetRiverPathFromTo(start, end, gridStep, 0.2f, 0);
+        List<Vertex> path = GetRiverPathFromTo(start, end, gridStep, e, 0);
         RiverInfo river = new RiverInfo(rg);
         river.riverPath = path;
         river.gridStep = gridStep;
+        river.threshold = Mathf.Max(start.height + e, end.height + e); 
 
-        //OptimizeRiver(river);
+        //SimplifyRiver(river, 3);
+        //SimplifyRiver(river, 1);
         return river;
     }
 
-    public void OptimizeRiver(RiverInfo river)
+    public void OptimizeRiverCorners(RiverInfo river)
     {
         List<Vertex> path = river.riverPath;
         int gridStep = river.gridStep;
-        for (int i = path.Count - 2; i > 0; i--)
+        for (int i = path.Count - 1; i > 1; i--)
         {
-            if(fmc.GetDistance(path[i], path[i+1]) < gridStep/2 ||
+            if (fmc.GetDistance(path[i], path[i -2]) <= (gridStep+1))
+            {
+                Debug.Log("remove: " + path[i-1]);
+                path.RemoveAt(i-1);
+            }
+        }
+    }
+
+    /// <summary>
+    /// removes all unnecessary nodes from river
+    /// </summary>
+    /// <param name="river"></param>
+    public void SimplifyRiver(RiverInfo river, int maxReduction)
+    {
+        List<Vertex> path = river.riverPath;
+        int gridStep = river.gridStep;
+        int reduction;
+        for (int i = 0; i < path.Count - 2; i++)
+        {
+            reduction = 0;
+            //while(i < path.Count-2 && fmc.GetDistance(path[i], path[i + 2]) < 2* gridStep)
+            //Vertex center = new Vertex((path[i].x + path[i + 2].x) / 2, (path[i].z + path[i + 2].z) / 2);
+            //center.height = rg.lt.globalTerrainC.GetValue(center.x, center.z);
+            Vertex next = path[i + 2];
+            while(reduction < maxReduction && i < path.Count - 3 && 
+                ftm.IsOnContour(path[i], next, river.threshold))
+            //if (fmc.GetDistance(path[i], path[i+2]) < 2* gridStep)//corner detected
+            {
+                Debug.Log(i + " remove: " + path[i+1] + ", left: " + (path.Count-1));
+                //center = new Vertex((path[i].x + path[i + 3].x) / 2, (path[i].z + path[i + 3].z) / 2);
+                //center.height = rg.lt.globalTerrainC.GetValue(center.x, center.z);
+                path.RemoveAt(i+1);
+                next = path[i + 2];
+                reduction++;
+            }
+
+            //not relevant with 4 neighbourhood method
+            /*if(fmc.GetDistance(path[i], path[i+1]) < gridStep/2 ||
                 fmc.GetDistance(path[i], path[i - 1]) < gridStep/2)
             {
                 Debug.Log("remove: " + path[i]);
                 path.RemoveAt(i);
-            }
+            }*/
         }
     }
     
-    public List<Vertex> GetRiverPathFromTo(Vertex start, Vertex end, float step, float e, int counter)
+    
+    public List<Vertex> GetRiverPathFromTo(Vertex start, Vertex end, int step, float e, int counter)
+    {
+        float threshold = Mathf.Max(start.height + e, end.height + e);
+        List<Vertex> path = new List<Vertex>();
+        List<Vertex> borderPath = new List<Vertex>();
+        List<Vertex> ignoreV = new List<Vertex>();//list of vertices where path can't be for sure
+
+        path.Add(start);
+        Vertex current = start;
+        
+        while(fmc.GetDistance(current, end) > (1.5*step - e) && counter < 666)
+        {
+            counter++;
+            //Debug.Log(counter);
+            List<Vertex> neighbours = ftm.Get4Neighbours(current, step);
+            bool newCurrent = false;
+            //Debug.Log(current);
+            
+            float dist = 666;
+            foreach (Vertex n in neighbours)
+            {
+                if(n.height < threshold && fmc.GetDistance(n,end) < dist &&
+                    !path.Contains(n) && !ignoreV.Contains(n))
+                {
+                    current = n;
+                    newCurrent = true;
+                    dist = fmc.GetDistance(n, end);
+                }
+                if(n.height == 666)//vertex is out of bounds => it can be path through border
+                {
+                    //if (borderPath.Count == 0 ||
+                    //    (borderPath.Count > 0 &&
+                    //    fmc.GetDistance(borderPath[borderPath.Count - 1], end) < fmc.GetDistance(n, end)))
+                    if(borderPath.Count > path.Count+1)
+                    {
+                        Debug.Log("new border");
+                        borderPath.AddRange(path);
+                        borderPath.Add(n);
+                    }
+                }
+            }
+            if (newCurrent)
+            {
+                path.Add(current);
+            }
+            else
+            {
+                while (!newCurrent && current != start)
+                {
+                    ignoreV.Add(current);
+                    path.RemoveAt(path.Count - 1);
+                    current = path[path.Count - 1];
+                    neighbours = ftm.Get4Neighbours(current, step);
+                    foreach (Vertex n in neighbours)
+                    {
+                            if (n.height < threshold &&
+                            !path.Contains(n) && !ignoreV.Contains(n))
+                        {
+                            newCurrent = true;
+                            current = n;
+                            path.Add(current);
+                        }
+                        if (newCurrent)
+                            break;
+                    }
+                }
+            }
+            if(current == start)
+            {
+                Debug.Log("border");
+                return borderPath;//if borderpath is empty => no path found                
+            }
+        }
+        Debug.Log(counter);
+        return path;
+    }
+
+
+    //not working
+    /*
+    public List<Vertex> GetRiverPathFromTo2(Vertex start, Vertex end, float step, float e, int counter)
     {
         //int counter = 0;
         float threshold = Mathf.Max(start.height + e, end.height + e);
@@ -353,7 +474,7 @@ public class FunctionRiverPlanner  {
         if (fmc.GetDistance(current, end) < (step + e) && current.height < threshold)
         {
             if ((path.Count > 0 && !current.CoordinatesEquals(path[path.Count - 1])))
-                path.Add(current);                
+                path.Add(current);
         }
         else
         {
@@ -426,21 +547,21 @@ public class FunctionRiverPlanner  {
                 Vector3 bourder_dir = ((Vector3)current - bc).normalized;
                 while (bc.height == 666)
                 {
-                    bc = new Vertex((int)(bc.x + bourder_dir.x * step/3), (int)(bc.z + bourder_dir.z * step/3));
+                    bc = new Vertex((int)(bc.x + bourder_dir.x * step / 3), (int)(bc.z + bourder_dir.z * step / 3));
                     bc.height = rg.lt.globalTerrainC.GetValue(bc);
                 }
                 Debug.Log("moved to " + bc);
                 //bc = current;
             }
 
-            List<Vertex> path1 = GetRiverPathFromTo(current, bc, step, e, counter);
-            if (path1.Count > 0 && path[path.Count-1] == path1[0])
+            List<Vertex> path1 = GetRiverPathFromTo2(current, bc, step, e, counter);
+            if (path1.Count > 0 && path[path.Count - 1] == path1[0])
             {
                 Debug.Log("remove: " + path1[0]);
                 path1.RemoveAt(0);
             }
             path.AddRange(path1);
-            List<Vertex> path2 = GetRiverPathFromTo(bc, barrier, step, e, counter);
+            List<Vertex> path2 = GetRiverPathFromTo2(bc, barrier, step, e, counter);
             if (path2.Count > 0 && path[path.Count - 1] == path2[0])
             {
                 Debug.Log("remove: " + path2[0]);
@@ -449,9 +570,9 @@ public class FunctionRiverPlanner  {
             path.AddRange(path2);
         }
 
-        if(path.Count > 0 && fmc.GetDistance(path[path.Count - 1], end) > (step + e))
+        if (path.Count > 0 && fmc.GetDistance(path[path.Count - 1], end) > (step + e))
         {
-            List<Vertex> pathEnd = GetRiverPathFromTo(path[path.Count - 1], end, step, e, counter);
+            List<Vertex> pathEnd = GetRiverPathFromTo2(path[path.Count - 1], end, step, e, counter);
             path.AddRange(pathEnd);
         }
 
@@ -460,10 +581,9 @@ public class FunctionRiverPlanner  {
         if (path.Count == 0)
             path.Add(start);
 
-        if (path.Count > 0 && !end.CoordinatesEquals(path[path.Count-1]))
+        if (path.Count > 0 && !end.CoordinatesEquals(path[path.Count - 1]))
             path.Add(end);
         return path;
     }
-    
-    
+    */
 }

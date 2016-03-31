@@ -1,0 +1,4 @@
+River path finder
+
+- implemented new path finding method (not complete yet)
+- cahnged IsOnBorder method

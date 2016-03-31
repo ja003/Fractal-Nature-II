@@ -199,6 +199,9 @@ public class DiamondSquare
             UnityEngine.Debug.Log("no peak found");
             distance = maxDistance;
         }
+        //if (distance > 50)
+        //    distance = 666;
+
         return distance;
     }
     /*
@@ -239,6 +242,7 @@ public class DiamondSquare
             //value = 1;
             if(debugPeaks)
                 SetLocalHeight(0, 0, factor, overwrite); //DEBUG PEAKS
+            //factor = 1;
             SetLocalHeight(0, 0, value * factor, overwrite);
         }
 
@@ -254,6 +258,7 @@ public class DiamondSquare
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(s, 0, factor, overwrite); //DEBUG PEAKS
+            //factor = 1;
             SetLocalHeight(s, 0, value * factor, overwrite);
         }
 
@@ -269,6 +274,7 @@ public class DiamondSquare
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(0, s, factor, overwrite); //DEBUG PEAKS
+            //factor = 1;
             SetLocalHeight(0, s, value * factor, overwrite);
         }
 
@@ -284,12 +290,13 @@ public class DiamondSquare
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(s,s, factor, overwrite); //DEBUG PEAKS
+            //factor = 1;
             SetLocalHeight(s, s, value * factor, overwrite);
         }
     }
 
 
-    float factorConstant = 2;
+    float factorConstant = 3;
     float highFactor = 1;
     float lowFactor = 1;
     bool debugPeaks = false;
@@ -410,11 +417,13 @@ public class DiamondSquare
 
     public float GetHeight(int x, int z, float initValue, float modNoise)
     {
+        float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
         if (debugPeaks)
         {
-            float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
+            
             return factor;
         }
+        //modNoise *= (float)Math.Sqrt(factor);
         
         float height = initValue + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
         
@@ -425,7 +434,8 @@ public class DiamondSquare
     {
         float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
 
-        float modNoise = modNoiseOrig * factor;
+        float modNoise = modNoiseOrig;// = modNoiseOrig * factor;
+        modNoise *= (float)Math.Sqrt(factor);
         //if ((x > 10 && x <= 30))
         //{
         //    modNoise += factor;
