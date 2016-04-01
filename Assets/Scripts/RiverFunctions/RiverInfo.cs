@@ -114,7 +114,7 @@ public class RiverInfo  {
     {
         width = 15;
         areaEffect = 2;
-        depth = 0.1f;
+        depth = 0.15f;
         gridStep = 30;
     }
 
@@ -253,10 +253,10 @@ public class RiverInfo  {
     {
         if (riverPath[0].EqualsCoordinates(river2.riverPath[0]))
         {
-            riverPath.RemoveAt(0);
+            river2.riverPath.RemoveAt(0);
             riverPath.Reverse();
             riverPath.AddRange(river2.riverPath);
-            riverPath.Reverse();
+            //riverPath.Reverse();
         }
         else if (GetLastVertex().EqualsCoordinates(river2.riverPath[0]))
         {

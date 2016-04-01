@@ -62,78 +62,6 @@ public class DiamondSquare
         return (a & (a - 1)) == 0;
     }
     
-    public float[][] DiamondSquareGridOLD(int size, int seed = 0, float rMin = 0, float rMax = 255, float noise = 0.0f)
-    {
-        // Fail if grid size is not of the form (2 ^ n) - 1 or if min/max values are invalid
-        int s = size - 1;
-        if (!pow2(s) || rMin >= rMax)
-            return null;
-
-        float modNoise = 0.0f;
-
-        // init the grid
-        float[][] grid = new float[size][];
-        for (int i = 0; i < size; i++)
-            grid[i] = new float[size];
-
-        // Seed the first four corners
-        Random rand = (seed == 0 ? new Random() : new Random(seed));
-        grid[0][0] = RandRange(rand, rMin, rMax);
-        grid[s][0] = RandRange(rand, rMin, rMax);
-        grid[0][s] = RandRange(rand, rMin, rMax);
-        grid[s][s] = RandRange(rand, rMin, rMax);
-
-        float s0, s1, s2, s3, d0, d1, d2, d3, cn;
-
-        for (int i = s; i > 1; i /= 2)
-        {
-            // reduce the random range at each step
-            modNoise = (rMax - rMin) * noise * ((float)i / s);
-
-            // diamonds
-            for (int y = 0; y < s; y += i)
-            {
-                for (int x = 0; x < s; x += i)
-                {
-                    s0 = grid[x][y];
-                    s1 = grid[x + i][y];
-                    s2 = grid[x][y + i];
-                    s3 = grid[x + i][y + i];
-
-                    // cn
-                    grid[x + (i / 2)][y + (i / 2)] = ((s0 + s1 + s2 + s3) / 4.0f)
-                        + RandRange(rand, -modNoise, modNoise);
-                }
-            }
-
-            // squares
-            for (int y = 0; y < s; y += i)
-            {
-                for (int x = 0; x < s; x += i)
-                {
-                    s0 = grid[x][y];
-                    s1 = grid[x + i][y];
-                    s2 = grid[x][y + i];
-                    s3 = grid[x + i][y + i];
-                    cn = grid[x + (i / 2)][y + (i / 2)];
-
-                    d0 = y <= 0 ? (s0 + s1 + cn) / 3.0f : (s0 + s1 + cn + grid[x + (i / 2)][y - (i / 2)]) / 4.0f;
-                    d1 = x <= 0 ? (s0 + cn + s2) / 3.0f : (s0 + cn + s2 + grid[x - (i / 2)][y + (i / 2)]) / 4.0f;
-                    d2 = x >= s - i ? (s1 + cn + s3) / 3.0f :
-                        (s1 + cn + s3 + grid[x + i + (i / 2)][y + (i / 2)]) / 4.0f;
-                    d3 = y >= s - i ? (cn + s2 + s3) / 3.0f :
-                        (cn + s2 + s3 + grid[x + (i / 2)][y + i + (i / 2)]) / 4.0f;
-
-                    grid[x + (i / 2)][y] = d0 + RandRange(rand, -modNoise, modNoise);
-                    grid[x][y + (i / 2)] = d1 + RandRange(rand, -modNoise, modNoise);
-                    grid[x + i][y + (i / 2)] = d2 + RandRange(rand, -modNoise, modNoise);
-                    grid[x + (i / 2)][y + i] = d3 + RandRange(rand, -modNoise, modNoise);
-                }
-            }
-        }
-
-        return grid;
-    }
     
 
     int counter = 0;
@@ -162,7 +90,7 @@ public class DiamondSquare
         SetLocalHeight(0, 0, value * factor, overwrite);
     }*/
 
-    float maxDistance = 666;
+    float maxDistance = 128;
     
 
     /// <summary>
@@ -231,9 +159,10 @@ public class DiamondSquare
         //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(s, s));
 
         neighbourhood = lt.GetNeighbourHeight(0, 0);
+        //UnityEngine.Debug.Log(lt.GetLocalHeight(0, 0));
         if (neighbourhood != 666)
         {
-            SetLocalHeight(0, 0, neighbourhood, false);
+            SetLocalHeight(0, 0, neighbourhood, true);
         }
         else
         {
@@ -249,7 +178,7 @@ public class DiamondSquare
         neighbourhood = lt.GetNeighbourHeight(s, 0);
         if (neighbourhood != 666)
         {
-            SetLocalHeight(s, 0, neighbourhood, false);
+            SetLocalHeight(s, 0, neighbourhood, true);
         }
         else
         {
@@ -265,7 +194,7 @@ public class DiamondSquare
         neighbourhood = lt.GetNeighbourHeight(0, s);
         if (neighbourhood != 666)
         {
-            SetLocalHeight(0, s, neighbourhood, false);
+            SetLocalHeight(0, s, neighbourhood, true);
         }
         else
         {
@@ -281,7 +210,7 @@ public class DiamondSquare
         neighbourhood = lt.GetNeighbourHeight(s, s);
         if (neighbourhood != 666)
         {
-            SetLocalHeight(s, s, neighbourhood, false);
+            SetLocalHeight(s, s, neighbourhood, true);
         }
         else
         {
@@ -423,9 +352,31 @@ public class DiamondSquare
             
             return factor;
         }
-        //modNoise *= (float)Math.Sqrt(factor);
         
-        float height = initValue + RandRange(rand, -modNoise * lowFactor, modNoise * highFactor);
+
+        lowFactor = 2*GetSmallestDistanceToPeak(x, z, closestPeaks) / maxDistance;
+        highFactor = 2*(maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
+
+        if (lowFactor > highFactor)
+            highFactor = lowFactor;
+        else
+            lowFactor = highFactor;
+
+        if (counter < 10 && (lowFactor > 1 || highFactor > 1))
+        {
+            //UnityEngine.Debug.Log(factor);
+            //UnityEngine.Debug.Log(GetSmallestDistanceToPeak(x, z, closestPeaks));
+            //UnityEngine.Debug.Log(lowFactor);
+            //UnityEngine.Debug.Log(highFactor);
+
+            counter++;
+        }
+
+        //modNoise *= (float)Math.Sqrt(factor);
+        float minNoise = -modNoise * lowFactor;// + (float)Math.Sqrt(factor);
+        float maxNoise = modNoise * highFactor;// + (float)Math.Sqrt(factor);
+
+        float height = initValue + RandRange(rand, minNoise, maxNoise);
         
         return height;
     }
@@ -595,4 +546,78 @@ public class DiamondSquare
 		base.Draw(gameTime);
 	}
 }*/
+    /*
+    public float[][] DiamondSquareGridOLD(int size, int seed = 0, float rMin = 0, float rMax = 255, float noise = 0.0f)
+    {
+        // Fail if grid size is not of the form (2 ^ n) - 1 or if min/max values are invalid
+        int s = size - 1;
+        if (!pow2(s) || rMin >= rMax)
+            return null;
+
+        float modNoise = 0.0f;
+
+        // init the grid
+        float[][] grid = new float[size][];
+        for (int i = 0; i < size; i++)
+            grid[i] = new float[size];
+
+        // Seed the first four corners
+        Random rand = (seed == 0 ? new Random() : new Random(seed));
+        grid[0][0] = RandRange(rand, rMin, rMax);
+        grid[s][0] = RandRange(rand, rMin, rMax);
+        grid[0][s] = RandRange(rand, rMin, rMax);
+        grid[s][s] = RandRange(rand, rMin, rMax);
+
+        float s0, s1, s2, s3, d0, d1, d2, d3, cn;
+
+        for (int i = s; i > 1; i /= 2)
+        {
+            // reduce the random range at each step
+            modNoise = (rMax - rMin) * noise * ((float)i / s);
+
+            // diamonds
+            for (int y = 0; y < s; y += i)
+            {
+                for (int x = 0; x < s; x += i)
+                {
+                    s0 = grid[x][y];
+                    s1 = grid[x + i][y];
+                    s2 = grid[x][y + i];
+                    s3 = grid[x + i][y + i];
+
+                    // cn
+                    grid[x + (i / 2)][y + (i / 2)] = ((s0 + s1 + s2 + s3) / 4.0f)
+                        + RandRange(rand, -modNoise, modNoise);
+                }
+            }
+
+            // squares
+            for (int y = 0; y < s; y += i)
+            {
+                for (int x = 0; x < s; x += i)
+                {
+                    s0 = grid[x][y];
+                    s1 = grid[x + i][y];
+                    s2 = grid[x][y + i];
+                    s3 = grid[x + i][y + i];
+                    cn = grid[x + (i / 2)][y + (i / 2)];
+
+                    d0 = y <= 0 ? (s0 + s1 + cn) / 3.0f : (s0 + s1 + cn + grid[x + (i / 2)][y - (i / 2)]) / 4.0f;
+                    d1 = x <= 0 ? (s0 + cn + s2) / 3.0f : (s0 + cn + s2 + grid[x - (i / 2)][y + (i / 2)]) / 4.0f;
+                    d2 = x >= s - i ? (s1 + cn + s3) / 3.0f :
+                        (s1 + cn + s3 + grid[x + i + (i / 2)][y + (i / 2)]) / 4.0f;
+                    d3 = y >= s - i ? (cn + s2 + s3) / 3.0f :
+                        (cn + s2 + s3 + grid[x + (i / 2)][y + i + (i / 2)]) / 4.0f;
+
+                    grid[x + (i / 2)][y] = d0 + RandRange(rand, -modNoise, modNoise);
+                    grid[x][y + (i / 2)] = d1 + RandRange(rand, -modNoise, modNoise);
+                    grid[x + i][y + (i / 2)] = d2 + RandRange(rand, -modNoise, modNoise);
+                    grid[x + (i / 2)][y + i] = d3 + RandRange(rand, -modNoise, modNoise);
+                }
+            }
+        }
+
+        return grid;
+    }
+    */
 }

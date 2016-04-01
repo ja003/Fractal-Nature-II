@@ -104,7 +104,7 @@ public class RiverGenerator  {
         globalStart.height = start.height;
 
         RiverInfo river = frp.GetRiverFrom(globalStart, new List<Direction>(), gridStep);
-        //Debug.Log(river);
+        Debug.Log(river);
            
         globalStart.side = fmc.GetOppositeDirection(river.GetLastVertex().side);
         Area restrictedArea = fmc.CalculateRestrictedArea(globalStart);
@@ -116,12 +116,13 @@ public class RiverGenerator  {
         // 2)find second path
         //Debug.Log(restrictedArea);
         RiverInfo river2 = frp.GetRiverFrom(globalStart, reachedSides, restrictedArea, river, river.gridStep);
-        //Debug.Log(river2);
+        Debug.Log(river2);
 
         // connect them
         river.ConnectWith(river2);
         river.DrawRiver();
-        
+
+        Debug.Log(river);
 
         frd.DistortPath(river.riverPath, river.gridStep/3, river.gridStep);
 
@@ -134,7 +135,7 @@ public class RiverGenerator  {
 
         riverGui.riverFlags.Add(true);
 
-        Debug.Log(river);
+        Debug.Log("distorted: " + river);
     }
 
     /// <summary>

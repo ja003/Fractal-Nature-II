@@ -67,7 +67,9 @@ public class FunctionRiverPlanner  {
         int x_max = restrictedArea.topRight.x;
         int z_max = restrictedArea.topRight.z;
 
-        //Debug.Log("start: " + start);
+        //Debug.Log(ignoreRiver);
+        //Debug.Log(restrictedArea);
+        Debug.Log("start: " + start);
         //Debug.Log("on");
         //Debug.Log(x_min);
         //Debug.Log(z_min);
@@ -129,7 +131,8 @@ public class FunctionRiverPlanner  {
                         Debug.Log(z);
 
                     }*/
-                    if (rg.IsRiverDefined(x,z) && rg.GetRiverOn(x, z) != ignoreRiver)
+                    if (rg.IsRiverDefined(x,z) && rg.GetRiverOn(x, z) != ignoreRiver && 
+                        !ignoreRiver.riverPath.Contains(currentNode.vertex) && !reachedSides.Contains(Direction.river))
                     {
                         reachedSide = Direction.river;
                         currentNode.vertex.side = Direction.river;
@@ -192,13 +195,19 @@ public class FunctionRiverPlanner  {
                         }
                         foreach (Vertex v in neighbours)
                         {
-                            if (!rg.IsRiverDefined(v.x, v.z)) //remove if river can connect to river (right now doesn't look well)
+                            //if (!rg.IsRiverDefined(v.x, v.z)) //remove if river can connect to river (right now doesn't look well)
+                            //{
+                            if (v.height < threshold && !rg.IsRiverDefined(v.x, v.z) && 
+                                !reachableNodes.Contains(new FloodNode(v, i)) || //normal node
+                                !reachedSides.Contains(Direction.river) && rg.IsRiverDefined(v.x, v.z) && //river node
+                                !ignoreRiver.riverPath.Contains(v))
                             {
-                                if (v.height < threshold && !ignoreRiver.riverPath.Contains(v) && !reachableNodes.Contains(new FloodNode(v, i)))
-                                {
-                                    reachableNodes.Add(new FloodNode(v, i));
-                                }
+                                //if(ignoreRiver.riverPath.Count>0)
+                                //    Debug.Log(ignoreRiver.riverPath[0]);
+                                //Debug.Log(v);
+                                reachableNodes.Add(new FloodNode(v, i));
                             }
+                            //}
                         }
                     }
                     else
@@ -234,6 +243,7 @@ public class FunctionRiverPlanner  {
             Vertex lastVertex = reachableNodes[pathIndex].vertex;
             reachableNodes[pathIndex].vertex.side = Direction.none;
             finalPath.Add(rg.GetRiverOn(lastVertex.x, lastVertex.z).GetClosestVertexTo(lastVertex));
+            Debug.Log("added river node: " + finalPath[0]);
             finalPath[0].side = Direction.river;
         }
         else
@@ -255,10 +265,11 @@ public class FunctionRiverPlanner  {
 
         //if added border node is too close to next node, delete the next one
         if (finalPath.Count > 1 &&
-            Vector3.Distance(finalPath[0], finalPath[1]) < gridStep / 2)
+            Vector3.Distance(finalPath[0], finalPath[1]) < gridStep / 2 &&
+            finalPath[1] != start)
         {
-            //Debug.Log("removing " + finalPath[1]);
-            //Debug.Log("too close to " + finalPath[0]);
+            Debug.Log("removing " + finalPath[1]);
+            Debug.Log("too close to " + finalPath[0]);
             finalPath.RemoveAt(1);
         }
 

@@ -117,6 +117,8 @@ public class TerrainGenerator
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
                     //ds.mountainPeaksManager.GeneratePeaks(x, z);
+
+                    //TODO: make roughness depemndent on the peaks
                     roughness += UnityEngine.Random.Range(-0.3f, 0.2f);
                     if (roughness < 1)
                         roughness += 0.3f;
@@ -126,6 +128,8 @@ public class TerrainGenerator
 
 
                     //Debug.Log("generating on: " + movedCenter);
+                    //Debug.Log(localTerrain.GetBotLeft());
+                    //Debug.Log(localTerrain.GetTopRight());
                 }
                 else
                 {
