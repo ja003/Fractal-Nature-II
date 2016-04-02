@@ -1,0 +1,5 @@
+Connecting rivers
+
+- implemented possibility to end river in another river
+- fixed ConnectWith method
+- DS: low/high factor are now affected by peaks

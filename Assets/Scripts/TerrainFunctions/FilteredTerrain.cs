@@ -7,6 +7,7 @@ public class FilteredTerrain {
     public TerrainGenerator tg;
     public FilterGenerator fg;
     public RiverGenerator rg;
+    public ErosionGenerator eg;
 
 
     public FilteredTerrain()
@@ -19,6 +20,55 @@ public class FilteredTerrain {
         tg = terrainGenerator;
         fg = filterGenerator;
         rg = riverGenerator;
+    }
+
+    /// <summary>
+    /// returns value from combination of give layers
+    /// returns 0 from layer if not defined
+    /// </summary>
+    public float GetValueFromLayers(int x, int z, List<Layer> layers)
+    {
+        float terrain = 0;
+        float erosionHydraulic = 0;
+        float filterAverage = 0;
+        float filterMedian = 0;
+        float river = 0;
+
+        foreach (Layer l in layers)
+        {
+            switch (l)
+            {
+                case Layer.terrain:
+                    terrain = tg.globalTerrain.GetHeight(x, z);
+                    if (terrain == 666)
+                        terrain = 0;
+                    break;
+                case Layer.erosionHydraulic:
+                    erosionHydraulic = eg.GetErosionValue(x, z);
+                    if (erosionHydraulic == 666)
+                        erosionHydraulic = 0;
+                    break;
+
+                case Layer.filterAverage:
+                    filterAverage = fg.globalFilterAverageC.GetValue(x, z);
+                    if (filterAverage == 666)
+                        filterAverage = 0;
+                    break;
+                case Layer.filterMedian:
+                    filterMedian = fg.globalFilterMedianC.GetValue(x, z);
+                    if (filterMedian == 666)
+                        filterMedian = 0;
+                    break;
+                case Layer.river:
+                    foreach(RiverInfo r in rg.rivers)
+                    {
+                        river += r.globalRiverC.GetValue(x, z);
+                    }
+                    break;
+            }
+        }
+        
+        return terrain - erosionHydraulic - filterMedian - filterAverage - river;
     }
 
     /// <summary>

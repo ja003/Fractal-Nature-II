@@ -1,0 +1,4 @@
+Hydraulic erosion
+
+- implemented basics of hydraulic erosion 
+- added GetValueFromLayers method

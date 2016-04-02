@@ -121,9 +121,14 @@ public class GlobalCoordinates {
         SetValue((int)point.x, (int)point.z, height, overwrite);
     }
 
-
+    int counter = 0;
     public void SetValue(int x, int z, float height)
     {
+        if(height > 666 && counter < 10)
+        {
+            Debug.Log(x + "," + z + ": " + height);
+            counter++;
+        }
         SetValue(x, z, height, true);
     }
 

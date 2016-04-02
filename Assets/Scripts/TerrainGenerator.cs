@@ -11,6 +11,7 @@ public class TerrainGenerator
 
     public FilterGenerator filterGenerator;
     public RiverGenerator riverGenerator;
+    public ErosionGenerator erosionGenerator;
 
     public DiamondSquare ds;
     public DiamondSquare2 ds2;
@@ -30,6 +31,7 @@ public class TerrainGenerator
     public bool filterMedianLayer = false;
     public bool filterSpikeLayer = false;
     public bool filterGaussianLayer = false;
+    public bool erosionHydraulicLayer = true;
 
     public float roughness = 3;
 
@@ -48,12 +50,15 @@ public class TerrainGenerator
 
     public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
         FilterGenerator filterGenerator, FunctionMathCalculator functionMathCalculator,
-        RiverGenerator riverGenerator, GridManager gridManager, GUIManager guiManager)
+        RiverGenerator riverGenerator, GridManager gridManager, GUIManager guiManager,
+        ErosionGenerator erosionGenerator)
     {
         this.globalTerrain = globalTerrain;
         this.localTerrain = localTerrain;
         this.filterGenerator = filterGenerator;
         this.riverGenerator = riverGenerator;
+        this.erosionGenerator = erosionGenerator;
+
         fmc = functionMathCalculator;
 
         gm = gridManager;
@@ -239,10 +244,16 @@ public class TerrainGenerator
     /// </summary>
     public void ApplyLayers()
     {
+        float value;
+
+        Vertex globalC;
+
         for (int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainHeight; z++)
             {
+                globalC = localTerrain.GetGlobalCoordinate(x, z);
+
                 if (terrainLayer)
                     vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
                 //vertices[x, z].y = 0;
@@ -271,19 +282,17 @@ public class TerrainGenerator
                 if (filterGaussianLayer)
                     vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterGaussianC);
 
-                /*
-                if(riverGenerator.GetLocalValue(x, z) != 0)
+                if (erosionHydraulicLayer)
                 {
-                    //Debug.Log(riverGenerator.GetLocalValue(x, z));
-                }*/
+                    value = erosionGenerator.he.GetWaterValue(globalC.x, globalC.z);
+                    if (value < 600)
+                        W[x, z] = value;
 
-                //vertices[x, z].y = 0;
+                    value = erosionGenerator.GetErosionValue(globalC.x, globalC.z);
+                    vertices[x, z].y -= value;
 
-                //if (riverGenerator.GetLocalValue(x, z) != 0 && counter < 100)
-                //{
-                //    Debug.Log(localTerrain.GetGlobalCoordinate(x, z) + ": " + riverGenerator.GetLocalValue(x, z));
-                //    counter++;
-                //}
+                }
+
             }
         }
     }

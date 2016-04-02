@@ -15,7 +15,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
     public TerrainGenerator terrainGenerator;
     public FilterGenerator filterGenerator;
     public RiverGenerator riverGenerator;
-    
+    public ErosionGenerator erosionGenerator;
+
     private FunctionMathCalculator functionMathCalculator;
     private FunctionDebugger functionDebugger;
     private FunctionRiverDigger functionRiverDigger;
@@ -34,9 +35,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 150; 
-        terrainHeight = 150;
-        patchSize = 128;
+        terrainWidth = 100; 
+        terrainHeight = 100;
+        patchSize = 64;
         scaleTerrainY = 12;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
@@ -53,6 +54,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         
         terrainGenerator = new TerrainGenerator(patchSize);
         riverGenerator = new RiverGenerator(localTerrain);
+        erosionGenerator = new ErosionGenerator(localTerrain);
 
         gridManager = new GridManager(new Vector3(0,0,0), patchSize, patchSize);
         layerManager = new LayerManager();
@@ -74,7 +76,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
             terrainGenerator, filterGenerator, riverGenerator);
 
         terrainGenerator.AssignFunctions(globalTerrain, localTerrain, 
-            filterGenerator, functionMathCalculator, riverGenerator, gridManager, guiManager);
+            filterGenerator, functionMathCalculator, riverGenerator, gridManager, guiManager,
+            erosionGenerator);
 
         filterGenerator.AssignFunctions(functionMathCalculator, localTerrain, functionTerrainManager);
 
@@ -88,6 +91,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator, riverGenerator);
 
         layerManager.AssignLayers(globalTerrain.globalTerrainC, riverGenerator);
+
+        erosionGenerator.AssignFunctions(functionTerrainManager);
     }
 
     int lastActionFrame = 0;
@@ -103,6 +108,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
 
     bool textureFlag = true;
+
+    int hydraulicErosionStep = 1;
+
     void Update () {
 
         //generate terrain when camera gets close to border
@@ -123,15 +131,19 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("7") && lastActionFrame < Time.frameCount - 30)
         {
-            FixCameraPosition();
-            //Debug.Log("moving to: " + gameObject.transform.position);
-            localTerrain.MoveVisibleTerrain(gameObject.transform.position, true);
+            Debug.Log("distribute water");
+            erosionGenerator.he.DistributeWater(localTerrain.GetVisibleArea(), 0.1f);
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("perserve mountain");
-            filterGenerator.mf.PerserveMountainsInRegion(localTerrain.localTerrainC.botLeft, localTerrain.localTerrainC.topRight, 3, 50, 10);
+            Debug.Log("hydraulic erosion step " + hydraulicErosionStep);
+            erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea(), hydraulicErosionStep, 0.1f);
+            terrainGenerator.build();
+
+            Debug.Log(erosionGenerator.he.TerrainWaterValuesString(new Area(new Vertex(-50, -50), new Vertex(-40, -40))));
+
+            hydraulicErosionStep++;
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
