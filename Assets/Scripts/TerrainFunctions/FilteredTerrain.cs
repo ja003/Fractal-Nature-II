@@ -28,6 +28,8 @@ public class FilteredTerrain {
     /// </summary>
     public float GetValueFromLayers(int x, int z, List<Layer> layers)
     {
+        float value; 
+
         float terrain = 0;
         float erosionHydraulic = 0;
         float filterAverage = 0;
@@ -62,13 +64,15 @@ public class FilteredTerrain {
                 case Layer.river:
                     foreach(RiverInfo r in rg.rivers)
                     {
-                        river += r.globalRiverC.GetValue(x, z);
+                        value = r.globalRiverC.GetValue(x, z);
+                        if(value != 666)    
+                            river += value;
                     }
                     break;
             }
         }
         
-        return terrain - erosionHydraulic - filterMedian - filterAverage - river;
+        return terrain - erosionHydraulic - filterMedian - filterAverage + river;
     }
 
     /// <summary>

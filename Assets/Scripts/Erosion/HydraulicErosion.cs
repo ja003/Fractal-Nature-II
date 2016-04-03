@@ -67,10 +67,25 @@ public class HydraulicErosion  {
                     List<Vertex> neighbours = ftm.Get8Neighbours(current, 1);
                     foreach(Vertex n in neighbours)
                     {
-                        float dif = GetTerrainWatterValue(x, z) - GetTerrainWatterValue(n.x, n.z);
-                        if (dif > 0 && area.Contains(n)) //current is higher that n
+                        float currentVal = GetTerrainWatterValue(x, z);
+                        float neighbourVal = GetTerrainWatterValue(n.x, n.z);
+                        if (currentVal > neighbourVal && area.Contains(n)) //current is higher that n
                         {
-                            if(MoveWaterFromTo(current, n, dif))
+                            float dif = Mathf.Abs(currentVal - neighbourVal);
+                            /*if(dif > 1 && counter < 10)
+                            {
+                                Debug.Log(x + "," + z + "/" + n + " ... " + dif);
+                                Debug.Log(currentVal);
+                                Debug.Log(eg.GetTerrainValue(x, z));
+                                Debug.Log(GetWaterValue(x, z));
+
+                                Debug.Log(neighbourVal);
+                                Debug.Log(eg.GetTerrainValue(n.x, n.z));
+                                Debug.Log(GetWaterValue(n.x, n.z));
+
+                                counter++;
+                            }*/
+                            if (MoveWaterFromTo(current, n, dif))
                                 valueChanged = true;
                         }
                     }
@@ -85,12 +100,17 @@ public class HydraulicErosion  {
                 waterSum += GetWaterValue(x, z);
             }
         }
-        Debug.Log("waterSum: " + waterSum);
-
+        int _x = -50;
+        int _z = 50;
+        //Debug.Log(eg.lt.globalTerrainC.GetValue(_x, _z));
+        //Debug.Log(eg.GetTerrainValue(_x, _z));
+        //Debug.Log(eg.GetTerrainValue(_x, _z) + GetWaterValue(_x, _z));
+        //Debug.Log(GetWaterValue(_x, _z));
+        /*
         if (valueChanged)
             Debug.Log("CHANGE");
         else
-            Debug.Log("nothing");
+            Debug.Log("nothing");*/
     }
 
     /// <summary>
@@ -142,8 +162,8 @@ public class HydraulicErosion  {
         //}
 
         float sedimentAmount = GetSedimentAmount(waterAmount);
-        sedimentMap.SetValue(v1.x, v1.z, GetSedimentValue(v1.x, v1.z) - sedimentAmount);
-        sedimentMap.SetValue(v2.x, v2.z, GetSedimentValue(v2.x, v2.z) + sedimentAmount);
+        //sedimentMap.SetValue(v1.x, v1.z, GetSedimentValue(v1.x, v1.z) - sedimentAmount);
+        //sedimentMap.SetValue(v2.x, v2.z, GetSedimentValue(v2.x, v2.z) + sedimentAmount);
         if (waterAmount > 0)
             return true;
         else
@@ -164,7 +184,13 @@ public class HydraulicErosion  {
     public float GetTerrainWatterValue(int x, int z) //not sure how to name this:/
     {
         float value = eg.GetTerrainValue(x, z) + GetSedimentValue(x, z) + GetWaterValue(x, z);
-        if(value >= 666 && counter < 50)
+        /*if(eg.lt.rg.rivers.Count > 0 && eg.lt.rg.rivers[0].globalRiverC.IsDefined(x, z) && counter < 10)
+        {
+            Debug.Log(eg.GetTerrainValue(x, z));
+            counter++;
+        }*/
+
+        if( value > 600  && counter < 50)
         {
             Debug.Log(x + "," + z);
             Debug.Log(eg.GetTerrainValue(x, z));

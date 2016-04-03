@@ -284,12 +284,18 @@ public class TerrainGenerator
 
                 if (erosionHydraulicLayer)
                 {
-                    value = erosionGenerator.he.GetWaterValue(globalC.x, globalC.z);
-                    if (value < 600)
-                        W[x, z] = value;
+                    value = erosionGenerator.he.GetTerrainWatterValue(globalC.x, globalC.z);
+                    //if (value < 600)
+                    W[x, z] = value;
+                    /*if(value < 0 && counter < 10)
+                    {
+                        counter++;
+                        Debug.Log(x + "," + z);
+                        Debug.Log(value);
+                    }*/
 
                     value = erosionGenerator.GetErosionValue(globalC.x, globalC.z);
-                    vertices[x, z].y -= value;
+                    vertices[x, z].y += value;
 
                 }
 
@@ -629,7 +635,8 @@ public class TerrainGenerator
                             new Color(this_color, this_color, this_color));
 
                         //Set water data if water is present
-                        if (W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] > 0.0001f)
+                        //if (W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] > 0.0001f)
+                        if(erosionHydraulicLayer)
                         {
                             int tex = 15;
 
@@ -638,15 +645,11 @@ public class TerrainGenerator
                             if (alpha > 0.9f) alpha = 1.0f;
 
                             //Set water texture pixel
-                            waterMap[meshIndex].SetPixel(x, z, new Color(this_color * 1 - W[
-                                x + individualMeshWidth * j - j,
-                                z + individualMeshHeight * i - i] * tex,
-                                this_color * 1 - W[x + individualMeshWidth * j - j,
-                                z + individualMeshHeight * i - i] * tex, 1, alpha));
+                            waterMap[meshIndex].SetPixel(x, z, new Color(0,0,2*this_color, alpha));
 
                             //Set water output vertex
                             verticesWater[meshIndex][(z * individualMeshHeight) + x] = vertices[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i];
-                            verticesWater[meshIndex][(z * individualMeshHeight) + x].y += W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i];
+                            verticesWater[meshIndex][(z * individualMeshHeight) + x].y = W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i];
                             verticesWater[meshIndex][(z * individualMeshHeight) + x].Scale(vertsScale);
                         }
                         else
