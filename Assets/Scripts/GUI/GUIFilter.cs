@@ -17,6 +17,8 @@ public class GUIFilters
     public bool medianFilter;
     public bool spikeFilter;
     public bool gaussFilter;
+    public bool minThresholdFilter;
+    public bool maxThresholdFilter;
 
     float spikeThreshold = 0.1f;
     float spikeThresholdFlag;
@@ -26,6 +28,11 @@ public class GUIFilters
 
     float kernelSize = 1;
     float kernelSizeFlag;
+
+    float minThreshold = -1;
+    float minThresholdFlag;
+    float maxThreshold = 2;
+    float maxThresholdFlag;
 
 
     GUIManager gm;
@@ -48,7 +55,7 @@ public class GUIFilters
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 9 * buttonHeight), "Filters");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 13 * buttonHeight), "Filters");
 
         yPos += buttonHeight + 5;
 
@@ -99,10 +106,8 @@ public class GUIFilters
         spikeFilterFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos, sideOffset, buttonHeight), spikeFilter, "");
         if (GUI.Button(new Rect(Screen.width - menuWidth + 3 * sideOffset + 5, yPos, buttonWidth, buttonHeight), "Spike"))
         {
-            Debug.Log("!");
             if (spikeThresholdFlag != spikeThreshold)
             {
-                Debug.Log("!");
                 gm.cm.filterGenerator.sf.ResetFilter();
                 spikeThresholdFlag = spikeThreshold;
             }
@@ -189,6 +194,100 @@ public class GUIFilters
         }
 
         yPos += buttonHeight + 5;
+
+        //MIN THRESHOLD
+        bool minThresholdFilterFlag = minThresholdFilter;
+        minThresholdFilterFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos, sideOffset, buttonHeight), minThresholdFilter, "");
+        if (GUI.Button(new Rect(Screen.width - menuWidth + 3 * sideOffset + 5, yPos, 1.5f*buttonWidth, buttonHeight),
+            "Min Threshold"))
+        {
+            if (minThresholdFilter != minThresholdFilterFlag || minThreshold != minThresholdFlag)
+            {
+                gm.cm.filterGenerator.tf.ResetMinFilter();
+                minThresholdFlag = minThreshold;
+            }
+            gm.cm.filterGenerator.tf.GenerateMinThresholdInRegion(gm.cm.localTerrain.GetVisibleArea(), minThreshold);
+            minThresholdFilter = true;
+            minThresholdFilterFlag = true;
+            gm.cm.terrainGenerator.filterMinThresholdLayer = true;
+            gm.cm.terrainGenerator.build();
+        }
+        if (minThresholdFilterFlag != minThresholdFilter)
+        {
+            minThresholdFilter = minThresholdFilterFlag;
+            gm.cm.terrainGenerator.filterMinThresholdLayer = minThresholdFilter;
+            gm.cm.terrainGenerator.build();
+        }
+        if (minThreshold != minThresholdFlag && minThresholdFilter)
+        {
+            minThresholdFlag = minThreshold;
+            gm.cm.filterGenerator.tf.ResetMinFilter();
+            gm.cm.filterGenerator.tf.GenerateMinThresholdInRegion(gm.cm.localTerrain.GetVisibleArea(), minThreshold);
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight;
+
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), 
+            "value: " + (int)minThreshold + "." +
+            (int)((minThreshold - (int)minThreshold) * 100));
+
+
+        minThreshold = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth, yPos + 5,
+                menuWidth - sideOffset - buttonWidth - 5,
+                buttonHeight), minThreshold, -2f, 3f);
+
+        yPos += buttonHeight;
+
+
+
+        //MAX THRESHOLD
+        bool maxThresholdFilterFlag = maxThresholdFilter;
+        maxThresholdFilterFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos, sideOffset, buttonHeight), maxThresholdFilter, "");
+        if (GUI.Button(new Rect(Screen.width - menuWidth + 3 * sideOffset + 5, yPos, 1.5f * buttonWidth, buttonHeight),
+            "Max Threshold"))
+        {
+            if (maxThresholdFilter != maxThresholdFilterFlag || maxThreshold != maxThresholdFlag)
+            {
+                gm.cm.filterGenerator.tf.ResetMaxFilter();
+                maxThresholdFlag = maxThreshold;
+            }
+            gm.cm.filterGenerator.tf.GenerateMaxThresholdInRegion(gm.cm.localTerrain.GetVisibleArea(), maxThreshold);
+            maxThresholdFilter = true;
+            maxThresholdFilterFlag = true;
+            gm.cm.terrainGenerator.filterMaxThresholdLayer = true;
+            gm.cm.terrainGenerator.build();
+        }
+        if (maxThresholdFilterFlag != maxThresholdFilter)
+        {
+            maxThresholdFilter = maxThresholdFilterFlag;
+            gm.cm.terrainGenerator.filterMaxThresholdLayer = maxThresholdFilter;
+            gm.cm.terrainGenerator.build();
+        }
+        if (maxThreshold != maxThresholdFlag && maxThresholdFilter)
+        {
+            maxThresholdFlag = maxThreshold;
+            gm.cm.filterGenerator.tf.ResetMaxFilter();
+            gm.cm.filterGenerator.tf.GenerateMaxThresholdInRegion(gm.cm.localTerrain.GetVisibleArea(), maxThreshold);
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight;
+
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight),
+            "value: " + (int)maxThreshold + "." +
+            (int)((maxThreshold - (int)maxThreshold) * 100));
+
+
+        maxThreshold = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth, yPos + 5,
+                menuWidth - sideOffset - buttonWidth - 5,
+                buttonHeight), maxThreshold, -2f, 3f);
+
+
+        yPos += buttonHeight;
+
+
+
 
     }
 }

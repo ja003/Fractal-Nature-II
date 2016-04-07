@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 
+
 public class GUIExport {
 
     int menuWidth;
@@ -25,10 +26,12 @@ public class GUIExport {
     string name;
 
     GUIManager gm;
+    TerrainGenerator tg;
 
     public GUIExport(GUIManager gm)
     {
         this.gm = gm;
+        tg = gm.cm.terrainGenerator;
 
         menuWidth = gm.menuWidth;
         rightMenuOffset = gm.rightOffset;
@@ -103,18 +106,43 @@ public class GUIExport {
     {
         //gm.cm.objExporter.t
         //string s = ObjExporter.TerrainToString(gm.cm.localTerrain.globalTerrainC);
-        //string s = ObjExporterMy.MeshToString(gm.cm.terrainGenerator.myMesh[0]);
+        //string s = ObjExporterMy.MeshToString(tg.myMesh[0]);
 
         //string fileName = Application.persistentDataPath + "/" + FILE_NAME; fileWriter = File.CreateText(fileName); fileWriter.WriteLine("Hello world"); fileWriter.Close();
 
 
-        //ObjExporter.MeshToFile(gm.cm.terrainGenerator.myTerrain[0].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_0.obj");
-        //ObjExporter.MeshToFile(gm.cm.terrainGenerator.myTerrain[1].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_1.obj");
+        //ObjExporter.MeshToFile(tg.myTerrain[0].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_0.obj");
+        //ObjExporter.MeshToFile(tg.myTerrain[1].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_1.obj");
         List<Layer> layers = new List<Layer>();
-        layers.Add(Layer.terrain);
-        layers.Add(Layer.river);
+        if (tg.terrainLayer)
+            layers.Add(Layer.terrain);
+        if (tg.riverLayer)
+            layers.Add(Layer.river);
 
-        if(name.Length == 0)
+        if (tg.filterAverageLayer)
+            layers.Add(Layer.filterAverage);
+        if (tg.filterMedianLayer)
+            layers.Add(Layer.filterMedian);
+        if (tg.filterSpikeLayer)
+            layers.Add(Layer.filterSpike);
+        if (tg.filterGaussianLayer)
+            layers.Add(Layer.filterGaussian);
+        if (tg.filterMinThresholdLayer)
+            layers.Add(Layer.filterMinThreshold);
+        if (tg.filterMaxThresholdLayer)
+            layers.Add(Layer.filterMaxThreshold);
+
+
+        if (tg.erosionHydraulicLayer)
+            layers.Add(Layer.erosionHydraulic);
+
+        Debug.Log("exporting");
+        foreach(Layer l in layers)
+        {
+            Debug.Log(l);
+        }
+
+        if (name.Length == 0)
         {
             name = "default_name";
         }

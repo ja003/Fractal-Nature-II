@@ -3,10 +3,15 @@ using System.Collections;
 
 public enum Layer{
     terrain,
-    erosionHydraulic,
-    erosionThermal,
-    filterMountain,
+    river,
+        
     filterAverage,
     filterMedian,
-    river
+    filterSpike,
+    filterGaussian,    
+    filterMinThreshold,
+    filterMaxThreshold,
+
+    erosionHydraulic,
+    erosionThermal
 }

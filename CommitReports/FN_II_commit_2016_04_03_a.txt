@@ -1,2 +1,4 @@
 Hydraulic erosion
 
+- fixed water mesh display
+- improved hydraulic erosion 

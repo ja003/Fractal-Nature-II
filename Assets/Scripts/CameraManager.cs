@@ -73,7 +73,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
     public void AssignFunctions()
     {
         localTerrain.AssignFunctions(globalTerrain.globalTerrainC, 
-            terrainGenerator, filterGenerator, riverGenerator);
+            terrainGenerator, filterGenerator, riverGenerator, erosionGenerator);
 
         terrainGenerator.AssignFunctions(globalTerrain, localTerrain, 
             filterGenerator, functionMathCalculator, riverGenerator, gridManager, guiManager,
@@ -90,7 +90,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionMathCalculator.AssignFunctions(localTerrain);
         functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator, riverGenerator);
 
-        layerManager.AssignLayers(globalTerrain.globalTerrainC, riverGenerator);
+        layerManager.AssignFunctions(terrainGenerator, filterGenerator, riverGenerator, erosionGenerator);
 
         erosionGenerator.AssignFunctions(functionTerrainManager);
     }
@@ -125,8 +125,12 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
         {
             FixCameraPosition();
-            Debug.Log("[8]: generating on: " + gameObject.transform.position);
-            localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
+            Debug.Log("threshold ");
+            terrainGenerator.filterMinThresholdLayer = !terrainGenerator.filterMinThresholdLayer;
+            terrainGenerator.filterMaxThresholdLayer = !terrainGenerator.filterMaxThresholdLayer;
+            filterGenerator.tf.GenerateMinThresholdInRegion(localTerrain.GetVisibleArea(), 0);
+            filterGenerator.tf.GenerateMaxThresholdInRegion(localTerrain.GetVisibleArea(), 1);
+            terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
 

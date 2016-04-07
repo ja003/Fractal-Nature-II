@@ -337,7 +337,7 @@ public class GlobalCoordinates {
 
     public void ResetQuadrants()
     {
-        Debug.Log("reseting quadrants");
+        //Debug.Log("reseting quadrants");
         int quadrantSize = 100; //TODO: assign value
 
         quadrant1 = new float[quadrantSize, quadrantSize];

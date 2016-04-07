@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class TerrainGenerator
 {
@@ -25,15 +26,23 @@ public class TerrainGenerator
     public int terrainHeight;
     public int patchSize;
 
+    //------LAYERS-----
     public bool terrainLayer = true;
     public bool riverLayer = true;
+
     public bool filterAverageLayer = false;
     public bool filterMedianLayer = false;
     public bool filterSpikeLayer = false;
     public bool filterGaussianLayer = false;
-    public bool erosionHydraulicLayer = true;
+    public bool filterMinThresholdLayer = true;
+    public bool filterMaxThresholdLayer = true;
+
+    public bool erosionHydraulicLayer = false;
+    //------/LAYERS-----
 
     public float roughness = 3;
+    public float rMin = -0.5f;
+    public float rMax = 0.5f;
 
     int individualMeshWidth;
     int individualMeshHeight;
@@ -127,9 +136,28 @@ public class TerrainGenerator
                     roughness += UnityEngine.Random.Range(-0.3f, 0.2f);
                     if (roughness < 1)
                         roughness += 0.3f;
-                    //rougness = i;
-                    //i++;
-                    ds.Initialize(patchSize, roughness);
+                    if (roughness > 4)
+                        roughness -= 0.3f;
+
+                    rMin += UnityEngine.Random.Range(-roughness/10, roughness/10);
+                    if (rMin < -1)
+                        rMin = -1;
+                    if (rMin > 0)
+                        rMin = 0;
+                    //rMax = rMin + 1 + roughness/10;
+                    rMax = Mathf.Abs(rMin) + roughness / 10;
+                    if (rMax - Math.Abs(rMin) < 0.5f)
+                        rMax += roughness / 5;
+                    //rMax += roughness / 10; 
+
+                    //rMin = -(4-roughness)/2;
+                    //rMax = roughness / 3;
+
+                    //roughness = 2;
+                    //rMin = -0.5f;
+                    //rMax = 0.5f;
+
+                    ds.Initialize(patchSize, roughness, rMin, rMax); 
 
 
                     //Debug.Log("generating on: " + movedCenter);
@@ -223,6 +251,8 @@ public class TerrainGenerator
         }
     }
 
+
+
     /// <summary>
     /// copies global heights from visible area to vertices
     /// </summary>
@@ -239,66 +269,46 @@ public class TerrainGenerator
 
 
     int counter = 0;
+    List<Layer> layers;
+
     /// <summary>
     /// applies values from all layers to vertices
     /// </summary>
     public void ApplyLayers()
     {
-        float value;
+        //float value;
 
         Vertex globalC;
+        layers = new List<Layer>();
+        if (terrainLayer)
+            layers.Add(Layer.terrain);
+        if (riverLayer)
+            layers.Add(Layer.river);
+
+        if (filterAverageLayer)
+            layers.Add(Layer.filterAverage);
+        if (filterMedianLayer)
+            layers.Add(Layer.filterMedian);
+        if (filterSpikeLayer)
+            layers.Add(Layer.filterSpike);
+        if (filterGaussianLayer)
+            layers.Add(Layer.filterGaussian);
+        if (filterMinThresholdLayer)
+            layers.Add(Layer.filterMinThreshold);
+        if (filterMaxThresholdLayer)
+            layers.Add(Layer.filterMaxThreshold);
+
+
+        if (erosionHydraulicLayer)
+            layers.Add(Layer.erosionHydraulic);
+
 
         for (int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainHeight; z++)
             {
                 globalC = localTerrain.GetGlobalCoordinate(x, z);
-
-                if (terrainLayer)
-                    vertices[x, z].y = localTerrain.GetLocalHeight(x, z);
-                //vertices[x, z].y = 0;
-
-                foreach (RiverInfo river in riverGenerator.rivers)
-                {
-                    if (riverGenerator.riverGui.riverFlags[riverGenerator.rivers.IndexOf(river)])
-                        vertices[x, z].y += riverGenerator.GetLocalValue(river, x, z);
-                }
-                /*
-                if(riverLayer)
-                    vertices[x, z].y += riverGenerator.GetLocalValue(x, z);*/
-
-                //fornow
-                //vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMountainC);
-
-                if (filterAverageLayer)
-                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterAverageC);
-
-                if (filterMedianLayer)
-                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterMedianC);
-
-                if (filterSpikeLayer)
-                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterSpikeC);
-
-                if (filterGaussianLayer)
-                    vertices[x, z].y -= filterGenerator.GetLocalValue(x, z, filterGenerator.globalFilterGaussianC);
-
-                if (erosionHydraulicLayer)
-                {
-                    value = erosionGenerator.he.GetTerrainWatterValue(globalC.x, globalC.z);
-                    //if (value < 600)
-                    W[x, z] = value;
-                    /*if(value < 0 && counter < 10)
-                    {
-                        counter++;
-                        Debug.Log(x + "," + z);
-                        Debug.Log(value);
-                    }*/
-
-                    value = erosionGenerator.GetErosionValue(globalC.x, globalC.z);
-                    vertices[x, z].y += value;
-
-                }
-
+                vertices[x, z].y = localTerrain.ft.GetValueFromLayers(globalC.x, globalC.z, layers);
             }
         }
     }
@@ -621,8 +631,15 @@ public class TerrainGenerator
                         //Set heightmap texture pixel
                         //float this_color = vertices[x + individualMeshWidth * j, z + 
                         //individualMeshHeight * i].y;
-                        float this_color =
+                        float this_color = (vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
+                            +minusValue)/valueRange;
+
+
+                        float this_color2 =
                             (localTerrain.GetLocalHeight(x + j * individualMeshWidth, z + i * individualMeshHeight)
+                            + minusValue) / valueRange;
+                        float this_color3 =
+                            (localTerrain.ft.GetValueFromLayers(x + j * individualMeshWidth, z + i * individualMeshHeight, layers)
                             + minusValue) / valueRange;
                         if (counter < 10 && (this_color < 0 || this_color > 1) && this_color < 50)
                         {
@@ -750,6 +767,10 @@ public class TerrainGenerator
 
             myTerrain[i].GetComponent<Renderer>().material.mainTexture = heightMap;
             myTerrain[i].GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Clamp;
+
+           
+            myTerrain[i].GetComponent<Renderer>().material.SetFloat("_Glossiness", 0);
+            //Debug.Log(myTerrain[i].GetComponent<Renderer>().material.GetFloat("_Glossiness"));
 
             //WATER
             myWaterMesh[i] = new Mesh();

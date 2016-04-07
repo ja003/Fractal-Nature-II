@@ -16,12 +16,15 @@ public class FilterGenerator// : IFilterGenerator
     public GlobalCoordinates globalFilterMedianC;
     public GlobalCoordinates globalFilterSpikeC;
     public GlobalCoordinates globalFilterGaussianC;
+    public GlobalCoordinates globalFilterMinThresholdC;
+    public GlobalCoordinates globalFilterMaxThresholdC;
 
     public MountainFilter mf;
     public AverageFilter af;
     public MedianFilter mdf;
     public SpikeFilter sf;
     public GaussianFilter gf;
+    public ThresholdFilter tf;
 
     public FilterGenerator(int quadrantSize, LocalTerrain localTerrain)
     {
@@ -30,6 +33,8 @@ public class FilterGenerator// : IFilterGenerator
         globalFilterMedianC = new GlobalCoordinates(100);
         globalFilterSpikeC = new GlobalCoordinates(100);
         globalFilterGaussianC = new GlobalCoordinates(100);
+        globalFilterMinThresholdC = new GlobalCoordinates(100);
+        globalFilterMaxThresholdC = new GlobalCoordinates(100);
 
         lt = localTerrain;
         localCoordinates = lt.localTerrainC;
@@ -43,6 +48,7 @@ public class FilterGenerator// : IFilterGenerator
         mdf = new MedianFilter(this);
         sf = new SpikeFilter(this);
         gf = new GaussianFilter(this);
+        tf = new ThresholdFilter(this);
     }
 
     public void AssignFunctions(FunctionMathCalculator functionMathCalculator, 
@@ -57,6 +63,7 @@ public class FilterGenerator// : IFilterGenerator
         mdf.AssignFunctions(lt, fmc, globalFilterMedianC, ftm);
         sf.AssignFunctions(lt, fmc, globalFilterSpikeC);
         gf.AssignFunctions(lt, fmc, globalFilterGaussianC);
+        tf.AssignFunctions(lt, fmc, globalFilterMinThresholdC, globalFilterMaxThresholdC);
     }
     
     /// <summary>
@@ -106,17 +113,7 @@ public class FilterGenerator// : IFilterGenerator
         mdf.ResetFilter();
         sf.ResetFilter();
         gf.ResetFilter();
+        tf.ResetFilters();
     }
-    /*
-    public void UpdateLocalCoordinates(Vector3 center, Vector3 botLeft, Vector3 topRight)
-    {
-        localFilterMountainC.center = center;
-        localFilterMountainC.botLeft = botLeft;
-        localFilterMountainC.topRight = topRight;
-
-        localFilterAverageC.center = center;
-        localFilterAverageC.botLeft = botLeft;
-        localFilterAverageC.topRight = topRight;
-    }*/
 
 }

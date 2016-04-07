@@ -17,14 +17,15 @@ public class LocalTerrain : ILocalTerrain {
     public TerrainGenerator tg;
     public FilterGenerator fg;
     public RiverGenerator rg;
+    public ErosionGenerator eg;
 
     public GlobalTerrain gt;
-    public FilteredTerrain ft;
+    public LayerManager ft;
 
     public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain)
     {
         gt = globalTerrain;
-        ft = new FilteredTerrain();
+        ft = new LayerManager();
 
         localTerrainC = new LocalCoordinates(new Vector3(0, 0, 0), terrainWidth, terrainHeight);
 
@@ -36,15 +37,16 @@ public class LocalTerrain : ILocalTerrain {
     }
 
     public void AssignFunctions(GlobalCoordinates globalTerrainC, TerrainGenerator terrainGenerator, 
-        FilterGenerator filterGenerator, RiverGenerator riverGenerator)
+        FilterGenerator filterGenerator, RiverGenerator riverGenerator, ErosionGenerator erosionGenerator)
     {
         this.globalTerrainC = globalTerrainC;
 
         tg = terrainGenerator;
         fg = filterGenerator;
         rg = riverGenerator;
+        eg = erosionGenerator;
 
-        ft.AssignFunctions(tg, fg, rg);
+        ft.AssignFunctions(tg, fg, rg, eg);
     }
 
     /// <summary>

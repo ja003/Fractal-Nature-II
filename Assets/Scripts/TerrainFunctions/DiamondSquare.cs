@@ -32,12 +32,12 @@ public class DiamondSquare
         mountainPeaksManager = new MountainPeaksManager(tg.gm);
     }
 
-    public void Initialize(int patchSize, float roughness)
+    public void Initialize(int patchSize, float roughness, float rMin, float rMax)
     {
         random = new Random();
         seed = random.Next(100);
         
-        GenerateTerrain(patchSize, roughness);
+        GenerateTerrain(patchSize, roughness, rMin, rMax);
     }
 
     // TODO: break these off into a util class
@@ -61,9 +61,10 @@ public class DiamondSquare
     {
         return (a & (a - 1)) == 0;
     }
-    
-    
 
+
+    //float maxHeight = 1;
+    //float minHeight = 0.3f;
     int counter = 0;
 
     /// <summary>
@@ -71,10 +72,15 @@ public class DiamondSquare
     /// </summary>
     public void SetLocalHeight(int x, int z, float value, bool overwrite)
     {/*
-        if(x > 20 && x < 50)
+        if(value > maxHeight)
         {
-            value -= 0.5f;
-        }*/
+            value = maxHeight + (float)Math.Sqrt(value- maxHeight);
+        }
+        if (value < minHeight)
+        {
+            value = minHeight - (float)Math.Sqrt(Math.Abs(value - minHeight));
+        }
+        */
         lt.SetLocalHeight(x, z, value, overwrite);
     }
 
@@ -410,13 +416,15 @@ public class DiamondSquare
 
     //float[][] ds;
 
-    public void GenerateTerrain(int patchSize, float roughness)
+    public void GenerateTerrain(int patchSize, float roughness, float rMin, float rMax)
     {
     //    UnityEngine.Debug.Log("!!!");
     //    UnityEngine.Debug.Log(tg.localTerrain.localTerrainC.center);
         maxDistance = (float)Math.Sqrt(patchSize * patchSize + patchSize * patchSize);
 
-        DiamondSquareGrid(patchSize, seed, -1, 1, roughness / 5.0f);
+        //DiamondSquareGrid(patchSize, seed, -1, 1, roughness / 5.0f);
+        DiamondSquareGrid(patchSize, seed, rMin, rMax, roughness / 5.0f);
+
     }
     /*
     public void CopyValues()
@@ -621,3 +629,4 @@ public class DiamondSquare
     }
     */
 }
+

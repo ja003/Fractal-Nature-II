@@ -51,16 +51,18 @@ public class ObjExporter
     {
         StringBuilder sb = new StringBuilder();
         
-        int x_min = lm.terrain.definedArea.botLeft.x;
-        int z_min = lm.terrain.definedArea.botLeft.x;
-        int x_max = lm.terrain.definedArea.topRight.x;
-        int z_max = lm.terrain.definedArea.topRight.z;
-        
+        int x_min = lm.lt.globalTerrainC.definedArea.botLeft.x;
+        int z_min = lm.lt.globalTerrainC.definedArea.botLeft.x;
+        int x_max = lm.lt.globalTerrainC.definedArea.topRight.x;
+        int z_max = lm.lt.globalTerrainC.definedArea.topRight.z;
+
+        Debug.Log(lm.rg.lt.tg.scaleTerrain);
+
         for (int x = x_min; x< x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                sb.Append(string.Format("v {0} {1} {2}\n", x, lm.GetValueFromLayers(x, z, layers) * 15, z));
+                sb.Append(string.Format("v {0} {1} {2}\n", x, lm.GetValueFromLayers(x, z, layers) * lm.rg.lt.tg.scaleTerrain.y, z));
             }
         }
 

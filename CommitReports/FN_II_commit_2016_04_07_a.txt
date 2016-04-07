@@ -1,0 +1,8 @@
+Threshold filter
+
+- added lighting
+- implemented height threshold filter 
+- deleted LayerManager
+- fixed object exporting
+- FilteredTerrain renamed to LayerManager
+- TODO: fix river render toggling
