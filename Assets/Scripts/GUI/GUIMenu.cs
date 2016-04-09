@@ -53,16 +53,27 @@ public class GUIMenu
             }
 
             //Erosion menu button
-            if (GUI.Button(new Rect(Screen.width - menuWidth + menuWidth / 2, yPos, menuWidth - rightOffset - menuWidth / 2, buttonHeight), "Erosion"))
+            if (GUI.Button(new Rect(Screen.width - menuWidth + menuWidth / 2, yPos, 
+                menuWidth - rightOffset - menuWidth / 2, buttonHeight), "Erosion"))
             {
                 SetMenuFlag(MenuEnum.erosion, !gm.erosionMenuFlag);
             }
             yPos += buttonHeight;
 
-            if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "River functions"))
+            //River menu button
+            if (GUI.Button(new Rect(Screen.width - menuWidth, yPos,
+                menuWidth - rightOffset - menuWidth / 2, buttonHeight), "River"))
             {
                 SetMenuFlag(MenuEnum.river, !gm.riverMenuFlag);
             }
+
+            //Debug menu button
+            if (GUI.Button(new Rect(Screen.width - menuWidth + menuWidth / 2, yPos,
+                menuWidth - rightOffset - menuWidth / 2, buttonHeight), "Debug"))
+            {
+                SetMenuFlag(MenuEnum.debug, !gm.debugMenuFlag);
+            }
+
             yPos += buttonHeight;
         }
 
@@ -70,73 +81,49 @@ public class GUIMenu
 
     void SetMenuFlag(MenuEnum menu, bool value)
     {
+        gm.generalSettingsFlag = false;
+        gm.filterMenuFlag = false;
+        gm.erosionMenuFlag = false;
+        gm.riverMenuFlag = false;
+        gm.debugMenuFlag = false;
+
         switch (menu)
         {
             case MenuEnum.fractalNature:
                 if (value)
-                {
                     gm.fractalNatureFlag = true;
-                }
                 else
-                {
                     gm.fractalNatureFlag = false;
-                }
                 break;
             case MenuEnum.generalSettings:
                 if (value)
-                {
                     gm.generalSettingsFlag = true;
-                    gm.filterMenuFlag = false;
-                    gm.erosionMenuFlag = false;
-                    gm.riverMenuFlag = false;
-
-                }
                 else
-                {
                     gm.generalSettingsFlag = false;
-                }
                 break;
             case MenuEnum.filters:
                 if (value)
-                {
                     gm.filterMenuFlag = true;
-                    gm.generalSettingsFlag = false;
-                    gm.erosionMenuFlag = false;
-                    gm.riverMenuFlag = false;
-
-                }
                 else
-                {
                     gm.filterMenuFlag = false;
-                }
                 break;
             case MenuEnum.erosion:
                 if (value)
-                {
                     gm.erosionMenuFlag = true;
-                    gm.filterMenuFlag = false;
-                    gm.generalSettingsFlag = false;
-                    gm.riverMenuFlag = false;
-
-                }
                 else
-                {
                     gm.erosionMenuFlag = false;
-                }
                 break;
             case MenuEnum.river:
                 if (value)
-                {
                     gm.riverMenuFlag = true;
-                    gm.filterMenuFlag = false;
-                    gm.generalSettingsFlag = false;
-                    gm.erosionMenuFlag = false;
-
-                }
                 else
-                {
                     gm.riverMenuFlag = false;
-                }
+                break;
+            case MenuEnum.debug:
+                if (value)
+                    gm.debugMenuFlag = true;
+                else
+                    gm.debugMenuFlag = false;
                 break;
         }
         //Debug.Log(gm);

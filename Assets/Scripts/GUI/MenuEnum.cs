@@ -7,5 +7,6 @@ public enum MenuEnum {
     generalSettings,
     filters,
     erosion,
-    river
+    river,
+    debug
 }

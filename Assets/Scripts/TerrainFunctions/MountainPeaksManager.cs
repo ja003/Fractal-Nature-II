@@ -42,18 +42,18 @@ public class MountainPeaksManager {
         //Debug.Log("!");
 
         ////TODO: TOO COMPLEX!!!
-        /*
+        
         for(int x = _x - 1; x <= _x+1; x++)
         {
             for (int z = _z - 1; z <= _z + 1; z++)
             {
-                Debug.Log(peaks);
-                Debug.Log(mountainPeaks);
-                //mountainPeaks.GetValue(x, z).AddPeaks(peaks);
+                //Debug.Log(peaks);
+                //Debug.Log(mountainPeaks);
+                mountainPeaks.GetValue(x, z).AddPeaks(peaks);
                 //Debug.Log(mountainPeaks.GetValue(x, z));
                 //mountainPeaks.UpdateValue(x, z, peaks);
             }
-        }*/
+        }
     }
 
     /// <summary>

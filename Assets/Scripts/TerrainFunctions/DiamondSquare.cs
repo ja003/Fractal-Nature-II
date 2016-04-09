@@ -62,25 +62,14 @@ public class DiamondSquare
         return (a & (a - 1)) == 0;
     }
 
-
-    //float maxHeight = 1;
-    //float minHeight = 0.3f;
+    
     int counter = 0;
 
     /// <summary>
     /// maps local coordinates to global and sets height
     /// </summary>
     public void SetLocalHeight(int x, int z, float value, bool overwrite)
-    {/*
-        if(value > maxHeight)
-        {
-            value = maxHeight + (float)Math.Sqrt(value- maxHeight);
-        }
-        if (value < minHeight)
-        {
-            value = minHeight - (float)Math.Sqrt(Math.Abs(value - minHeight));
-        }
-        */
+    {
         lt.SetLocalHeight(x, z, value, overwrite);
     }
 
@@ -97,10 +86,11 @@ public class DiamondSquare
     }*/
 
     float maxDistance = 128;
-    
+
 
     /// <summary>
     /// calculates smallest distance from given local point to one of give peaks
+    /// distance can't be equal to maxDistance
     /// </summary>
     public float GetSmallestDistanceToPeak(int x, int z, List<Vertex> peaks)
     {
@@ -115,27 +105,16 @@ public class DiamondSquare
             {
                 distance = d;
             }
-            /*if(counter < 20 && globalX > -64 && globalZ > -64)
-            {
-                UnityEngine.Debug.Log(globalX + "," + globalZ + ":" + peak + "," + distance);
-                counter++;
-            }*/
-            /*if (x >= 30 && x < 34 && z >= 30 && z < 34)
-            {
-                UnityEngine.Debug.Log(x+","+z+":"+peak);
-                UnityEngine.Debug.Log("global:"+globalX+","+ globalZ);
-                UnityEngine.Debug.Log(tg.fmc.GetDistance(globalX, globalZ, peak.x, peak.z));
-                UnityEngine.Debug.Log(distance);
-            }*/
         }
         if (peaks.Count == 0 || distance == 666)
         {
             UnityEngine.Debug.Log("no peak found");
-            distance = maxDistance;
+            distance = maxDistance-1;
         }
-        //if (distance > 50)
-        //    distance = 666;
-
+        if (distance >= maxDistance && counter < 10)
+        {
+            distance = maxDistance - 1;
+        }
         return distance;
     }
     /*
@@ -420,7 +399,7 @@ public class DiamondSquare
     {
     //    UnityEngine.Debug.Log("!!!");
     //    UnityEngine.Debug.Log(tg.localTerrain.localTerrainC.center);
-        maxDistance = (float)Math.Sqrt(patchSize * patchSize + patchSize * patchSize);
+        maxDistance = 2*(float)Math.Sqrt(patchSize * patchSize + patchSize * patchSize);
 
         //DiamondSquareGrid(patchSize, seed, -1, 1, roughness / 5.0f);
         DiamondSquareGrid(patchSize, seed, rMin, rMax, roughness / 5.0f);

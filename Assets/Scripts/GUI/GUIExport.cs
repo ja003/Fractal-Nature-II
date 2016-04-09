@@ -136,6 +136,9 @@ public class GUIExport {
         if (tg.erosionHydraulicLayer)
             layers.Add(Layer.erosionHydraulic);
 
+
+
+
         Debug.Log("exporting");
         foreach(Layer l in layers)
         {

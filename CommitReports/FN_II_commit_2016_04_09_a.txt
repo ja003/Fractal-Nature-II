@@ -1,0 +1,4 @@
+Debugger
+
+- implemented debug mode
+- modified rMin, rMax and roughness dependencies

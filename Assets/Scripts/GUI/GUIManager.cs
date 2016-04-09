@@ -21,6 +21,7 @@ public class GUIManager : MonoBehaviour
     public bool erosionMenuFlag;
     public bool filterMenuFlag;
     public bool riverMenuFlag;
+    public bool debugMenuFlag;
     public bool terrainProcessing;
 
 
@@ -38,6 +39,7 @@ public class GUIManager : MonoBehaviour
     public GUIProgress progress;
     GUIFilters filter;
     GUIRiver river;
+    GUIDebug debug;
 
 
     void Start()
@@ -53,8 +55,11 @@ public class GUIManager : MonoBehaviour
         fractalNatureFlag = true;
         generalSettingsFlag = false;
         erosionMenuFlag = false;
-        filterMenuFlag = true;
+        filterMenuFlag = false ;
         riverMenuFlag = false;
+        debugMenuFlag = true;
+
+
         terrainProcessing = false;
 
         scaleY = cm.scaleTerrainY;
@@ -69,6 +74,7 @@ public class GUIManager : MonoBehaviour
         progress = new GUIProgress(this);
         filter = new GUIFilters(this);
         river = new GUIRiver(this);
+        debug = new GUIDebug(this);
     }
     
     void Update()
@@ -105,7 +111,8 @@ public class GUIManager : MonoBehaviour
             //meshControlFlag = false;
         }
 
-        if (fractalNatureFlag && !erosionMenuFlag && !filterMenuFlag && !riverMenuFlag)
+        if (fractalNatureFlag && !erosionMenuFlag && !filterMenuFlag 
+            && !riverMenuFlag && !debugMenuFlag)
         {
             generalSettingsFlag = true;
         }
@@ -114,7 +121,8 @@ public class GUIManager : MonoBehaviour
             generalSettingsFlag = false;
         }
 
-        if (fractalNatureFlag && !erosionMenuFlag && !generalSettingsFlag && !riverMenuFlag)
+        if (fractalNatureFlag && !erosionMenuFlag && !generalSettingsFlag 
+            && !riverMenuFlag && !debugMenuFlag)
         {
             filterMenuFlag = true;
         }
@@ -123,13 +131,24 @@ public class GUIManager : MonoBehaviour
             filterMenuFlag = false;
         }
 
-        if (fractalNatureFlag&& !erosionMenuFlag && !generalSettingsFlag && !filterMenuFlag)
+        if (fractalNatureFlag&& !erosionMenuFlag && !generalSettingsFlag 
+            && !filterMenuFlag && !debugMenuFlag)
         {
             riverMenuFlag = true;
         }
         else
         {
             riverMenuFlag = false;
+        }
+
+        if (fractalNatureFlag && !erosionMenuFlag && !generalSettingsFlag 
+            && !filterMenuFlag && !riverMenuFlag)
+        {
+            debugMenuFlag = true;
+        }
+        else
+        {
+            debugMenuFlag = false;
         }
     }
 
@@ -163,7 +182,12 @@ public class GUIManager : MonoBehaviour
         {
             river.OnGui(menu.yPos + 5);
         }
-        
+
+        if (debugMenuFlag)
+        {
+            debug.OnGui(menu.yPos + 5);
+        }
+
     }
 
     public override string ToString()
@@ -174,6 +198,7 @@ public class GUIManager : MonoBehaviour
         s += "filterMenu = " + filterMenuFlag + "\n";
         s += "erosionMenu = " + erosionMenuFlag + "\n";
         s += "riverMenu = " + riverMenuFlag + "\n";
+        s += "debug = " + debugMenuFlag + "\n";
 
         return s;
     }

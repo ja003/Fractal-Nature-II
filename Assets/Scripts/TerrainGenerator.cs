@@ -34,15 +34,38 @@ public class TerrainGenerator
     public bool filterMedianLayer = false;
     public bool filterSpikeLayer = false;
     public bool filterGaussianLayer = false;
-    public bool filterMinThresholdLayer = true;
-    public bool filterMaxThresholdLayer = true;
+    public bool filterMinThresholdLayer = false;
+    public bool filterMaxThresholdLayer = false;
 
     public bool erosionHydraulicLayer = false;
     //------/LAYERS-----
 
+    //------PATCH PARAMETERS-----
     public float roughness = 3;
+    public float roughness_min = 1;
+    public float roughness_max = 4;
+    public int rStep = 10;
+
     public float rMin = -0.5f;
+    float rMin_min = -1;
+    float rMin_max = 0;
+
     public float rMax = 0.5f;
+    float rMax_min = 0;
+    float rMax_max = 1;
+
+    public float maxRdif = 1f;
+    public float minRdif = 0.5f;
+    
+    public PatchManager pm;
+    public bool colorMode = true;
+    public bool debugHeightmap = true;
+    public bool debugRmin = false;
+    public bool debugRmax = false;
+    public bool debugRoughness = false;
+
+
+    //------/PATCH PARAMETERS-----
 
     int individualMeshWidth;
     int individualMeshHeight;
@@ -55,6 +78,7 @@ public class TerrainGenerator
         ds2 = new DiamondSquare2(this);
         rt = new RandomTerrain(this);
         this.patchSize = patchSize;
+        pm = new PatchManager(patchSize);
     }
 
     public void AssignFunctions(GlobalTerrain globalTerrain, LocalTerrain localTerrain,
@@ -95,15 +119,28 @@ public class TerrainGenerator
         build();
     }
 
+    
+    /*
+    GlobalCoordinates rMinValues = new GlobalCoordinates(100);
+    void SetRminValues(Vertex center, int patchSize, float value)
+    {
+        for (int x = center.x - patchSize/2; x < center.x + patchSize/2; x++)
+        {
+            for (int z = center.z - patchSize / 2; z < center.z + patchSize / 2; z++)
+            {
+                rMinValues.SetValue(x, z, value);
+            }
+        }
+    }*/
 
 
     //// <summary>
     /// checks all points on grid in visible area are defined
     /// if not, regions with centers in points on the grid is generated
     /// </summary>
-    public void PregenerateRegions(Vector3 center, Area visibleArea, int patchSize)
+    public void PregenerateRegions(Vertex center, Area visibleArea, int patchSize)
     {
-        Vector3 centerOnGrid = gm.GetPointOnGrid(center);
+        Vertex centerOnGrid = gm.GetPointOnGrid(center);
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
         //Debug.Log("patchSize: " + patchSize);
 
@@ -121,48 +158,50 @@ public class TerrainGenerator
 
         localTerrain.UpdateSize(patchSize, patchSize);
 
-        int i = 0;
+        
+        int _x = centerOnGrid.x;
+        int _z = centerOnGrid.z - patchSize;
+        Vertex tmpCenter = new Vertex(_x, _z);
+        rMin = -0.8f;
+        rMax = -0.2f;
+        roughness = 1;
+        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+        ds.Initialize(patchSize, roughness, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+
+        _x = centerOnGrid.x;
+        _z = centerOnGrid.z;
+        tmpCenter = new Vertex(_x, _z);
+        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+        ds.Initialize(patchSize, roughness, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+
+        _x = centerOnGrid.x;
+        _z = centerOnGrid.z + patchSize;
+        tmpCenter = new Vertex(_x, _z);
+        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+        ds.Initialize(patchSize, roughness, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+
+        rMin = -0.5f;
+        rMax = 0.5f;
+        roughness = 3;
+
+        
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
             {
-                Vector3 movedCenter = new Vector3(x, 0, z);
+                Vertex movedCenter = new Vertex(x, z);
                 if (!localTerrain.globalTerrainC.IsDefinedArea(movedCenter, 1))
                 {
                     localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
-                    //ds.mountainPeaksManager.GeneratePeaks(x, z);
 
-                    //TODO: make roughness depemndent on the peaks
-                    roughness += UnityEngine.Random.Range(-0.3f, 0.2f);
-                    if (roughness < 1)
-                        roughness += 0.3f;
-                    if (roughness > 4)
-                        roughness -= 0.3f;
+                    CalculatePatchValues(movedCenter, x, z);
 
-                    rMin += UnityEngine.Random.Range(-roughness/10, roughness/10);
-                    if (rMin < -1)
-                        rMin = -1;
-                    if (rMin > 0)
-                        rMin = 0;
-                    //rMax = rMin + 1 + roughness/10;
-                    rMax = Mathf.Abs(rMin) + roughness / 10;
-                    if (rMax - Math.Abs(rMin) < 0.5f)
-                        rMax += roughness / 5;
-                    //rMax += roughness / 10; 
-
-                    //rMin = -(4-roughness)/2;
-                    //rMax = roughness / 3;
-
-                    //roughness = 2;
-                    //rMin = -0.5f;
-                    //rMax = 0.5f;
-
-                    ds.Initialize(patchSize, roughness, rMin, rMax); 
-
+                    ds.Initialize(patchSize, roughness, rMin, rMax);
 
                     //Debug.Log("generating on: " + movedCenter);
-                    //Debug.Log(localTerrain.GetBotLeft());
-                    //Debug.Log(localTerrain.GetTopRight());
                 }
                 else
                 {
@@ -176,6 +215,51 @@ public class TerrainGenerator
         localTerrain.MoveVisibleTerrain(center, false);
         localTerrain.UpdateSize(terrainWidth, terrainHeight);
 
+    }
+
+    /// <summary>
+    /// calculates roughness, rMin, rMax for defined patch
+    /// </summary>
+    public void CalculatePatchValues(Vertex center, int x, int z)
+    {
+        float roughnessAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rougness);
+        if (roughnessAvg != 666)
+            roughness += UnityEngine.Random.Range(-0.5f, 0.4f);
+        if (roughness < roughness_min)
+            roughness = roughness_min;
+        if (roughness > roughness_max)
+            roughness = roughness_max;
+
+        //rMin
+        float rMinAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rMin);
+        if (rMinAvg != 666)
+            rMin += UnityEngine.Random.Range(-roughness / rStep, roughness / rStep);
+        if (rMin < rMin_min)
+            rMin = rMin_min;
+        if (rMin > rMin_max)
+            rMin = rMin_max;
+
+
+        //rMax
+        float rMaxAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rMax);
+        if (rMaxAvg != 666)
+            rMax += UnityEngine.Random.Range(-roughness / rStep, roughness / rStep);
+        if (rMax < rMax_min)
+            rMax = rMax_min;
+        if (rMax > rMax_max)
+            rMax = rMax_max;
+        //rMax = rMin + roughness / 3;
+
+        //dif
+        if (rMax - rMin < minRdif)
+            rMax += roughness / 3;
+        if (rMax - rMin > maxRdif)
+            rMax = rMin + maxRdif;
+        //Debug.Log(roughness);
+        //Debug.Log(rMin);
+        //Debug.Log(rMax);
+
+        pm.SetValues(center, patchSize, rMin, rMax, roughness);
     }
 
     public void GenerateDefaultTerrain()
@@ -631,25 +715,50 @@ public class TerrainGenerator
                         //Set heightmap texture pixel
                         //float this_color = vertices[x + individualMeshWidth * j, z + 
                         //individualMeshHeight * i].y;
-                        float this_color = (vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
+                        float this_color = 666;
+                        if(debugHeightmap)
+                            this_color= (vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
                             +minusValue)/valueRange;
 
+                        Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
+                        if(debugRmin)
+                            this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
+                        if(debugRoughness)
+                            this_color = (pm.roughness.GetValue(c.x, c.z) - roughness_min) / (roughness_max - roughness_min);
 
-                        float this_color2 =
-                            (localTerrain.GetLocalHeight(x + j * individualMeshWidth, z + i * individualMeshHeight)
-                            + minusValue) / valueRange;
-                        float this_color3 =
-                            (localTerrain.ft.GetValueFromLayers(x + j * individualMeshWidth, z + i * individualMeshHeight, layers)
-                            + minusValue) / valueRange;
+
                         if (counter < 10 && (this_color < 0 || this_color > 1) && this_color < 50)
                         {
 
-                            Debug.Log(localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshHeight) + ":" + this_color);
+                            //Debug.Log(localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshHeight) + ":" + this_color);
                             counter++;
                         }
 
                         heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
                             new Color(this_color, this_color, this_color));
+
+
+                        if (colorMode)
+                        {
+                            float secondary = this_color / 2;
+                            if (this_color < 0.3f)
+                            {
+                                if (this_color < 0.1)
+                                    this_color = 0.1f;
+                                heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                            new Color(secondary, secondary, this_color));
+                            }
+                            else if (this_color < 0.6f)
+                            {
+                                heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                            new Color(secondary, this_color, secondary));
+                            }
+                            else if (this_color < 1.1f)
+                            {
+                                heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                            new Color(this_color, secondary, secondary));
+                            }
+                        }
 
                         //Set water data if water is present
                         //if (W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] > 0.0001f)

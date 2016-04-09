@@ -140,8 +140,13 @@ public class MountainPeaks {
 
         List<Vertex> newPeaks = new List<Vertex>();
         newPeaks.Add(new Vertex(randX, randZ));
-        AddPeaks(newPeaks);
-        mpm.UpdateNeighbourhood(gridCoordinates.x, gridCoordinates.z, newPeaks);
+        float rnd = Random.Range(0f, 1f);
+        if (rnd > 0.8f)
+        {
+            //Debug.Log("ADD");
+            AddPeaks(newPeaks);
+            mpm.UpdateNeighbourhood(gridCoordinates.x, gridCoordinates.z, newPeaks);
+        }
     }
 
     public override string ToString()
