@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class HydraulicErosion  {
     public GlobalCoordinates sedimentMap;
@@ -56,61 +57,91 @@ public class HydraulicErosion  {
     {
         bool valueChanged = false;
         float waterSum = 0;
+        float e = 0.01f;
         for (int x = area.botLeft.x; x < area.topRight.x; x++)
         {
             for (int z = area.botLeft.z; z < area.topRight.z; z++)
             {
                 Vertex current = new Vertex(x, z);
+                float currentVal = GetTerrainWatterValue(x, z);
+                float currentWater = GetWaterValue(x, z);
+
                 //perform step only if required step hasn't already been processed here
-                if(GetStepValue(x,z) < stepNumber)
+                if (GetStepValue(x,z) < stepNumber && currentWater != 0) //and some water is present
                 {
                     List<Vertex> neighbours = ftm.Get8Neighbours(current, 1);
-                    foreach(Vertex n in neighbours)
-                    {
-                        float currentVal = GetTerrainWatterValue(x, z);
+                    //var rnd = new System.Random();
+                    //var neighbours = neighbours0.OrderBy(item => rnd.Next());
+
+                    
+                    List<float> outflowList = new List<float>();
+                    float outflowSum = 0;
+
+                    foreach (Vertex n in neighbours)
+                    {                        
                         float neighbourVal = GetTerrainWatterValue(n.x, n.z);
-                        if (currentVal > neighbourVal && area.Contains(n)) //current is higher that n
+                        if (currentVal > (neighbourVal + e) && area.Contains(n)) //current is higher that neighbour
                         {
-                            float dif = Mathf.Abs(currentVal - neighbourVal);
-                            /*if(dif > 1 && counter < 10)
+                            float dif = currentVal - neighbourVal;
+                            dif /= 2;
+                            if(dif > currentWater)
                             {
-                                Debug.Log(x + "," + z + "/" + n + " ... " + dif);
-                                Debug.Log(currentVal);
-                                Debug.Log(eg.GetTerrainValue(x, z));
-                                Debug.Log(GetWaterValue(x, z));
-
-                                Debug.Log(neighbourVal);
-                                Debug.Log(eg.GetTerrainValue(n.x, n.z));
-                                Debug.Log(GetWaterValue(n.x, n.z));
-
-                                counter++;
-                            }*/
-                            if (MoveWaterFromTo(current, n, dif))
-                                valueChanged = true;
+                                dif = currentWater;
+                            }
+                            outflowList.Add(dif);
+                            outflowSum += dif;
+                            //if (MoveWaterFromTo(current, n, dif))
+                            //  valueChanged = true;
+                        }
+                        else
+                        {
+                            outflowList.Add(0);
                         }
                     }
+                    float ratio = outflowSum / currentWater;
+
+                    foreach (Vertex n in neighbours)
+                    {
+                        if (area.Contains(n) && outflowSum != 0)
+                        {
+                            float outflow = outflowList[neighbours.IndexOf(n)];
+                            if(ratio > 1)
+                                outflow /= ratio;
+
+                            if (outflow != 0)
+                            {
+                                if (MoveWaterFromTo(current, n, outflow))
+                                    valueChanged = true;
+                            }
+                        }
+                    }
+
+
                     stepMap.SetValue(x, z, GetStepValue(x, z) + 1);
                 }
             }
         }
+        /*
         for (int x = area.botLeft.x; x < area.topRight.x; x++)
         {
             for (int z = area.botLeft.z; z < area.topRight.z; z++)
             {
                 waterSum += GetWaterValue(x, z);
             }
-        }
+        }*/
         int _x = -50;
         int _z = 50;
         //Debug.Log(eg.lt.globalTerrainC.GetValue(_x, _z));
         //Debug.Log(eg.GetTerrainValue(_x, _z));
         //Debug.Log(eg.GetTerrainValue(_x, _z) + GetWaterValue(_x, _z));
         //Debug.Log(GetWaterValue(_x, _z));
-        /*
+        
         if (valueChanged)
-            Debug.Log("CHANGE");
+        {
+            //Debug.Log("CHANGE");
+        }
         else
-            Debug.Log("nothing");*/
+            Debug.Log("nothing");
     }
 
     /// <summary>
@@ -133,11 +164,11 @@ public class HydraulicErosion  {
         if (waterAmount > GetWaterValue(v1.x, v1.z))
             waterAmount = GetWaterValue(v1.x, v1.z);
 
-        //if (counter < 10)
-        //{
-        //    Debug.Log("acually: " + waterAmount);
-        //    counter++;
-        //}
+        if (counter < 10)
+        {
+            //Debug.Log("acually: " + waterAmount);
+            counter++;
+        }
 
         float sum1 = GetWaterValue(v1.x, v1.z) + GetWaterValue(v2.x, v2.z);
 
@@ -257,12 +288,12 @@ public class HydraulicErosion  {
         {
             for (int z = area.botLeft.z; z < area.topRight.z; z++)
             {
-                s = "";
-                value = GetTerrainWatterValue(x, z);
-                if (value >= 0)
-                    s = "+";
-                s += value;
-                s = s.Substring(0, 5);
+                s = (int)Mathf.Abs(GetTerrainWatterValue(x, z)) + "." +
+                    (int)(100 * (Mathf.Abs(GetTerrainWatterValue(x, z)) - (int)Mathf.Abs(GetTerrainWatterValue(x, z))));
+                if (s.Length < 4)
+                    s += "0";
+                if (s.Length > 4)
+                    s = s.Substring(0, 4);
                 s += "|";
                 output += s;
             }

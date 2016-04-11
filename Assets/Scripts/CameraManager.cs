@@ -110,7 +110,6 @@ public class CameraManager : MonoBehaviour, ICameraManager
     bool textureFlag = true;
 
     int hydraulicErosionStep = 1;
-    int n = 10;
 
     void Update () {
 
@@ -146,21 +145,22 @@ public class CameraManager : MonoBehaviour, ICameraManager
             erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea(), hydraulicErosionStep, 0.1f);
             terrainGenerator.build();
 
-            Debug.Log(erosionGenerator.he.WaterValuesString(new Area(new Vertex(-50, -50), new Vertex(-40, -40))));
+            Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
 
             hydraulicErosionStep++;
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
         {
-            
-            Debug.Log("hydraulic erosion " + n + " steps ");
-            for(int i = 1; i < n; i++)
+            hydraulicErosionStep += 10;
+            //Debug.Log("hydraulic erosion " + hydraulicErosionStep + " steps ");
+            for(int i = hydraulicErosionStep - 10; i < hydraulicErosionStep; i++)
             {
                 erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea(), i, 0.1f);
             }
-            n += 10;
-            
+            //Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
+            Debug.Log(erosionGenerator.he.TerrainWaterValuesString(localTerrain.GetVisibleArea()));
+
             terrainGenerator.build();
 
             lastActionFrame = Time.frameCount;

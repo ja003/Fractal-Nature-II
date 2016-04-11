@@ -37,7 +37,7 @@ public class TerrainGenerator
     public bool filterMinThresholdLayer = false;
     public bool filterMaxThresholdLayer = false;
 
-    public bool erosionHydraulicLayer = false;
+    public bool erosionHydraulicLayer = true;
     //------/LAYERS-----
 
     //------PATCH PARAMETERS-----
@@ -58,7 +58,7 @@ public class TerrainGenerator
     public float minRdif = 0.5f;
     
     public PatchManager pm;
-    public bool colorMode = true;
+    public bool colorMode = false;
     public bool debugHeightmap = true;
     public bool debugRmin = false;
     public bool debugRmax = false;
@@ -158,7 +158,7 @@ public class TerrainGenerator
 
         localTerrain.UpdateSize(patchSize, patchSize);
 
-        
+        /*
         int _x = centerOnGrid.x;
         int _z = centerOnGrid.z - patchSize;
         Vertex tmpCenter = new Vertex(_x, _z);
@@ -182,11 +182,12 @@ public class TerrainGenerator
         localTerrain.MoveVisibleTerrain(tmpCenter, false);
         ds.Initialize(patchSize, roughness, rMin, rMax);
         pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+        */
 
         rMin = -0.5f;
         rMax = 0.5f;
         roughness = 3;
-
+        
         
         for (int x = x_min; x <= x_max; x += patchSize)
         {
@@ -264,12 +265,14 @@ public class TerrainGenerator
 
     public void GenerateDefaultTerrain()
     {
-        int size = 150;
+        int size = 25;
         for (int x = -size; x < size; x++)
         {
             for (int z = -size; z < size; z++)
             {
                 localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
+
+                /*localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
                 if (x >= 30 && x <= 50 && z > -120)
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
                 if (x >= -50 && x <= -30 && z < 120)
@@ -278,7 +281,7 @@ public class TerrainGenerator
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
                 if (x >= 30 && x <= 120 && z > -20 && z < 20)
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-
+                    */
                 /*int h = 30;
                 if (x >= -4*h && x <= -3*h && z > -5*h && z < h)
                     localTerrain.globalTerrainC.SetValue(x, z, 5, true);
@@ -393,6 +396,7 @@ public class TerrainGenerator
             {
                 globalC = localTerrain.GetGlobalCoordinate(x, z);
                 vertices[x, z].y = localTerrain.ft.GetValueFromLayers(globalC.x, globalC.z, layers);
+                W[x, z] = erosionGenerator.he.GetTerrainWatterValue(globalC.x, globalC.z);
             }
         }
     }
@@ -768,10 +772,11 @@ public class TerrainGenerator
 
                             //Set transparency
                             float alpha = W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] * 120;
+                            alpha = 1f;
                             if (alpha > 0.9f) alpha = 1.0f;
 
                             //Set water texture pixel
-                            waterMap[meshIndex].SetPixel(x, z, new Color(0,0,2*this_color, alpha));
+                            waterMap[meshIndex].SetPixel(x, z, new Color(0,0,this_color, alpha));
 
                             //Set water output vertex
                             verticesWater[meshIndex][(z * individualMeshHeight) + x] = vertices[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i];

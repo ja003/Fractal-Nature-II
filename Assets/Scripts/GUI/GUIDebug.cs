@@ -10,7 +10,8 @@ public class GUIDebug {
     public float yPos;
     int sideOffset;
     bool colorMode;
-    
+    bool waterMap;
+
 
 
     GUIManager gm;
@@ -70,6 +71,16 @@ public class GUIDebug {
         {
             colorMode = colorModeFlag;
             gm.cm.terrainGenerator.colorMode = colorMode;
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight + 5;
+
+        bool waterMapFlag = waterMap;
+        waterMapFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), waterMap, "  water");
+        if (waterMapFlag != waterMap)
+        {
+            waterMap = waterMapFlag;
+            gm.cm.terrainGenerator.erosionHydraulicLayer = waterMap;
             gm.cm.terrainGenerator.build();
         }
 
