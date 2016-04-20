@@ -345,6 +345,8 @@ public class GlobalCoordinates {
         quadrant3 = new float[quadrantSize, quadrantSize];
         quadrant4 = new float[quadrantSize, quadrantSize];
 
+        globalCenter = 666;
+
         InitialiseQuadrant(quadrant1);
         InitialiseQuadrant(quadrant2);
         InitialiseQuadrant(quadrant3);

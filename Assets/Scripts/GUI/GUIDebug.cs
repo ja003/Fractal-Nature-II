@@ -10,7 +10,8 @@ public class GUIDebug {
     public float yPos;
     int sideOffset;
     bool colorMode;
-    bool waterMap;
+    bool waterMap = true;
+    bool sedimentMap = true;
 
 
 
@@ -27,13 +28,15 @@ public class GUIDebug {
         sideOffset = 10;
     }
 
+    int terrainSize = 50;
+
     public void OnGui(int yPosition)
     {
-        float buttonWidth = menuWidth / 2 - sideOffset - sideOffset / 2;
+        float buttonWidth = menuWidth / 2 - sideOffset;
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 9 * buttonHeight), "Debug");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,16 * buttonHeight), "Debug");
 
         yPos += buttonHeight + 5;
         
@@ -80,9 +83,79 @@ public class GUIDebug {
         if (waterMapFlag != waterMap)
         {
             waterMap = waterMapFlag;
-            gm.cm.terrainGenerator.erosionHydraulicLayer = waterMap;
+            gm.cm.terrainGenerator.erosionHydraulicWaterLayer = waterMap;
             gm.cm.terrainGenerator.build();
         }
+        yPos += buttonHeight + 5;
+
+        bool sedimentMapFlag = sedimentMap;
+        sedimentMapFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), sedimentMap, "  sediment");
+        if (sedimentMapFlag != sedimentMap)
+        {
+            sedimentMap = sedimentMapFlag;
+            gm.cm.terrainGenerator.erosionHydraulicLayer = sedimentMap;
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight + 5;
+
+
+        GUI.Label(new Rect(Screen.width - menuWidth + 6 * sideOffset, yPos, buttonWidth, buttonHeight), "default terrain");
+        yPos += buttonHeight;
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "gradientX_LR"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradientX_lr, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset + buttonWidth + 5, yPos, buttonWidth, buttonHeight), "gradientX_RL"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradientX_rl, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight + 5;
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "gradientZ_LR"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradientZ_lr, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset + buttonWidth + 5, yPos, buttonWidth, buttonHeight), "gradientZ_RL"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradientZ_rl, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight + 5;
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "radial +"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradient_radialPlus, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset + buttonWidth + 5, yPos, buttonWidth, buttonHeight), "radial -"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradient_radialMinus, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight + 5;
+
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "XXX"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradient_radialPlus, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset + buttonWidth + 5, yPos, buttonWidth, buttonHeight), "constant"))
+        {
+            terrainSize = gm.cm.localTerrain.terrainWidth;
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.constant, terrainSize);
+            gm.cm.terrainGenerator.build();
+        }
+        yPos += buttonHeight + 5;
+
+
 
         yPos += buttonHeight + 5;
 

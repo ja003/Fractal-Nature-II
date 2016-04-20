@@ -44,7 +44,8 @@ public class LayerManager {
         float filterMinThreshold = 0;
         float filterMaxThreshold = 0;
 
-        float erosionHydraulic = 0;
+        float erosionHydraulicWater = 0;
+        float erosionHydraulic = 0; //eroded terrain
 
         foreach (Layer l in layers)
         {
@@ -97,8 +98,13 @@ public class LayerManager {
                     break;
 
 
+                case Layer.erosionHydraulicWater:
+                    erosionHydraulicWater = eg.he.GetWaterValue(x, z);
+                    if (erosionHydraulicWater == 666)
+                        erosionHydraulicWater = 0;
+                    break;
                 case Layer.erosionHydraulic:
-                    erosionHydraulic = eg.GetErosionValue(x, z);
+                    erosionHydraulic = eg.he.GetHydraulicErosionValue(x, z);
                     if (erosionHydraulic == 666)
                         erosionHydraulic = 0;
                     break;
@@ -107,7 +113,7 @@ public class LayerManager {
 
         return terrain + river
             - (filterMedian + filterAverage + filterSpike + filterGauss + filterMinThreshold + filterMaxThreshold)
-            - erosionHydraulic;
+            - erosionHydraulicWater + erosionHydraulic;
     }
 
     /// <summary>
@@ -181,21 +187,26 @@ public class LayerManager {
             if (filterMaxThreshold == 666)
                 filterMaxThreshold = 0;
         }
+        
 
-
-
-        float eroionHydraulic = 0;
+        float erosionHydraulicWater = 0;
+        if (!ignoreLayers.Contains(Layer.erosionHydraulicWater))
+        {
+            erosionHydraulicWater = eg.he.GetWaterValue(x, z);
+            if (erosionHydraulicWater == 666)
+                erosionHydraulicWater = 0;
+        }
+        float erosionHydraulicSediment = 0;
         if (!ignoreLayers.Contains(Layer.erosionHydraulic))
         {
-            eroionHydraulic = eg.GetErosionValue(x, z);
-            if (eroionHydraulic == 666)
-                eroionHydraulic = 0;
+            erosionHydraulicSediment = eg.he.GetSedimentValue(x, z);
+            if (erosionHydraulicSediment == 666)
+                erosionHydraulicSediment = 0;
         }
-
 
         return terrain + river 
             - (filterMedian + filterAverage + filterSpike + filterGauss + filterMinThreshold + filterMaxThreshold) 
-            - eroionHydraulic;
+            - erosionHydraulicWater + erosionHydraulicSediment;
     }
 
 }

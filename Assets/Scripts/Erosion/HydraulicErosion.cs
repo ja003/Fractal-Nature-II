@@ -4,9 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class HydraulicErosion  {
+    public GlobalCoordinates hydraulicErosionMap;
     public GlobalCoordinates sedimentMap;
     public GlobalCoordinates waterMap;
+    //public GlobalCoordinates outflowMap;//map of water value which will flow out of vertex in next iteration
+    //public GlobalCoordinates inflowMap;//map of water value which will flow into vertex in next iteration
     public GlobalCoordinates stepMap;
+
+    public GlobalCoordinates outflowTop;
+    public GlobalCoordinates outflowRight;
+    public GlobalCoordinates outflowBot;
+    public GlobalCoordinates outflowLeft;
+
+    public GlobalCoordinates velocityX;
+    public GlobalCoordinates velocityZ;
+
 
     public ErosionGenerator eg;
 
@@ -16,9 +28,19 @@ public class HydraulicErosion  {
     {
         eg = erosionManager;
 
+        hydraulicErosionMap = new GlobalCoordinates(100);
         sedimentMap = new GlobalCoordinates(100);
         waterMap = new GlobalCoordinates(100);
         stepMap = new GlobalCoordinates(100);
+        //inflowMap = new GlobalCoordinates(100);
+        outflowTop = new GlobalCoordinates(100);
+        outflowRight = new GlobalCoordinates(100);
+        outflowBot = new GlobalCoordinates(100);
+        outflowLeft = new GlobalCoordinates(100);
+
+        velocityX = new GlobalCoordinates(100);
+        velocityZ = new GlobalCoordinates(100);
+
     }
 
     public void AssignFunctions(FunctionTerrainManager functionTerrainManager)
@@ -29,199 +51,395 @@ public class HydraulicErosion  {
     /// <summary>
     /// increses amount of water on given area max by given value
     /// </summary>
-    public void DistributeWater(Area area, float maxWaterIncrease)
+    public void DistributeWater(Area area,int stepNumber, float maxWaterIncrease)
     {
         float value;
-        for(int x = area.botLeft.x; x < area.topRight.x; x++)
+        int x = Random.Range(area.botLeft.x, area.topRight.x);
+        int z = Random.Range(area.botLeft.z, area.topRight.z);
+        //x = 0;
+        //z = 0;
+
+        value = GetWaterValue(x, z) + Random.Range(0, maxWaterIncrease);
+        value = GetWaterValue(x, z) + maxWaterIncrease;
+        waterMap.SetValue(x, z, value);
+       
+        /*
+        for(int x = area.botLeft.x ; x < 0; x++)
         {
-            for (int z = area.botLeft.z; z < area.topRight.z; z++)
+            for (int z = area.botLeft.z ; z < area.topRight.z; z++)
             {
-                value = GetWaterValue(x, z) + Random.Range(0, maxWaterIncrease);
-                waterMap.SetValue(x, z, value);
-                if(counter < 20 && value >= 600)
+                if (GetStepValue(x, z) < stepNumber)
                 {
-                    Debug.Log(x + "," + z);
-                    Debug.Log(value);
-                    Debug.Log(GetWaterValue(x,z));
-                    counter++;
+                    value = GetWaterValue(x, z) + Random.Range(-3 * maxWaterIncrease, maxWaterIncrease);
+                    value = maxWaterIncrease;
+                    if (value > 0 && Random.Range(0f, 1f) > 0.7f)
+                        waterMap.SetValue(x, z, GetWaterValue(x, z) + value);
                 }
             }
-        }
+        }*/
     }
     int counter = 0;
+
+
+    float e = 0.01f;
+
+    public void HydraulicErosionStep(Area area)
+    {
+        //area, waterViscosity, strength,deposition, evaporation, windX, windZ, windStrength, windAngle
+        HydraulicErosionStep(area, 0.25f, 0.2f, 0.2f, 0.2f,0,0,100,-1);
+    }
 
     /// <summary>
     /// perform 1 step number 'stepNumber' of hydraulic erosion on given area
     /// </summary>
-    public void HydraulicErosionStep(Area area, int stepNumber, float outflowAmount)
+    public void HydraulicErosionStep(Area area, float waterViscosity, float strength,float deposition, float evaporation, int windX, int windZ, float windStrength, float windAngle)
     {
-        bool valueChanged = false;
-        float waterSum = 0;
-        float e = 0.01f;
+
+        //Debug.Log(windX);
+        //Debug.Log(windZ);
+        //Debug.Log(windStrength);
+        //Debug.Log(windAngle);
+
+        //!!! windCoverage vs windEffect ???
+        //deposiion: not very effective (at least on default)
+
+        //CalculateFlowStep(area, stepNumber);
+        // Kc = water viscosity
+        // Ks = strength or (1.0 - terrainDensity)
+        // Kd = deposition factor
+        // Ke = evaporation speed
+        // Kr = droplet weight
+        // G  = gravity
+
+        //DistributeWater(area, stepNumber, 0.1f);
+        UpdateOutflow(area, -666, 9.81f, windX, windZ, windStrength, windAngle);
+        UpdateSediment(area, -666, waterViscosity, strength, deposition);
+        EvaporateWater(area, evaporation);
+        //UpdateStepNumber(area, -666);
+    }
+
+    float T = 0.1f;  //delta time
+    float L = 1.0f;  //pipe cross-sectional area
+    float A = 1.0f;  //cell area
+    //int wind_x = -1; //-1,0,1
+    //int wind_z = 0; //-1,0,1
+    //int windStrength = 10;
+    //float windCoverage = -1f; //<-1,1>
+
+    public void UpdateOutflow(Area area, int stepNumber, float G, 
+        int windX,int windZ, float windStrength, float windCoverage)
+    {
+        // Kc = water viscosity
+        // Ks = strength or (1.0 - terrainDensity)
+        // Kd = deposition factor
+        // Ke = evaporation speed
+        // Kr = droplet weight
+        // G  = gravity
+
+        //Step 2: UPDATING OUTFLOW FLUX MAP
         for (int x = area.botLeft.x; x < area.topRight.x; x++)
         {
             for (int z = area.botLeft.z; z < area.topRight.z; z++)
             {
-                Vertex current = new Vertex(x, z);
-                float currentVal = GetTerrainWatterValue(x, z);
-                float currentWater = GetWaterValue(x, z);
-
-                //perform step only if required step hasn't already been processed here
-                if (GetStepValue(x,z) < stepNumber && currentWater != 0) //and some water is present
+                if (GetStepValue(x, z) < 666 && GetWaterValue(x, z) > 0) // stepNumber)
                 {
-                    List<Vertex> neighbours = ftm.Get8Neighbours(current, 1);
-                    //var rnd = new System.Random();
-                    //var neighbours = neighbours0.OrderBy(item => rnd.Next());
+                    // Initialise flux variables
+                    float fluxL, fluxB, fluxR, fluxT;
+                    float windForce = 0;
+                    // Get current point height
+                    float currentH = GetTerrainWatterValue(x, z);
+                    float windPotentialX = GetWindStrength(windStrength* windX, currentH, x, z);
+                    float windPotentialZ = GetWindStrength(windStrength* windZ, currentH, x, z);
+                    Vertex current = new Vertex(x, z);
 
-                    
-                    List<float> outflowList = new List<float>();
-                    float outflowSum = 0;
+                    //TOP
+                    float hN = GetTerrainWatterValue(x, z + 1);
+                    float deltaH = currentH - hN;
+                    windForce = 0;
+                    if (windZ > 0 && deltaH > windCoverage)
+                        windForce = windPotentialZ;
 
-                    foreach (Vertex n in neighbours)
-                    {                        
-                        float neighbourVal = GetTerrainWatterValue(n.x, n.z);
-                        if (currentVal > (neighbourVal + e) && area.Contains(n)) //current is higher that neighbour
-                        {
-                            float dif = currentVal - neighbourVal;
-                            dif /= 2;
-                            if(dif > currentWater)
-                            {
-                                dif = currentWater;
-                            }
-                            outflowList.Add(dif);
-                            outflowSum += dif;
-                            //if (MoveWaterFromTo(current, n, dif))
-                            //  valueChanged = true;
-                        }
-                        else
-                        {
-                            outflowList.Add(0);
-                        }
-                    }
-                    float ratio = outflowSum / currentWater;
+                    fluxT = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.top) + T * A * ((G * deltaH + windForce) / L));                    
 
-                    foreach (Vertex n in neighbours)
+                    //RIGHT
+                    hN = GetTerrainWatterValue(x + 1, z);
+                    deltaH = currentH - hN;
+                    windForce = 0;
+                    if (windX > 0 && deltaH > windCoverage)
+                        windForce = windPotentialX; 
+                    fluxR = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.right) + T * A * ((G * deltaH + windForce) / L));
+                    /*if (x == 4 && counter < 10)
                     {
-                        if (area.Contains(n) && outflowSum != 0)
-                        {
-                            float outflow = outflowList[neighbours.IndexOf(n)];
-                            if(ratio > 1)
-                                outflow /= ratio;
+                        Debug.Log("currentH:"+currentH);
+                        Debug.Log("hN:" + hN);
+                        Debug.Log("deltaH:" + deltaH);
+                        Debug.Log("fluxR:" + fluxR);
+                        counter++;
+                    }*/
 
-                            if (outflow != 0)
-                            {
-                                if (MoveWaterFromTo(current, n, outflow))
-                                    valueChanged = true;
-                            }
-                        }
-                    }
+                    //BOT
+                    hN = GetTerrainWatterValue(x, z - 1);
+                    deltaH = currentH - hN;
+                    windForce = 0;
+                    if (windZ < 0 && deltaH > windCoverage)
+                        windForce = windPotentialZ;
+
+                    fluxB = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.bot) + T * A * ((G * deltaH + windForce) / L));
+
+                    //LEFT
+                    hN = GetTerrainWatterValue(x - 1, z);
+                    deltaH = currentH - hN;
+                    windForce = 0;
+                    if (windX < 0 && deltaH > windCoverage)
+                        windForce = windPotentialX;
+
+                    fluxL = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.left) + T * A * ((G * deltaH + windForce) / L));
 
 
-                    stepMap.SetValue(x, z, GetStepValue(x, z) + 1);
+                    //If the sum of the outflow flux exceeds the water amount of the cell,
+                    //the flux value will be scaled down by a factor K to avoid negative
+                    //updated water height
+
+                    float K;
+                    if ((fluxL + fluxR + fluxT + fluxB) * T > GetWaterValue(x, z))
+                        K = Mathf.Min(1.0f, GetWaterValue(x, z) / ((fluxL + fluxR + fluxT + fluxB) * T));
+                    else
+                        K = 1;
+
+                    //Debug.Log(fluxT);
+                    //Debug.Log(fluxR);
+                    //Debug.Log(fluxB);
+                    //Debug.Log(fluxL);
+
+                    outflowTop.SetValue(x, z, fluxT * K);
+                    outflowRight.SetValue(x, z, fluxR * K);
+                    outflowBot.SetValue(x, z, fluxB * K);
+                    outflowLeft.SetValue(x, z, fluxL * K);
                 }
             }
         }
-        /*
+    }
+
+    public void UpdateSediment(Area area, int stepNumber, float Kc, float Ks, float Kd)
+    {
+        //int c = 4;
+        //Ks *= c;
+        //Kd *= c;
+        //Kc *= c;
+        float waterSum = 0;
+
         for (int x = area.botLeft.x; x < area.topRight.x; x++)
         {
             for (int z = area.botLeft.z; z < area.topRight.z; z++)
             {
-                waterSum += GetWaterValue(x, z);
+                if (GetStepValue(x, z) < 666)//stepNumber)
+                {
+                    float inL, inR, inB, inT;
+                    inT = GetOutflowValue(x, z + 1, Direction.bot);
+                    inR = GetOutflowValue(x + 1, z, Direction.left);
+                    inB = GetOutflowValue(x, z - 1, Direction.top);
+                    inL = GetOutflowValue(x - 1, z, Direction.right);
+
+
+                    //Compute inflow and outflow for velocity update
+                    float fluxIN = inL + inR + inB + inT;
+                    float fluxOUT = GetOutflowValue(x, z, Direction.top);
+                    fluxOUT += GetOutflowValue(x, z, Direction.right);
+                    fluxOUT += GetOutflowValue(x, z, Direction.bot);
+                    fluxOUT += GetOutflowValue(x, z, Direction.left);
+
+                    //V is net volume change for the water over time
+                    float V = Mathf.Max(0.0f, T * (fluxIN - fluxOUT));
+                    /*if(x == 4 && z == 0)
+                    {
+                        Debug.Log("fluxIN:" + fluxIN);
+                        Debug.Log("fluxOUT:" + fluxOUT);
+                        Debug.Log("V:" + V);
+                    }*/
+
+                    //The water is updated according to the volume change 
+                    //and cross-sectional area of pipe
+                    waterMap.SetValue(x, z, GetWaterValue(x, z) + V / (L * L));
+                    if(GetWaterValue(x, z) + V / (L * L) < 0)
+                    {
+                        Debug.Log("!");
+                    }
+
+                    //Step 3: UPDATING THE VELOCITY FIELD
+                    //velocityX.SetValue(x, z,
+                    //    (inL - GetOutflowValue(x, z, Direction.left)
+                    //    + GetOutflowValue(x, z, Direction.right) - inR) / 2);
+
+                    //velocityZ.SetValue(x, z,
+                    //    (inT - GetOutflowValue(x, z, Direction.top)
+                    //    + GetOutflowValue(x, z, Direction.bot) - inB) / 2);
+
+                    float velocity_x = inL - GetOutflowValue(x, z, Direction.left)
+                        + GetOutflowValue(x, z, Direction.right) - inR;
+                    float velocity_z = inT - GetOutflowValue(x, z, Direction.top)
+                        + GetOutflowValue(x, z, Direction.bot) - inB;
+
+                    Vector2 velocity = new Vector2(velocity_x, velocity_z);
+                    //velocity /= 2;
+
+                    // Compute maximum sediment capacity
+                    float C = Kc * 10*velocity.magnitude * GetSlope(x, z);
+
+                    float currentSediment = GetSedimentValue(x, z);
+                    float currentHydraulicErosion = GetHydraulicErosionValue(x, z);
+
+                    float KS = Mathf.Max(0, Ks * (C - currentSediment));
+                    float KD = Mathf.Max(0, Kd * (currentSediment - C));
+                    /*
+                    if (GetSlope(x, z) != 0 && counter < 10)
+                    {
+                        Debug.Log("C:" + C);
+                        Debug.Log("velocity.magnitude:" + velocity.magnitude);
+                        Debug.Log("GetSlope(x, z):" + GetSlope(x, z));
+                        Debug.Log("currentSediment:" + currentSediment);
+                        Debug.Log("KS:" + KS);
+                        Debug.Log("KD:" + KD);
+                        counter++;
+                    }*/
+
+                    if (KS != 0 && (C > currentSediment) && GetWaterValue(x, z) > currentSediment)
+                    {
+                        //Debug.Log(KS);
+                        //Debug.Log(Ks);
+                        //Debug.Log(GetSlope(x, z));
+                        //Debug.Log(velocity);
+                        //Debug.Log(velocity.magnitude);
+                        //Debug.Log(Kc);
+                        //Debug.Log(C);
+                        //Debug.Log(currentSediment);
+                        float newVal = currentHydraulicErosion - KS/Mathf.Max(currentHydraulicErosion, 1);
+
+                        hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion - KS);
+                        sedimentMap.SetValue(x, z, currentSediment + KS);
+                    }
+                    else if(KD != 0)
+                    {
+                        //Debug.Log(KD);
+                        hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion + KD);
+                        sedimentMap.SetValue(x, z, currentSediment - KD);
+                    }
+
+                    sedimentMap.SetValue(x, z,
+                       GetSedimentValue((int)(x - velocity.x), (int)(z - velocity.y)));
+
+                    waterSum += GetWaterValue(x, z);
+                }
             }
-        }*/
-        int _x = -50;
-        int _z = 50;
-        //Debug.Log(eg.lt.globalTerrainC.GetValue(_x, _z));
-        //Debug.Log(eg.GetTerrainValue(_x, _z));
-        //Debug.Log(eg.GetTerrainValue(_x, _z) + GetWaterValue(_x, _z));
-        //Debug.Log(GetWaterValue(_x, _z));
+        }
+        //Debug.Log("waterSum: " + waterSum);
+    }
         
-        if (valueChanged)
+    public void EvaporateWater(Area area, float evaporation)
+    {
+        for (int x = area.botLeft.x; x < area.topRight.x; x++)
         {
-            //Debug.Log("CHANGE");
+            for (int z = area.botLeft.z; z < area.topRight.z; z++)
+            {
+                float newVal = GetWaterValue(x, z) * (1 - evaporation);
+                if(newVal < 0.01f)
+                {
+                    newVal = 0;
+                }
+                waterMap.SetValue(x,z, newVal);
+                if (newVal < 0)
+                {
+                    Debug.Log("!");
+                }
+                //waterMap.SetValue(x, z, Mathf.Max(GetWaterValue(x, z) - 0.01f, 0));
+            }
         }
-        else
-            Debug.Log("nothing");
     }
 
-    /// <summary>
-    /// move waterAmount of water from v1 to v2
-    /// calculate how much sediment does water carry and move this sediment from v1 to v2
-    /// returns false if no change occured
-    /// </summary>
-    public bool MoveWaterFromTo(Vertex v1, Vertex v2, float waterAmount)
+    public void UpdateStepNumber(Area area, int stepNumber)
     {
-        //if (counter < 10)
-        //{
-        //   Debug.Log("move: " + waterAmount);
-        //    Debug.Log("from " + v1);
-        //    Debug.Log("to " + v2);
-        //    Debug.Log("waterAmount " + waterAmount);
-        //    Debug.Log("GetWaterValue1 " + v2);
-        //    counter++;
-        //}
-
-        if (waterAmount > GetWaterValue(v1.x, v1.z))
-            waterAmount = GetWaterValue(v1.x, v1.z);
-
-        if (counter < 10)
+        for (int x = area.botLeft.x; x < area.topRight.x; x++)
         {
-            //Debug.Log("acually: " + waterAmount);
-            counter++;
+            for (int z = area.botLeft.z; z < area.topRight.z; z++)
+            {
+                int currentStep = GetStepValue(x, z);
+                if(currentStep < stepNumber)
+                    stepMap.SetValue(x,z, currentStep + 1);
+            }
         }
-
-        float sum1 = GetWaterValue(v1.x, v1.z) + GetWaterValue(v2.x, v2.z);
-
-        waterMap.SetValue(v1.x, v1.z, GetWaterValue(v1.x, v1.z) - waterAmount);
-        waterMap.SetValue(v2.x, v2.z, GetWaterValue(v2.x, v2.z) + waterAmount);
-
-        float sum2 = GetWaterValue(v1.x, v1.z) + GetWaterValue(v2.x, v2.z);
-
-        //if(sum1 != sum2 && counter < 10)
-        //{
-        //    Debug.Log("!");
-        //    Debug.Log(sum1);
-        //    Debug.Log(sum2);
-        //    Debug.Log(waterAmount);
-        //    counter++;
-        //}
-
-
-        //if (counter < 10)
-        //{
-        //    Debug.Log("result: " + waterMap.GetValue(v1.x, v1.z));
-        //}
-
-        float sedimentAmount = GetSedimentAmount(waterAmount);
-        //sedimentMap.SetValue(v1.x, v1.z, GetSedimentValue(v1.x, v1.z) - sedimentAmount);
-        //sedimentMap.SetValue(v2.x, v2.z, GetSedimentValue(v2.x, v2.z) + sedimentAmount);
-        if (waterAmount > 0)
-            return true;
-        else
-            return false;
     }
 
-    public float GetSedimentAmount(float waterAmount)
+    private float GetSlope(int x, int z)
     {
-        if (waterAmount == 0)
+        //float topN = eg.GetTerrainValue(x, z + 1);
+        //float rightN = eg.GetTerrainValue(x + 1, z);
+        //float botN = eg.GetTerrainValue(x, z - 1);
+        //float leftN = eg.GetTerrainValue(x - 1, z);
+
+        float topN = eg.GetTerrainValue(x, z + 1) + GetHydraulicErosionValue(x,z+1);
+        float rightN = eg.GetTerrainValue(x + 1, z)+ GetHydraulicErosionValue(x + 1, z);
+        float botN = eg.GetTerrainValue(x, z - 1)+ GetHydraulicErosionValue(x, z - 1);
+        float leftN = eg.GetTerrainValue(x - 1, z)+ GetHydraulicErosionValue(x - 1, z);
+
+        float currentH = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z);
+        if((topN+rightN+botN+leftN)/4 > currentH + e)
+        {
             return 0;
-        return waterAmount / 8 + Random.Range(0, 0.05f); //TODO: control sediment amount
+        }
+
+        //if (!area.Contains(new Vertex(x, z + 1)))
+        //    topN = eg.GetTerrainValue(x, z);
+        //if (!area.Contains(new Vertex(x + 1, z)))
+        //    rightN = eg.GetTerrainValue(x, z);
+        //if (!area.Contains(new Vertex(x, z - 1)))
+        //    botN = eg.GetTerrainValue(x, z);
+        //if (!area.Contains(new Vertex(x - 1, z)))
+        //    leftN = eg.GetTerrainValue(x, z);
+
+        //Find normal
+        Vector3 va = new Vector3(1, rightN - leftN, 0);
+        Vector3 vb = new Vector3(0, topN - botN, 1);
+        //Vector3 n = Vector3.Cross(va.normalized, vb.normalized);
+        Vector3 n = Vector3.Cross(va, vb);
+
+        //float val = Mathf.Max(0.05f, 1.0f - Mathf.Abs(Vector3.Dot(n, new Vector3(0, 1, 0))));
+        float val = Vector3.Dot(n.normalized, new Vector3(0, 1, 0));
+        //Debug.Log(x + "," + z + " : " + val);
+        //Return dot product of normal with the Y axis
+        return 10*(1-Mathf.Abs(val));
     }
 
+    private float GetWindStrength(float strength, float height, int x, int z)
+    {
+        float slope = GetSlope(x, z);
+        //Debug.Log(x + "," + z + " : " + slope);
+
+        //Clamp to 0.005 
+        if (slope < 0.005f) slope = 0.005f;
+
+        //Check if altitude scaling is not on 
+        //Set value to null if so, 1
+        //if (!windAltitude) height = 1;
+
+        //Return wind potential force
+        //return strength * height * slope;
+        return Mathf.Abs(strength * slope);
+    }
+
+    //---GETTERS---//
 
     /// <summary>
     /// returns sum of filtered terrain, sediment and water
     /// </summary>
     public float GetTerrainWatterValue(int x, int z) //not sure how to name this:/
     {
-        float value = eg.GetTerrainValue(x, z) + GetSedimentValue(x, z) + GetWaterValue(x, z);
+        float value = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z) + GetWaterValue(x, z);
         /*if(eg.lt.rg.rivers.Count > 0 && eg.lt.rg.rivers[0].globalRiverC.IsDefined(x, z) && counter < 10)
         {
             Debug.Log(eg.GetTerrainValue(x, z));
             counter++;
         }*/
 
-        if( value > 600  && counter < 50)
+        if ( value > 600  && counter < 50)
         {
             Debug.Log(x + "," + z);
             Debug.Log(eg.GetTerrainValue(x, z));
@@ -231,8 +449,32 @@ public class HydraulicErosion  {
         }
         return value;
     }
-
-   
+    
+    public float GetOutflowValue(int x, int z, Direction direction)
+    {
+        float outflow = 666;
+        switch (direction)
+        {
+            case Direction.top:
+                outflow = outflowTop.GetValue(x, z);
+                break;
+            case Direction.right:
+                outflow = outflowRight.GetValue(x, z);
+                break;
+            case Direction.bot:
+                outflow = outflowBot.GetValue(x, z);
+                break;
+            case Direction.left:
+                outflow = outflowLeft.GetValue(x, z);
+                break;
+        }
+        
+        if (outflow != 666)
+            return outflow;
+        else
+            return 0;
+    }
+    
     /// <summary>
     /// returns step value
     /// 0 if not defined
@@ -242,6 +484,19 @@ public class HydraulicErosion  {
         int step = (int)stepMap.GetValue(x, z);
         if (step != 666)
             return step;
+        else
+            return 0;
+    }
+        
+    /// <summary>
+    /// returns sediemnt value
+    /// 0 if not defined
+    /// </summary>
+    public float GetHydraulicErosionValue(int x, int z)
+    {
+        float erosion = hydraulicErosionMap.GetValue(x, z);
+        if (erosion != 666)
+            return erosion;
         else
             return 0;
     }
@@ -278,6 +533,20 @@ public class HydraulicErosion  {
             return 0;
     }
 
+    public void ResetValues()
+    {
+        outflowTop.ResetQuadrants();
+        outflowRight.ResetQuadrants();
+        outflowBot.ResetQuadrants();
+        outflowLeft.ResetQuadrants();
+
+        sedimentMap.ResetQuadrants();
+        waterMap.ResetQuadrants();
+        stepMap.ResetQuadrants();
+        hydraulicErosionMap.ResetQuadrants();
+    }
+
+    //---DEBUG---//
 
     public string TerrainWaterValuesString(Area area)
     {
@@ -302,8 +571,7 @@ public class HydraulicErosion  {
 
         return output;
     }
-
-
+    
     public string WaterValuesString(Area area)
     {
         string output = "water values: \n";
@@ -327,5 +595,29 @@ public class HydraulicErosion  {
         return output;
     }
 
+    public string ErosionValuesString(Area area)
+    {
+        string output = "hydraulic erosion values: \n";
+        string s = "";
+        for (int x = area.botLeft.x; x < area.topRight.x; x++)
+        {
+            for (int z = area.botLeft.z; z < area.topRight.z; z++)
+            {
+                s = (int)GetHydraulicErosionValue(x, z) + "." +
+                    (int)(100 * (GetHydraulicErosionValue(x, z) - (int)GetHydraulicErosionValue(x, z)));
+                if (s.Length < 4)
+                    s += "0";
+                if (s.Length > 4)
+                    s = s.Substring(0, 4);
+                s += "|";
+                output += s;
+            }
+            output += "\n";
+        }
+
+        return output;
+    }
+
 
 }
+

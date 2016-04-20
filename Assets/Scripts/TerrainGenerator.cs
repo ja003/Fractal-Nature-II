@@ -37,7 +37,10 @@ public class TerrainGenerator
     public bool filterMinThresholdLayer = false;
     public bool filterMaxThresholdLayer = false;
 
+    public bool erosionHydraulicWaterLayer = true;
     public bool erosionHydraulicLayer = true;
+
+
     //------/LAYERS-----
 
     //------PATCH PARAMETERS-----
@@ -262,15 +265,55 @@ public class TerrainGenerator
 
         pm.SetValues(center, patchSize, rMin, rMax, roughness);
     }
+    
+      
 
-    public void GenerateDefaultTerrain()
+    public void GenerateDefaultTerrain(TerrainType type, int size) 
     {
-        int size = 25;
+        //int size = 50;
         for (int x = -size; x < size; x++)
         {
             for (int z = -size; z < size; z++)
             {
-                localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
+                switch (type)
+                {
+                    case TerrainType.gradientX_lr:
+                        localTerrain.globalTerrainC.SetValue(x, z, (float)x / size);
+                        break;
+                    case TerrainType.gradientX_rl:
+                        localTerrain.globalTerrainC.SetValue(x, z, (float)(- x) / size);
+                        break;
+
+                    case TerrainType.gradientZ_lr:
+                        localTerrain.globalTerrainC.SetValue(x, z, (float)z / size);
+                        break;
+                    case TerrainType.gradientZ_rl:
+                        localTerrain.globalTerrainC.SetValue(x, z, (float)(- z) / size);
+                        break;
+
+                    case TerrainType.constant:
+                        localTerrain.globalTerrainC.SetValue(x, z, 0.5f);
+                        break;
+                    case TerrainType.gradient_radialPlus:
+                        float distance = Vector2.Distance(new Vector2(0, 0), new Vector2(x, z));
+                        localTerrain.globalTerrainC.SetValue(x, z, (size - distance)/30);
+                        int c = 5;
+                        //if (z > -c && z < c && x > -c && x < c)
+                        //    localTerrain.globalTerrainC.SetValue(x, z, 0.3f);
+                        break;
+                    case TerrainType.gradient_radialMinus:
+                        distance = Vector2.Distance(new Vector2(0, 0), new Vector2(x, z));
+                        localTerrain.globalTerrainC.SetValue(x, z, distance / 30);
+                        c = 5;
+                        //if (z > -c && z < c && x > -c && x < c)
+                        //    localTerrain.globalTerrainC.SetValue(x, z, 0.3f);
+                        break;
+                }
+
+                //
+                
+                //localTerrain.globalTerrainC.SetValue(x, z, (float)z / 50);
+                //localTerrain.globalTerrainC.SetValue(x, z, 0.5f);
 
                 /*localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
                 if (x >= 30 && x <= 50 && z > -120)
@@ -301,13 +344,16 @@ public class TerrainGenerator
     /// generates terrain around given center
     /// and pregenerates neighbouring regions
     /// </summary>
-    public void GenerateTerrainOn(Vector3 center)//Vector3 botLeft, Vector3 topRight)
+    public void GenerateTerrainOn(Vector3 center, bool defaultTerrain)//Vector3 botLeft, Vector3 topRight)
     {
         ///functional RANDOM terrin generator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
-        PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
-        //GenerateDefaultTerrain();
+        //
+        if(defaultTerrain)
+            GenerateDefaultTerrain(TerrainType.gradient_radialMinus, terrainWidth);
+        else
+            PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
 
         //ds.Initialize();
 
@@ -386,6 +432,8 @@ public class TerrainGenerator
             layers.Add(Layer.filterMaxThreshold);
 
 
+        //if (erosionHydraulicWaterLayer)
+            //layers.Add(Layer.erosionHydraulicWater);
         if (erosionHydraulicLayer)
             layers.Add(Layer.erosionHydraulic);
 
@@ -721,8 +769,8 @@ public class TerrainGenerator
                         //individualMeshHeight * i].y;
                         float this_color = 666;
                         if(debugHeightmap)
-                            this_color= (vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
-                            +minusValue)/valueRange;
+                            this_color= ((vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
+                            +minusValue)/valueRange)-0.1f;
 
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)
@@ -766,7 +814,7 @@ public class TerrainGenerator
 
                         //Set water data if water is present
                         //if (W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] > 0.0001f)
-                        if(erosionHydraulicLayer)
+                        if(erosionHydraulicWaterLayer)
                         {
                             int tex = 15;
 
@@ -1979,4 +2027,16 @@ public class TerrainGenerator
         }
     }
     */
+}
+
+public enum TerrainType
+{
+    real,
+    constant,
+    gradientX_lr,
+    gradientX_rl,
+    gradientZ_lr,
+    gradientZ_rl,
+    gradient_radialPlus,
+    gradient_radialMinus
 }

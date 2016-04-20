@@ -133,19 +133,33 @@ public class CameraManager : MonoBehaviour, ICameraManager
             lastActionFrame = Time.frameCount;
         }
 
-        if (Input.GetKey("7") && lastActionFrame < Time.frameCount - 30)
+        if (Input.GetKey("u") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("distribute water");
-            erosionGenerator.he.DistributeWater(localTerrain.GetVisibleArea(), 0.1f);
-            lastActionFrame = Time.frameCount;
-        }
-        if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 30)
-        {
-            Debug.Log("hydraulic erosion step " + hydraulicErosionStep);
-            erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea(), hydraulicErosionStep, 0.1f);
+            Debug.Log("delete water");
+            erosionGenerator.he.waterMap.ResetQuadrants();
             terrainGenerator.build();
 
             Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
+            lastActionFrame = Time.frameCount;
+        }
+
+        if (Input.GetKey("7") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("distribute water");
+            hydraulicErosionStep = 1;
+            erosionGenerator.he.DistributeWater(localTerrain.GetVisibleArea(), hydraulicErosionStep, 0.1f);
+            terrainGenerator.build();
+
+            //Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
+            lastActionFrame = Time.frameCount;
+        }
+        if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 10)
+        {
+            //Debug.Log("hydraulic erosion step " + hydraulicErosionStep);
+            erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea());
+            terrainGenerator.build();
+
+            //Debug.Log(erosionGenerator.he.ErosionValuesString(localTerrain.GetVisibleArea()));
 
             hydraulicErosionStep++;
             lastActionFrame = Time.frameCount;
@@ -156,10 +170,11 @@ public class CameraManager : MonoBehaviour, ICameraManager
             //Debug.Log("hydraulic erosion " + hydraulicErosionStep + " steps ");
             for(int i = hydraulicErosionStep - 10; i < hydraulicErosionStep; i++)
             {
-                erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea(), i, 0.1f);
+                erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea());
             }
             //Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
-            Debug.Log(erosionGenerator.he.TerrainWaterValuesString(localTerrain.GetVisibleArea()));
+            //Debug.Log(erosionGenerator.he.TerrainWaterValuesString(localTerrain.GetVisibleArea()));
+            Debug.Log(erosionGenerator.he.ErosionValuesString(localTerrain.GetVisibleArea()));
 
             terrainGenerator.build();
 

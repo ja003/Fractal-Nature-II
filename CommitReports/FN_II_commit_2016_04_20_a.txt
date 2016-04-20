@@ -1,0 +1,6 @@
+Hydraulic erosion
+
+- improved results
+- eliminated too extreme eroded values 
+-- when water has only 1 source it won't create "big hole"
+- added controllers to generate default terrains

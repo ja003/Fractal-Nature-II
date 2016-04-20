@@ -1,0 +1,3 @@
+Hydraulic erosion
+
+- implemented hydraulic erosion model from previous version

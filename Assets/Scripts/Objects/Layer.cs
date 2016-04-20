@@ -12,6 +12,7 @@ public enum Layer{
     filterMinThreshold,
     filterMaxThreshold,
 
+    erosionHydraulicWater,
     erosionHydraulic,
     erosionThermal
 }

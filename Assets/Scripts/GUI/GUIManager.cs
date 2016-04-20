@@ -40,6 +40,7 @@ public class GUIManager : MonoBehaviour
     GUIFilters filter;
     GUIRiver river;
     GUIDebug debug;
+    GUIErosion erosion;
 
 
     void Start()
@@ -54,10 +55,10 @@ public class GUIManager : MonoBehaviour
 
         fractalNatureFlag = true;
         generalSettingsFlag = false;
-        erosionMenuFlag = false;
+        erosionMenuFlag = true;
         filterMenuFlag = false ;
         riverMenuFlag = false;
-        debugMenuFlag = true;
+        debugMenuFlag = false;
 
 
         terrainProcessing = false;
@@ -75,6 +76,7 @@ public class GUIManager : MonoBehaviour
         filter = new GUIFilters(this);
         river = new GUIRiver(this);
         debug = new GUIDebug(this);
+        erosion = new GUIErosion(this);
     }
     
     void Update()
@@ -150,6 +152,16 @@ public class GUIManager : MonoBehaviour
         {
             debugMenuFlag = false;
         }
+
+        if (fractalNatureFlag && !debugMenuFlag && !generalSettingsFlag
+            && !filterMenuFlag && !riverMenuFlag)
+        {
+            erosionMenuFlag = true;
+        }
+        else
+        {
+            erosionMenuFlag = false;
+        }
     }
 
     // On-screen Menu Loop
@@ -187,6 +199,12 @@ public class GUIManager : MonoBehaviour
         {
             debug.OnGui(menu.yPos + 5);
         }
+
+        if (erosionMenuFlag)
+        {
+            erosion.OnGui(menu.yPos + 5);
+        }
+        
 
     }
 
