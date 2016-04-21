@@ -60,7 +60,7 @@ public class LocalTerrain : ILocalTerrain {
         if (!fg.ftm.IsDefinedTerrainArea(GetVisibleArea()))
         {
             //Debug.Log(GetVisibleArea() + " not defined!");
-            tg.GenerateTerrainOn(localTerrainC.center, false); //localCoordinates.botLeft, localCoordinates.topRight);
+            tg.GenerateTerrainOn(localTerrainC.center, true); //localCoordinates.botLeft, localCoordinates.topRight);
 
             //connect river (if it has been generated)
             foreach(RiverInfo river in rg.rivers)

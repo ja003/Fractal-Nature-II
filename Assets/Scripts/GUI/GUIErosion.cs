@@ -51,130 +51,200 @@ public class GUIErosion {
     float deposition = 0.1f;
     float evaporation = 0.2f;
 
+    bool hydraulicErosionMenu = true;
+    bool thermalErosionMenu = false;
+
     public void OnGui(int yPosition)
     {
 
 
         yPos = yPosition;
-
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 16.5f * buttonHeight), "Hydraulic erosion");
-
-        yPos += buttonHeight + 5;
-
-        bool startRainFlag = startRain;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startRainString))
+                
+        yPos += 2;
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Hydraulic erosion"))
         {
-            startRain = !startRain;
-            if (startRain)
-                startRainString = "STOP RAIN";
-            else
-                startRainString = "START RAIN";
-        }
-        if (startRain && Time.frameCount % 30 == 0)
-        {
-            //Debug.Log("rain");
-            gm.cm.erosionGenerator.he.DistributeWater(gm.cm.localTerrain.GetVisibleArea(), currentStep, maxWaterIncrease);
-            currentStep++;
-            gm.cm.terrainGenerator.build();
+            hydraulicErosionMenu = !hydraulicErosionMenu;
         }
 
-        yPos += buttonHeight + 5;
-
-        bool startErosionFlag = startErosion;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startErosionString))
+        //HYDRAULIC EROSION
+        if (hydraulicErosionMenu)
         {
-            startErosion = !startErosion;
-            if (startErosion)
-                startErosionString = "STOP EROSION";
-            else
-                startErosionString = "START EROSION";
-        }
-        if (startErosion && Time.frameCount % 30 == 15)
-        {
-            gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
+            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 16.5f * buttonHeight), "");
 
-            gm.cm.terrainGenerator.build();
-        }
+            yPos += buttonHeight + 5;
 
-        yPos += buttonHeight + 3;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "strength");
-        erosionStrength = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth, yPos + 5,
-                menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), erosionStrength, 0, 0.2f);
-        yPos += buttonHeight;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "deposition");
-        deposition = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth, yPos + 5,
-                menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), deposition, 0, 0.2f);
-        yPos += buttonHeight;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "viscosity");
-        viscosity = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth, yPos + 5,
-                menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), viscosity, 0, 0.2f);
-        yPos += buttonHeight;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "evaporation");
-        evaporation = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth, yPos + 5,
-                menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), evaporation, 0, 0.6f);
-        yPos += buttonHeight + 3;
-
-        ///////////////WIND///////////////////
-        GUI.Box(new Rect(Screen.width - menuWidth + sideOffset / 2, yPos, menuWidth - rightMenuOffset - sideOffset, 7.5f * buttonHeight), "WIND");
-        yPos += buttonHeight;
-
-
-        GUI.Label(new Rect(Screen.width - menuWidth + 8 * sideOffset, yPos, buttonWidth, buttonHeight), "direction");
-        yPos += buttonHeight + 2;
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
+            bool startRainFlag = startRain;
+            if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startRainString))
             {
-                if (i == windDir_i && j == windDir_j)
-                    windDirectionString = "O";
+                startRain = !startRain;
+                if (startRain)
+                    startRainString = "STOP RAIN";
                 else
-                    windDirectionString = "-";
-                if (GUI.Button(new Rect(Screen.width - menuWidth + 4 * sideOffset + i * smallButtonWidth + 1,
-                    yPos + j * buttonHeight + 1, smallButtonWidth, buttonHeight), windDirectionString))
-                {
-                    windDir_i = i;
-                    windDir_j = j;
+                    startRainString = "START RAIN";
+            }
+            if (startRain && Time.frameCount % 30 == 0)
+            {
+                //Debug.Log("rain");
+                gm.cm.erosionGenerator.he.DistributeWater(gm.cm.localTerrain.GetVisibleArea(), currentStep, maxWaterIncrease);
+                currentStep++;
+                gm.cm.terrainGenerator.build();
+            }
 
-                    windX = i - 1;
-                    windZ = -(j - 1);
+            yPos += buttonHeight + 5;
+
+            bool startErosionFlag = startErosion;
+            if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startErosionString))
+            {
+                startErosion = !startErosion;
+                if (startErosion)
+                    startErosionString = "STOP EROSION";
+                else
+                    startErosionString = "START EROSION";
+            }
+            if (startErosion && Time.frameCount % 30 == 15)
+            {
+                gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
+
+                gm.cm.terrainGenerator.build();
+            }
+
+            yPos += buttonHeight + 3;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "strength");
+            erosionStrength = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), erosionStrength, 0, 0.2f);
+            yPos += buttonHeight;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "deposition");
+            deposition = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), deposition, 0, 0.2f);
+            yPos += buttonHeight;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "viscosity");
+            viscosity = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), viscosity, 0, 0.2f);
+            yPos += buttonHeight;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "evaporation");
+            evaporation = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), evaporation, 0, 0.6f);
+            yPos += buttonHeight + 3;
+
+            ///////////////WIND///////////////////
+            GUI.Box(new Rect(Screen.width - menuWidth + sideOffset / 2, yPos, menuWidth - rightMenuOffset - sideOffset, 7.5f * buttonHeight), "WIND");
+            yPos += buttonHeight;
+
+
+            GUI.Label(new Rect(Screen.width - menuWidth + 8 * sideOffset, yPos, buttonWidth, buttonHeight), "direction");
+            yPos += buttonHeight + 2;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (i == windDir_i && j == windDir_j)
+                        windDirectionString = "O";
+                    else
+                        windDirectionString = "-";
+                    if (GUI.Button(new Rect(Screen.width - menuWidth + 4 * sideOffset + i * smallButtonWidth + 1,
+                        yPos + j * buttonHeight + 1, smallButtonWidth, buttonHeight), windDirectionString))
+                    {
+                        windDir_i = i;
+                        windDir_j = j;
+
+                        windX = i - 1;
+                        windZ = -(j - 1);
+                    }
                 }
+            }
+
+            yPos += 3 * buttonHeight + 5;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "strength");
+            windStrength = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), windStrength, 0, 100);
+            yPos += buttonHeight;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "angle: " + (int)(90 * windAngle) + "." +
+                Mathf.Abs((int)((90 * windAngle - (int)(90 * windAngle)) * 100)));
+            windAngle = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), windAngle, -1, 1);
+            yPos += buttonHeight + 5;
+
+            if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))
+            {
+                gm.cm.erosionGenerator.he.ResetValues();
+                gm.cm.terrainGenerator.build();
             }
         }
 
-        yPos += 3 * buttonHeight + 5;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "strength");
-        windStrength = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth, yPos + 5,
-                menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), windStrength, 0, 100);
-        yPos += buttonHeight;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "angle: " + (int)(90 * windAngle) + "." +
-            Mathf.Abs((int)((90 * windAngle - (int)(90 * windAngle)) * 100)));
-        windAngle = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth, yPos + 5,
-                menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), windAngle, -1, 1);
         yPos += buttonHeight + 5;
-
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Thermal erosion"))
         {
-            gm.cm.erosionGenerator.he.ResetValues();
-            gm.cm.terrainGenerator.build();
+            thermalErosionMenu = !thermalErosionMenu;
         }
-        yPos += buttonHeight;
+
+        //THERMAL EROSION
+        if (thermalErosionMenu)
+        {
+            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 10 * buttonHeight), "");
+
+            yPos += buttonHeight + 5;
+
+            bool startRainFlag = startRain;
+            if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startRainString))
+            {
+                startRain = !startRain;
+                if (startRain)
+                    startRainString = "STOP RAIN";
+                else
+                    startRainString = "START RAIN";
+            }
+            if (startRain && Time.frameCount % 30 == 0)
+            {
+                //Debug.Log("rain");
+                gm.cm.erosionGenerator.he.DistributeWater(gm.cm.localTerrain.GetVisibleArea(), currentStep, maxWaterIncrease);
+                currentStep++;
+                gm.cm.terrainGenerator.build();
+            }
+
+            yPos += buttonHeight + 5;
+
+            bool startErosionFlag = startErosion;
+            if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startErosionString))
+            {
+                startErosion = !startErosion;
+                if (startErosion)
+                    startErosionString = "STOP EROSION";
+                else
+                    startErosionString = "START EROSION";
+            }
+            if (startErosion && Time.frameCount % 30 == 15)
+            {
+                gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
+
+                gm.cm.terrainGenerator.build();
+            }
+
+            yPos += buttonHeight + 3;
+
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "strength");
+            erosionStrength = GUI.HorizontalSlider(new Rect(
+                    Screen.width - menuWidth + buttonWidth, yPos + 5,
+                    menuWidth - sideOffset - buttonWidth - 5,
+                    buttonHeight), erosionStrength, 0, 0.2f);
+            yPos += buttonHeight;
+        }
     }
 }

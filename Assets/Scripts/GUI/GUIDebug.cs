@@ -13,6 +13,8 @@ public class GUIDebug {
     bool waterMap = true;
     bool sedimentMap = true;
 
+    float brightness = 0;
+    float brightnessFlag = 0;
 
 
     GUIManager gm;
@@ -36,7 +38,7 @@ public class GUIDebug {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,16 * buttonHeight), "Debug");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,17 * buttonHeight), "Debug");
 
         yPos += buttonHeight + 5;
         
@@ -67,6 +69,20 @@ public class GUIDebug {
             gm.cm.terrainGenerator.build();
         }
         yPos += buttonHeight + 5;
+
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight),"brightness");
+
+        brightness = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + buttonWidth, yPos + 5,
+                menuWidth - sideOffset - buttonWidth - 5,
+                buttonHeight), brightness, -1, 1);
+        if (brightnessFlag != brightness)
+        {
+            brightnessFlag = brightness;
+            gm.cm.terrainGenerator.terrainBrightness = brightness;
+            gm.cm.terrainGenerator.build();
+        }        
+        yPos += buttonHeight;
 
         bool colorModeFlag = colorMode;
         colorModeFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), colorMode, "  color mode");

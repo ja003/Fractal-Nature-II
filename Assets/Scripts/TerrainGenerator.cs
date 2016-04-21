@@ -67,6 +67,7 @@ public class TerrainGenerator
     public bool debugRmax = false;
     public bool debugRoughness = false;
 
+    public float terrainBrightness = 0.1f;
 
     //------/PATCH PARAMETERS-----
 
@@ -770,7 +771,7 @@ public class TerrainGenerator
                         float this_color = 666;
                         if(debugHeightmap)
                             this_color= ((vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
-                            +minusValue)/valueRange)-0.1f;
+                            +minusValue)/valueRange) + terrainBrightness;
 
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)
