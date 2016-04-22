@@ -81,6 +81,7 @@ public class GlobalTerrain : IGlobalTerrain
 
     }
 
+    //shouldnt be here
     /// <summary>
     /// returns highest neighbour of given point
     /// 0 if no neighbour is defined

@@ -133,10 +133,13 @@ public class GUIExport {
             layers.Add(Layer.filterMaxThreshold);
 
 
-        if (tg.erosionHydraulicWaterLayer)
-            layers.Add(Layer.erosionHydraulicWater);
+        //if (tg.waterLayer)
+        //    layers.Add(Layer.water);
+
         if (tg.erosionHydraulicLayer)
             layers.Add(Layer.erosionHydraulic);
+        if (tg.erosionThermalLayer)
+            layers.Add(Layer.erosionThermal);
 
 
 

@@ -61,7 +61,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         AssignFunctions();
         terrainGenerator.initialize(scaleTerrainY);
-        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0));
+        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
 
 
         //filterGenerator.PerserveMountains(3, 50, 10);
@@ -88,7 +88,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         functionRiverDigger.AssignFunctions(riverGenerator);
         functionRiverPlanner.AssignFunctions(riverGenerator);
         functionMathCalculator.AssignFunctions(localTerrain);
-        functionTerrainManager.AssignFunctions(localTerrain, functionMathCalculator, riverGenerator);
+        functionTerrainManager.AssignFunctions(localTerrain, 
+            functionMathCalculator, riverGenerator, layerManager);
 
         layerManager.AssignFunctions(terrainGenerator, filterGenerator, riverGenerator, erosionGenerator);
 
@@ -118,7 +119,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             //FixCameraPosition(); //no need now
             //Debug.Log("moving to center: " + gameObject.transform.position);
-            localTerrain.UpdateVisibleTerrain(gameObject.transform.position);
+            localTerrain.UpdateVisibleTerrain(gameObject.transform.position, false);
         }
 
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
@@ -182,15 +183,11 @@ public class CameraManager : MonoBehaviour, ICameraManager
         }
         if (Input.GetKey("4") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("color peaks");
+            Debug.Log("thermal erosion");
 
-            List<Vertex> closestPeaks = 
-                terrainGenerator.ds.mountainPeaksManager.GetClosestPeaks(localTerrain.localTerrainC.center);
-            foreach(Vertex v in closestPeaks)
-            {
-                riverGenerator.fd.ColorPixel(v.x, v.z, 3, riverGenerator.fd.greenColor);
-            }
+            erosionGenerator.te.ThermalErosionStep(localTerrain.GetVisibleArea(), 500, 0.00002f, 0.2f);
 
+            terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
 

@@ -12,6 +12,7 @@ public class GUIDebug {
     bool colorMode;
     bool waterMap = true;
     bool sedimentMap = true;
+    bool thermalMap = true;
 
     float brightness = 0;
     float brightnessFlag = 0;
@@ -92,26 +93,38 @@ public class GUIDebug {
             gm.cm.terrainGenerator.colorMode = colorMode;
             gm.cm.terrainGenerator.build();
         }
-        yPos += buttonHeight + 5;
+        yPos += buttonHeight;
 
         bool waterMapFlag = waterMap;
         waterMapFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), waterMap, "  water");
         if (waterMapFlag != waterMap)
         {
             waterMap = waterMapFlag;
-            gm.cm.terrainGenerator.erosionHydraulicWaterLayer = waterMap;
+            gm.cm.terrainGenerator.waterMesh = waterMap;
             gm.cm.terrainGenerator.build();
         }
-        yPos += buttonHeight + 5;
+        yPos += buttonHeight;
 
         bool sedimentMapFlag = sedimentMap;
-        sedimentMapFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), sedimentMap, "  sediment");
+        sedimentMapFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), sedimentMap, "  hydraulic erosion");
         if (sedimentMapFlag != sedimentMap)
         {
             sedimentMap = sedimentMapFlag;
             gm.cm.terrainGenerator.erosionHydraulicLayer = sedimentMap;
             gm.cm.terrainGenerator.build();
         }
+        yPos += buttonHeight;
+
+        bool thermalMapFlag = thermalMap;
+        thermalMapFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), thermalMap, "  thermal erosion");
+        if (thermalMapFlag != thermalMap)
+        {
+            thermalMap = thermalMapFlag;
+            gm.cm.terrainGenerator.erosionThermalLayer = thermalMap;
+            gm.cm.terrainGenerator.build();
+        }
+
+
         yPos += buttonHeight + 5;
 
 

@@ -24,9 +24,9 @@ public class HydraulicErosion  {
 
     public FunctionTerrainManager ftm;
 
-    public HydraulicErosion(ErosionGenerator erosionManager)
+    public HydraulicErosion(ErosionGenerator erosionGenerator)
     {
-        eg = erosionManager;
+        eg = erosionGenerator;
 
         hydraulicErosionMap = new GlobalCoordinates(100);
         sedimentMap = new GlobalCoordinates(100);

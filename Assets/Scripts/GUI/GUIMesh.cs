@@ -114,7 +114,7 @@ public class GUIMesh {
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2*sideOffset, 1.5f* buttonHeight), "GENERATE"))
         {
             //Debug.Log("generating on: " + gm.cm.gameObject.transform.position);
-            gm.cm.localTerrain.UpdateVisibleTerrain(gm.cm.gameObject.transform.position);
+            gm.cm.localTerrain.UpdateVisibleTerrain(gm.cm.gameObject.transform.position, false);
         }
         yPos += 1.5f * buttonHeight;
 

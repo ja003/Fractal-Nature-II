@@ -26,7 +26,11 @@ public class TerrainGenerator
     public int terrainHeight;
     public int patchSize;
 
+    public bool waterMesh = false;
+
     //------LAYERS-----
+
+
     public bool terrainLayer = true;
     public bool riverLayer = true;
 
@@ -37,8 +41,8 @@ public class TerrainGenerator
     public bool filterMinThresholdLayer = false;
     public bool filterMaxThresholdLayer = false;
 
-    public bool erosionHydraulicWaterLayer = true;
     public bool erosionHydraulicLayer = true;
+    public bool erosionThermalLayer = true;
 
 
     //------/LAYERS-----
@@ -413,7 +417,7 @@ public class TerrainGenerator
         //float value;
 
         Vertex globalC;
-        layers = new List<Layer>();
+        /*layers = new List<Layer>();
         if (terrainLayer)
             layers.Add(Layer.terrain);
         if (riverLayer)
@@ -437,14 +441,20 @@ public class TerrainGenerator
             //layers.Add(Layer.erosionHydraulicWater);
         if (erosionHydraulicLayer)
             layers.Add(Layer.erosionHydraulic);
+        if (erosionThermalLayer)
+            layers.Add(Layer.erosionThermal);
+            */
 
+        localTerrain.lm.UpdateLayers();
 
         for (int x = 0; x < terrainWidth; x++)
         {
             for (int z = 0; z < terrainHeight; z++)
             {
                 globalC = localTerrain.GetGlobalCoordinate(x, z);
-                vertices[x, z].y = localTerrain.ft.GetValueFromLayers(globalC.x, globalC.z, layers);
+                //vertices[x, z].y = localTerrain.lm.GetValueFromLayers(globalC.x, globalC.z, layers);
+                vertices[x, z].y = localTerrain.lm.GetValueFromLayers(
+                    globalC.x, globalC.z, localTerrain.lm.activeLayers);
                 W[x, z] = erosionGenerator.he.GetTerrainWatterValue(globalC.x, globalC.z);
             }
         }
@@ -815,7 +825,7 @@ public class TerrainGenerator
 
                         //Set water data if water is present
                         //if (W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] > 0.0001f)
-                        if(erosionHydraulicWaterLayer)
+                        if(waterMesh)
                         {
                             int tex = 15;
 

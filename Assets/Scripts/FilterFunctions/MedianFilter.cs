@@ -47,7 +47,7 @@ public class MedianFilter  {
                 //if(fg.GetGlobalValue(x,z,globalFilterMedianC)
                 //if(!globalFilterMedianC.IsDefined(x, z)){ //TODO: mountain filter sometimes changes provious values, therefore median has to also overwrite
 
-                fg.SetGlobalValue(x, z, lt.ft.GetValue(x, z, ignoreLayers) - ftm.GetGlobalMedian(x, z, 2), true, globalFilterMedianC);
+                fg.SetGlobalValue(x, z, lt.lm.GetTerrainValue(x, z) - ftm.GetGlobalMedian(x, z, 2), true, globalFilterMedianC);
                 //}
                 //fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - ftm.GetGlobalMedian(x, z, 2), false, globalFilterMedianC);
                 //fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - lt.gt.GetNeighbourAverage(x, z, 2), false, globalFilterMedianC);

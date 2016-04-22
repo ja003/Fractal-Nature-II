@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class LocalTerrain : ILocalTerrain {
+public class LocalTerrain {
 
     //public float[,] visibleTerrain; //practicaly not neccessary
     
@@ -20,12 +20,12 @@ public class LocalTerrain : ILocalTerrain {
     public ErosionGenerator eg;
 
     public GlobalTerrain gt;
-    public LayerManager ft;
+    public LayerManager lm;
 
     public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain)
     {
         gt = globalTerrain;
-        ft = new LayerManager();
+        lm = new LayerManager();
 
         localTerrainC = new LocalCoordinates(new Vector3(0, 0, 0), terrainWidth, terrainHeight);
 
@@ -46,21 +46,21 @@ public class LocalTerrain : ILocalTerrain {
         rg = riverGenerator;
         eg = erosionGenerator;
 
-        ft.AssignFunctions(tg, fg, rg, eg);
+        lm.AssignFunctions(tg, fg, rg, eg);
     }
 
     /// <summary>
     /// updates values to visible terrain based on camera position
     /// </summary>
     /// <param name="cameraPosition"></param>
-    public void UpdateVisibleTerrain(Vector3 cameraPosition)
+    public void UpdateVisibleTerrain(Vector3 cameraPosition, bool defaultTerrain)
     {
         MoveVisibleTerrain(cameraPosition, false);
 
         if (!fg.ftm.IsDefinedTerrainArea(GetVisibleArea()))
         {
             //Debug.Log(GetVisibleArea() + " not defined!");
-            tg.GenerateTerrainOn(localTerrainC.center, true); //localCoordinates.botLeft, localCoordinates.topRight);
+            tg.GenerateTerrainOn(localTerrainC.center, defaultTerrain); //localCoordinates.botLeft, localCoordinates.topRight);
 
             //connect river (if it has been generated)
             foreach(RiverInfo river in rg.rivers)

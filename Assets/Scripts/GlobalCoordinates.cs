@@ -69,6 +69,19 @@ public class GlobalCoordinates {
         }
     }
 
+    /// <summary>
+    /// returns value on given coordinates
+    /// returns undefinedValue if value not defined
+    /// </summary>
+    public float GetValue(int x, int z, float undefinedValue)
+    {
+        float value = GetValue(x, z);
+        if (value != 666)
+            return value;
+        else
+            return undefinedValue;
+    }
+
     public float GetValue(Vector3 point)
     {
         return GetValue((int)point.x, (int)point.z);

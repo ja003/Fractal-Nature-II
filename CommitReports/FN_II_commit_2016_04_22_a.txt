@@ -1,0 +1,5 @@
+Thermal erosion
+
+- added GetValue with specification of undefined value
+- implemented thermal erosion 
+- implemented better terrain layer value getter
