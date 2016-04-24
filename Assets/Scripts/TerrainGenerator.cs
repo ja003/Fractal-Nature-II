@@ -15,7 +15,6 @@ public class TerrainGenerator
     public ErosionGenerator erosionGenerator;
 
     public DiamondSquare ds;
-    public DiamondSquare2 ds2;
     public RandomTerrain rt;
 
     public FunctionMathCalculator fmc;
@@ -83,7 +82,6 @@ public class TerrainGenerator
     {
         //initialize(64,3);
         ds = new DiamondSquare(this, patchSize);
-        ds2 = new DiamondSquare2(this);
         rt = new RandomTerrain(this);
         this.patchSize = patchSize;
         pm = new PatchManager(patchSize);
@@ -849,7 +847,7 @@ public class TerrainGenerator
 
                             //Set transparency
                             float alpha = W[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i] * 120;
-                            alpha = 1f;
+                            alpha = 0.5f;
                             if (alpha > 0.9f) alpha = 1.0f;
 
                             //Set water texture pixel
@@ -985,6 +983,7 @@ public class TerrainGenerator
             myWater[i].GetComponent<Renderer>().material = Resources.Load("Watermat", typeof(Material)) as Material;
 
             myWater[i].GetComponent<Renderer>().material.mainTexture = waterMap[i];
+            myWater[i].GetComponent<Renderer>().material.mainTexture = waterMap[i];
             myWater[i].GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Clamp;
         }
     }
@@ -995,123 +994,7 @@ public class TerrainGenerator
     int patchWidth;
     int patchHeight;
 
-    //TODO: restrict region
-    public void applyDiamondSquare(float scale)
-    {
-        //int widthCount = localTerrain.terrainWidth / (3 * patchSize / 4);
-        //int heightCount = localTerrain.terrainHeight / (3 * patchSize / 4);
-
-        //for (int x = -patchSize / 2; x < localTerrain.terrainWidth; x += 3 * patchSize / 4)
-        //{
-        //    for (int z = -patchSize / 2; z < localTerrain.terrainHeight; z += 3 * patchSize / 4)
-        //    {
-        //        Debug.Log("Starting from: " + x + "," + z);
-        //        initDiamondSquare(new Vector3(x, 0, z), scale);
-        //    }
-        //}
-
-        patchWidth = terrainWidth / 6;
-        patchHeight = terrainHeight / 6;
-
-        //patchWidth = terrainWidth;
-        //patchHeight = terrainHeight;
-
-        //int widthCount = terrainWidth / (3 * terrainWidth / 4);
-        //int heightCount = terrainHeight / (3 * terrainHeight / 4);
-
-        ds2.SetupDiamondSquare(patchWidth, patchHeight);
-
-        /*
-        for (int x = -patchWidth / 2; x < terrainWidth; x += 3 * patchWidth / 4)
-        {
-            for (int z = -patchHeight / 2; z < terrainHeight; z += 3 * patchHeight / 4)
-            {
-                //Debug.Log("Starting from: " + x + "," + z);
-                initDiamondSquare(new Vector3(x, 0, z), scale);
-
-                //if(CheckBounds(x,z))
-                //    vertices[x, z].y = 10;
-            }
-        }*/
-        /*
-        for(int x = 0; x < terrainWidth; x+= patchWidth)
-        {
-            for (int z = 0; z < terrainHeight; z += patchHeight)
-            {
-                //Debug.Log("Starting from: " + x + "," + z);
-                ds.initDiamondSquare(new Vector3(x, 0, z), scale);
-            }
-        }*/
-        /*
-        for (int x = -patchWidth; x < terrainWidth + patchWidth; x += patchWidth-1)
-        {
-            for (int z = -patchHeight; z < terrainHeight + patchHeight; z += patchHeight-1)
-            {
-                //Debug.Log("Starting from: " + x + "," + z);
-                ds.initDiamondSquare(new Vector3(x, 0, z), scale);
-            }
-        }*/
-
-        //area where diamond - square is applied has to overlay(to form more continuous terrain)
-        for (int x = 0; x < terrainWidth; x += patchWidth / 2)
-        {
-            for (int z = 0; z < terrainHeight; z += patchHeight / 2)
-            {
-                //TODO: make scale better dependent on terrain size
-                float scale1 = ((terrainWidth + terrainHeight) / 4 -
-                    Vector3.Distance(new Vector3(x, 0, z), new Vector3(terrainWidth / 2, 0, terrainHeight / 2))) / 30;
-
-                //Debug.Log("Starting from: " + x + "," + z);
-                if (!localTerrain.NeighbourhoodDefined(x, z, patchWidth / 2))
-                {
-                    ds2.initDiamondSquare(new Vector3(x, 0, z), 1);// Math.Abs(2*scale1));
-                    //Debug.Log(scale1);
-                }
-            }
-        }
-
-        //ds.initDiamondSquare(new Vector3(terrainWidth/2, 0, terrainHeight/2), scale);
-
-        //Iterate through patches
-        /*
-        for (int x = 0; x < 7; x++)
-        {
-            for (int z = 0; z < 7; z++)
-            {
-
-                ////Initialise welding flags
-                //a_corner = b_corner = c_corner = d_corner = true;
-
-                //if (x > 0) { a_corner = false; d_corner = false; }
-                //if (z > 0) { a_corner = false; b_corner = false; }
-
-                //Set starting position and call main algorithm
-                Vector3 temp = new Vector3(x * patchWidth + x, 0, z * patchHeight + z);
-                //Vector3 temp = new Vector3(terrainWidth - x * patchWidth + x, 0,terrainHeight - z * patchHeight + z);
-
-                ds.initDiamondSquare(temp, scale);
-            }
-        }*/
-
-        //fix unset values
-        for (int x = 0; x < terrainWidth; x++)
-        {
-            for (int z = 0; z < terrainHeight; z++)
-            {
-                //if (vertices[x, z].y == 666)
-                if (localTerrain.GetLocalHeight(x, z) == 666)
-                {
-                    //Debug.Log("fixing: " + x + "," + z);
-                    //stepSquare(x, z, 0.4f, 0.6f, 10, 10);
-                    //vertices[x, z].y = localTerrain.GetNeighbourHeight(x, z);
-                    //SetVertex(x, z, localTerrain.GetNeighbourHeight(x, z));
-                    SetVertex(x, z, -10);
-                    //Debug.Log(vertices[x, z].y);
-                }
-            }
-        }
-    }
-
+   
 
     //modulus function
     public int mod(int x, int m)

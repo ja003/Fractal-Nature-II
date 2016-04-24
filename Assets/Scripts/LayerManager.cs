@@ -67,9 +67,12 @@ public class LayerManager {
                 case Layer.river:
                     foreach(RiverInfo r in rg.rivers)
                     {
-                        value = r.globalRiverC.GetValue(x, z);
-                        if(value != 666)    
-                            river += value;
+                        if (rg.riverGui.riverFlags[rg.rivers.IndexOf(r)])
+                        {
+                            value = r.globalRiverC.GetValue(x, z);
+                            if (value != 666)
+                                river += value;
+                        }
                     }
                     break;
 

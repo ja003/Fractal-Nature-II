@@ -119,6 +119,7 @@ public class GUIRiver
             if (riverFlag != riverFlags[i])
             {
                 riverFlags[i] = riverFlag;
+                //Debug.Log(i + ":" + riverFlag);
                 gm.cm.terrainGenerator.build();
             }
 

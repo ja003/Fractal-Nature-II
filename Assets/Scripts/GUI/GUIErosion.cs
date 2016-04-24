@@ -52,7 +52,7 @@ public class GUIErosion {
     float erosionStrength = 0.1f;
     float viscosity = 0.1f;
     float deposition = 0.1f;
-    float evaporation = 0.2f;
+    float evaporation = 0.05f;
 
     bool hydraulicErosionMenu = true;
     bool thermalErosionMenu = false;

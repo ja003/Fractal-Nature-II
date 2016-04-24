@@ -53,11 +53,11 @@ public class RiverGenerator  {
         int w = 20;
         
         List<Vertex> tempList = new List<Vertex>();
-        tempList.Add(new Vertex(0, -lt.terrainHeight/2));
-        tempList.Add(new Vertex(0, -w));
+        tempList.Add(new Vertex(0, -lt.terrainHeight/2 + 5));
+        tempList.Add(new Vertex(w, -w));
         tempList.Add(new Vertex(0, 0));
-        tempList.Add(new Vertex(0, w));
-        tempList.Add(new Vertex(0, lt.terrainHeight / 2));
+        tempList.Add(new Vertex(w, w));
+        tempList.Add(new Vertex(0, lt.terrainHeight / 2 - 5));
 
         RiverInfo river = new RiverInfo(this);
         river.riverPath = tempList;

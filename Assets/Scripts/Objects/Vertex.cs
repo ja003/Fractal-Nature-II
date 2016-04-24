@@ -86,6 +86,12 @@ public class Vertex
         return x * 98411 + z * 98507;
     }*/
 
+    //TODO: ...correct?
+    public override int GetHashCode()
+    {
+        return (x - 666) * (z + 666);
+    }
+
     public Vertex Clone()
     {
         return new Vertex(x, z, height);

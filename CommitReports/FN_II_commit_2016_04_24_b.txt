@@ -1,0 +1,5 @@
+Hydraulic erosion optimization
+
+- implemented more effective hydraulic erosion computation
+-- using HashSet 
+- fixed river toggler
