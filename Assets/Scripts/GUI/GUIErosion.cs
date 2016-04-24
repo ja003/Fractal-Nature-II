@@ -33,6 +33,9 @@ public class GUIErosion {
     float maxWaterIncrease = 0.2f;
     int currentStep = 1;
 
+    bool floodRiver = false;
+    string floodRiverString = "FLOOD RIVER";
+
     bool startErosionH= false;
     string startErosionHString = "START EROSION";
 
@@ -51,14 +54,16 @@ public class GUIErosion {
     float deposition = 0.1f;
     float evaporation = 0.2f;
 
-    bool hydraulicErosionMenu = false;
-    bool thermalErosionMenu = true;
+    bool hydraulicErosionMenu = true;
+    bool thermalErosionMenu = false;
 
     bool startErosionT = false;
     string startErosionTString = "START EROSION";
     float iterations = 500;
     float minDif = 0.005f;
     float thermalStrength = 0.2f;
+
+    int refreshFrame = 15;
 
     public void OnGui(int yPosition)
     {
@@ -78,7 +83,7 @@ public class GUIErosion {
             GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 16.5f * buttonHeight), "");
 
             yPos += buttonHeight + 5;
-
+            ///RAIN
             bool startRainFlag = startRain;
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startRainString))
             {
@@ -88,7 +93,7 @@ public class GUIErosion {
                 else
                     startRainString = "START RAIN";
             }
-            if (startRain && Time.frameCount % 30 == 0)
+            if (startRain && Time.frameCount % refreshFrame == 0)
             {
                 //Debug.Log("rain");
                 gm.cm.terrainGenerator.waterMesh = true;
@@ -100,6 +105,31 @@ public class GUIErosion {
 
             yPos += buttonHeight + 5;
 
+            ///RIVER
+            bool floodRiverFlag = floodRiver;
+            if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), floodRiverString))
+            {
+                floodRiver = !floodRiver;
+                if (floodRiver)
+                    floodRiverString = "STOP";
+                else
+                    floodRiverString = "FLOOD RIVER";
+            }
+            if (floodRiver && Time.frameCount % refreshFrame == 0)
+            {
+                //Debug.Log("FLOODING");
+                gm.cm.terrainGenerator.waterMesh = true;
+
+                foreach(RiverInfo river in gm.cm.riverGenerator.rivers)
+                {
+                    gm.cm.erosionGenerator.he.FloodRiver(river);
+                }
+                gm.cm.terrainGenerator.build();
+            }
+
+            yPos += buttonHeight + 5;
+
+            ///EROSION
             bool startErosionFlag = startErosionH;
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startErosionHString))
             {
@@ -109,7 +139,7 @@ public class GUIErosion {
                 else
                     startErosionHString = "START EROSION";
             }
-            if (startErosionH && Time.frameCount % 30 == 15)
+            if (startErosionH && Time.frameCount % refreshFrame == 1)
             {
                 gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
 

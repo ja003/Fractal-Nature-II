@@ -63,10 +63,13 @@ public class LocalTerrain {
             tg.GenerateTerrainOn(localTerrainC.center, defaultTerrain); //localCoordinates.botLeft, localCoordinates.topRight);
 
             //connect river (if it has been generated)
-            foreach(RiverInfo river in rg.rivers)
+            if (!defaultTerrain)
             {
-                Debug.Log("connection river");
-                rg.GenerateConnectingRiver(river);
+                foreach (RiverInfo river in rg.rivers)
+                {
+                    //Debug.Log("connection river");
+                    rg.GenerateConnectingRiver(river);
+                }
             }
             /*
             if (rg.currentRiver != null && rg.currentRiver.riverPath.Count > 0)

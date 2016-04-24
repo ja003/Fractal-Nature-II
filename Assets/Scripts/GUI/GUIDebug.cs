@@ -170,10 +170,10 @@ public class GUIDebug {
         }
         yPos += buttonHeight + 5;
 
-        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "XXX"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "river"))
         {
             terrainSize = gm.cm.localTerrain.terrainWidth;
-            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradient_radialPlus, terrainSize);
+            gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.river, terrainSize);
             gm.cm.terrainGenerator.build();
         }
         if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset + buttonWidth + 5, yPos, buttonWidth, buttonHeight), "constant"))

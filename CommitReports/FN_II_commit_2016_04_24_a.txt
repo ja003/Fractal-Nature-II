@@ -1,0 +1,5 @@
+River flooding
+
+- added default river terrain
+- improved hydraulic erosion from defined source
+- implemented river flooding by water mesh

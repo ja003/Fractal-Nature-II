@@ -39,11 +39,15 @@ public class ThermalErosion {
             int z = Random.Range(area.botLeft.z, area.topRight.z);
 
             //Call the sediment transportation recursive step
-            ThermalRecursion(x, z, minDif, strength);
+            ThermalRecursion(x, z, minDif, strength, 0);
         }
     }
-    private void ThermalRecursion(int x, int z, float minDif, float strength)
+    private void ThermalRecursion(int x, int z, float minDif, float strength, int recursionLvl)
     {
+        if (recursionLvl > 20)
+            return;
+        recursionLvl++;
+
         Vertex current = new Vertex(x, z, GetErodedTerrainValue(x,z));
         //Recursive sediment transportation with slope checking
 
@@ -68,7 +72,7 @@ public class ThermalErosion {
                 thermalErosionMap.GetValue(lowestN.x, lowestN.z, 0) + sedAmount);
 
             //Recall
-            ThermalRecursion(lowestN.x, lowestN.z, minDif, strength);
+            ThermalRecursion(lowestN.x, lowestN.z, minDif, strength, recursionLvl);
         }
     }
 

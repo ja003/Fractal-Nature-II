@@ -61,13 +61,21 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         AssignFunctions();
         terrainGenerator.initialize(scaleTerrainY);
-        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
+        //localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
 
 
         //filterGenerator.PerserveMountains(3, 50, 10);
         //terrainGenerator.build();
 
         //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
+    }
+
+    void FixedUpdate()
+    {
+        if(Time.frameCount == 1)
+        {
+            localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
+        }
     }
     
     public void AssignFunctions()
@@ -82,7 +90,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         filterGenerator.AssignFunctions(functionMathCalculator, localTerrain, functionTerrainManager);
 
         riverGenerator.AssignFunctions(functionTerrainManager, functionRiverPlanner, functionDebugger,
-            functionMathCalculator, functionRiverDigger);
+            functionMathCalculator, functionRiverDigger, guiManager.river);
 
         functionDebugger.AssignFunctions(riverGenerator);
         functionRiverDigger.AssignFunctions(riverGenerator);
@@ -94,6 +102,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         layerManager.AssignFunctions(terrainGenerator, filterGenerator, riverGenerator, erosionGenerator);
 
         erosionGenerator.AssignFunctions(functionTerrainManager);
+        
     }
 
     int lastActionFrame = 0;

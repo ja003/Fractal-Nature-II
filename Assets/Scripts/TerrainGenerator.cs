@@ -26,7 +26,7 @@ public class TerrainGenerator
     public int terrainHeight;
     public int patchSize;
 
-    public bool waterMesh = false;
+    public bool waterMesh = true;
 
     //------LAYERS-----
 
@@ -71,7 +71,7 @@ public class TerrainGenerator
     public bool debugRmax = false;
     public bool debugRoughness = false;
 
-    public float terrainBrightness = 0.1f;
+    public float terrainBrightness = +0.1f;
 
     //------/PATCH PARAMETERS-----
 
@@ -313,6 +313,18 @@ public class TerrainGenerator
                         //if (z > -c && z < c && x > -c && x < c)
                         //    localTerrain.globalTerrainC.SetValue(x, z, 0.3f);
                         break;
+                    case TerrainType.river:
+                        //c = 10;
+                        //if(x > -c && x < c)
+                        //{
+                        //    distance = Vector2.Distance(new Vector2(0, z), new Vector2(x, z));
+                        //    //float d0 = Vector2.Distance(new Vector2(0, z), new Vector2(c, z));
+                        //    localTerrain.globalTerrainC.SetValue(x, z, - distance/30);
+                        //}
+                        //else
+                        //    localTerrain.globalTerrainC.SetValue(x, z, 0);
+                        localTerrain.globalTerrainC.SetValue(x, z, 0.5f);
+                        break;
                 }
 
                 //
@@ -343,6 +355,10 @@ public class TerrainGenerator
 
             }
         }
+        if(type == TerrainType.river)
+        {
+            riverGenerator.GenerateDefaultRiver();
+        }
     }
 
     /// <summary>
@@ -356,7 +372,7 @@ public class TerrainGenerator
 
         //
         if(defaultTerrain)
-            GenerateDefaultTerrain(TerrainType.gradient_radialMinus, terrainWidth);
+            GenerateDefaultTerrain(TerrainType.river, terrainWidth);
         else
             PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
 
@@ -748,6 +764,8 @@ public class TerrainGenerator
 
         //for color mapping
         float valueRange = globalTerrain.globalTerrainC.globalMax - globalTerrain.globalTerrainC.globalMin;
+        if (valueRange == 0)
+            valueRange = 1;
         float minusValue = 0;
         if (globalTerrain.globalTerrainC.globalMin < 0)
             minusValue = -globalTerrain.globalTerrainC.globalMin;
@@ -2049,5 +2067,6 @@ public enum TerrainType
     gradientZ_lr,
     gradientZ_rl,
     gradient_radialPlus,
-    gradient_radialMinus
+    gradient_radialMinus,
+    river
 }

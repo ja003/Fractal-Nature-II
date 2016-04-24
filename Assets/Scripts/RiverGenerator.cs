@@ -35,13 +35,15 @@ public class RiverGenerator  {
 
     public void AssignFunctions(FunctionTerrainManager functionTerrainManager, 
         FunctionRiverPlanner functionRiverPlanner, FunctionDebugger functionDebugger, 
-        FunctionMathCalculator functionMathCalculator, FunctionRiverDigger functionRiverDigger)
+        FunctionMathCalculator functionMathCalculator, FunctionRiverDigger functionRiverDigger,
+        GUIRiver guiRiver)
     {
         ftm = functionTerrainManager;
         frp = functionRiverPlanner;
         fd = functionDebugger;
         fmc = functionMathCalculator;
         frd = functionRiverDigger;
+        riverGui = guiRiver;
     }
 
 
@@ -49,37 +51,28 @@ public class RiverGenerator  {
     {
 
         int w = 20;
-
+        
         List<Vertex> tempList = new List<Vertex>();
-        tempList.Add(new Vertex(0, -128));
-        tempList[0].side = Direction.bot;
-        tempList.Add(new Vertex(0, -64));
+        tempList.Add(new Vertex(0, -lt.terrainHeight/2));
+        tempList.Add(new Vertex(0, -w));
         tempList.Add(new Vertex(0, 0));
+        tempList.Add(new Vertex(0, w));
+        tempList.Add(new Vertex(0, lt.terrainHeight / 2));
 
-        RiverInfo defaultRiver = new RiverInfo(this);
-        defaultRiver.riverPath = tempList;
-        frd.DigRiver(defaultRiver);
+        RiverInfo river = new RiverInfo(this);
+        river.riverPath = tempList;
+        
 
+        frd.DistortPath(river.riverPath, river.gridStep / 3, river.gridStep);
 
-        List<Vertex> tempList2 = new List<Vertex>();
+        river.width = 15;
+        river.areaEffect = 2;
+        river.depth = 0.15f;
 
-        tempList2.Add(new Vertex(0,0));
-        tempList2.Add(new Vertex(0, 64));
-        tempList2.Add(new Vertex(0,128));
-
-        RiverInfo defaultRiver2 = new RiverInfo(this);
-        defaultRiver2.riverPath = tempList2;
-        defaultRiver.ConnectWith(defaultRiver2);
-        defaultRiver.GetLastVertex().side = Direction.top;
-
-        frd.DigRiver(defaultRiver);
+        rivers.Add(river);
+        frd.DigRiver(rivers[rivers.Count - 1]);
 
         riverGui.riverFlags.Add(true);
-        rivers.Add(defaultRiver);
-
-        lt.tg.build();
-
-        defaultRiver.DrawRiver();
     }
 
     public void DeleteRiverAt(int i)
@@ -272,10 +265,13 @@ public class RiverGenerator  {
 
     public void ResetRivers()
     {
-        for(int i = rivers.Count - 1; i >= 0; i++)
+        rivers = new List<RiverInfo>();
+        riverGui.riverFlags = new List<bool>();
+        /*for(int i = rivers.Count - 1; i >= 0; i--)
         {
+            Debug.Log("remove: " + i);
             rivers.RemoveAt(i);
-        }
+        }*/
         //globalRiverC.ResetQuadrants();
     }
 }

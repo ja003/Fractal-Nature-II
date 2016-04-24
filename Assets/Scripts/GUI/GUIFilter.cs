@@ -130,9 +130,6 @@ public class GUIFilters
 
         if (spikeFilterFlag != spikeFilter)
         {
-            Debug.Log("?");
-
-
             spikeFilter = spikeFilterFlag;
             gm.cm.terrainGenerator.filterSpikeLayer = spikeFilter;
             gm.cm.terrainGenerator.build();

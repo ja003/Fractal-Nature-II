@@ -67,16 +67,7 @@ public class FunctionRiverPlanner  {
         int x_max = restrictedArea.topRight.x;
         int z_max = restrictedArea.topRight.z;
 
-        //Debug.Log(ignoreRiver);
-        //Debug.Log(restrictedArea);
-        Debug.Log("start: " + start);
-        //Debug.Log("on");
-        //Debug.Log(x_min);
-        //Debug.Log(z_min);
-        //Debug.Log(x_max);
-        //Debug.Log(z_max);
-        //if(reachedSides.Count != 0)
-        //    Debug.Log("reached: " + reachedSides[0]);
+        //Debug.Log("start: " + start);
 
         if (step <= 0.1f) //step can't be too small
             step = 0.1f;

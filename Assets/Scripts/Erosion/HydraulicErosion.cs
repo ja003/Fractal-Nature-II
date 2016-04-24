@@ -21,12 +21,14 @@ public class HydraulicErosion  {
 
 
     public ErosionGenerator eg;
+    public LayerManager lm;
 
     public FunctionTerrainManager ftm;
 
     public HydraulicErosion(ErosionGenerator erosionGenerator)
     {
         eg = erosionGenerator;
+        lm = eg.lt.lm;
 
         hydraulicErosionMap = new GlobalCoordinates(100);
         sedimentMap = new GlobalCoordinates(100);
@@ -48,6 +50,15 @@ public class HydraulicErosion  {
         ftm = functionTerrainManager;
     }
 
+    public void FloodRiver(RiverInfo river)
+    {
+        float value = 0.1f;
+        foreach(Vertex v in river.riverPath)
+        {
+            waterMap.SetValue(v.x, v.z, waterMap.GetValue(v.x, v.z, 0) + value);
+        }
+    }
+
     /// <summary>
     /// increses amount of water on given area max by given value
     /// </summary>
@@ -56,8 +67,8 @@ public class HydraulicErosion  {
         float value;
         int x = Random.Range(area.botLeft.x, area.topRight.x);
         int z = Random.Range(area.botLeft.z, area.topRight.z);
-        //x = 0;
-        //z = 0;
+        x = 0;
+        z = 0;
 
         value = GetWaterValue(x, z) + Random.Range(0, maxWaterIncrease);
         value = GetWaterValue(x, z) + maxWaterIncrease;
@@ -432,7 +443,8 @@ public class HydraulicErosion  {
     /// </summary>
     public float GetTerrainWatterValue(int x, int z) //not sure how to name this:/
     {
-        float value = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z) + GetWaterValue(x, z);
+        //float value = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z) + GetWaterValue(x, z);
+        float value = lm.GetTerrainValue(x, z) + GetWaterValue(x, z);
         /*if(eg.lt.rg.rivers.Count > 0 && eg.lt.rg.rivers[0].globalRiverC.IsDefined(x, z) && counter < 10)
         {
             Debug.Log(eg.GetTerrainValue(x, z));
@@ -481,11 +493,7 @@ public class HydraulicErosion  {
     /// </summary>
     public int GetStepValue(int x, int z)
     {
-        int step = (int)stepMap.GetValue(x, z);
-        if (step != 666)
-            return step;
-        else
-            return 0;
+        return (int)stepMap.GetValue(x, z, 0);
     }
         
     /// <summary>
@@ -494,11 +502,7 @@ public class HydraulicErosion  {
     /// </summary>
     public float GetHydraulicErosionValue(int x, int z)
     {
-        float erosion = hydraulicErosionMap.GetValue(x, z);
-        if (erosion != 666)
-            return erosion;
-        else
-            return 0;
+        return hydraulicErosionMap.GetValue(x, z, 0);
     }
 
     /// <summary>
@@ -507,32 +511,18 @@ public class HydraulicErosion  {
     /// </summary>
     public float GetSedimentValue(int x, int z)
     {
-        float sediment = sedimentMap.GetValue(x, z);
-        if (sediment != 666)
-            return sediment;
-        else
-            return 0;
+        return sedimentMap.GetValue(x, z, 0);
     }
-
+    
     /// <summary>
     /// returns water value
     /// 0 if not defined
     /// </summary>
     public float GetWaterValue(int x, int z)
     {
-        float water = waterMap.GetValue(x, z);
-        if(water > 600 && water != 666 && counter < 30)
-        {
-            Debug.Log(x + "," + z + " too high " + water);
-            counter++;
-        }
-
-        if (water != 666)
-            return water;
-        else
-            return 0;
+        return waterMap.GetValue(x, z, 0);
     }
-
+    
     public void ResetValues()
     {
         outflowTop.ResetQuadrants();

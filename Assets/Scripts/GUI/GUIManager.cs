@@ -38,7 +38,7 @@ public class GUIManager : MonoBehaviour
     GUIExport export;
     public GUIProgress progress;
     GUIFilters filter;
-    GUIRiver river;
+    public GUIRiver river;
     GUIDebug debug;
     GUIErosion erosion;
 
