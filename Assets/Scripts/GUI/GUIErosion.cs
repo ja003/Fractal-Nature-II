@@ -14,10 +14,12 @@ public class GUIErosion {
 
 
     GUIManager gm;
+    GUIMessage message;
 
     public GUIErosion(GUIManager gm)
     {
         this.gm = gm;
+        message = gm.message;
 
         menuWidth = gm.menuWidth;
         rightMenuOffset = gm.rightOffset;
@@ -27,6 +29,8 @@ public class GUIErosion {
         buttonWidth = menuWidth / 2 - sideOffset - sideOffset / 2;
         smallButtonWidth = buttonWidth / 2;
     }
+
+    int erosionHCounter = 0;
 
     bool startRain = false;
     string startRainString = "START RAIN";
@@ -144,6 +148,9 @@ public class GUIErosion {
                 gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
 
                 gm.cm.terrainGenerator.build();
+
+                message.ShowMessage("hydraulic erosion step: " + erosionHCounter, refreshFrame);
+                erosionHCounter++;
             }
 
             yPos += buttonHeight + 3;
@@ -222,6 +229,8 @@ public class GUIErosion {
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))
             {
+                message.ShowMessage("erosion values reset", 100);
+                erosionHCounter = 0;
                 gm.cm.erosionGenerator.he.ResetValues();
                 gm.cm.terrainGenerator.build();
             }

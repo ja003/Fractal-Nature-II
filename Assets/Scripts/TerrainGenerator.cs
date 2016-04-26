@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class TerrainGenerator
 {
     public GUIManager guiManager;
+    public GUIMessage message;
 
     public GlobalTerrain globalTerrain;
     public LocalTerrain localTerrain;
@@ -101,12 +102,13 @@ public class TerrainGenerator
         fmc = functionMathCalculator;
 
         gm = gridManager;
+        
 
         rt.AssignFunctions(fmc);
         ds.AssignFunctions(localTerrain);
 
         this.guiManager = guiManager;
-
+        message = guiManager.message;
     }
 
     public void MoveVisibleTerrain(Vector3 cameraPosition)
@@ -193,28 +195,40 @@ public class TerrainGenerator
         rMin = -0.5f;
         rMax = 0.5f;
         roughness = 3;
-        
-        
+
+        int generationReadyFrame = 0;
+        int generationProgress = 1;
+        int duration = 30;
+
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
             {
-                Vertex movedCenter = new Vertex(x, z);
-                if (!localTerrain.globalTerrainC.IsDefinedArea(movedCenter, 1))
-                {
-                    localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
+                //if (Time.frameCount > generationReadyFrame)
+                //{
+                    message.ShowMessage("generating: " + generationProgress + "/", 15);
 
-                    CalculatePatchValues(movedCenter, x, z);
+                    Vertex movedCenter = new Vertex(x, z);
+                    if (!localTerrain.globalTerrainC.IsDefinedArea(movedCenter, 1))
+                    {
+                        localTerrain.MoveVisibleTerrain(movedCenter, false); //should be already on grid
 
-                    ds.Initialize(patchSize, roughness, rMin, rMax);
+                        CalculatePatchValues(movedCenter, x, z);
 
-                    //Debug.Log("generating on: " + movedCenter);
-                }
-                else
-                {
-                    //Debug.Log("center defined: " + movedCenter);
-                }
-                //guiManager.progress.AddToProgress(1);
+                        ds.Initialize(patchSize, roughness, rMin, rMax);
+
+                        //Debug.Log("generating on: " + movedCenter);
+                    }
+                    else
+                    {
+                        //Debug.Log("center defined: " + movedCenter);
+                    }
+                    //guiManager.progress.AddToProgress(1);
+                    generationProgress++;
+                    generationReadyFrame = Time.frameCount + duration;
+                
+                    
+                //}
             }
         }
 

@@ -24,6 +24,10 @@ public class GUIManager : MonoBehaviour
     public bool debugMenuFlag;
     public bool terrainProcessing;
 
+    public bool messageFlag;
+    //public int messageEndFrame;
+
+
 
     public bool onFlyGeneration;
 
@@ -41,6 +45,7 @@ public class GUIManager : MonoBehaviour
     public GUIRiver river;
     GUIDebug debug;
     GUIErosion erosion;
+    public GUIMessage message;
 
 
     void Start()
@@ -54,12 +59,14 @@ public class GUIManager : MonoBehaviour
         smallButtonHeight = 20;
 
         fractalNatureFlag = true;
-        generalSettingsFlag = false;
-        erosionMenuFlag = true;
+        generalSettingsFlag = true;
+        erosionMenuFlag = false;
         filterMenuFlag = false ;
         riverMenuFlag = false;
         debugMenuFlag = false;
 
+        messageFlag = false;
+        //messageEndFrame = 666;
 
         terrainProcessing = false;
 
@@ -67,6 +74,9 @@ public class GUIManager : MonoBehaviour
         visibleArea = cm.terrainWidth * 2;
         //visibleArea = 100;
         patchSize = cm.patchSize;
+
+        
+        message = new GUIMessage(this);//has to be declared first!
 
         menu = new GUIMenu(this);
         cameraMenu = new GUICamera(this);
@@ -77,6 +87,13 @@ public class GUIManager : MonoBehaviour
         river = new GUIRiver(this);
         debug = new GUIDebug(this);
         erosion = new GUIErosion(this);
+
+        AssignFunctions();
+    }
+
+    public void AssignFunctions()
+    {
+        cm.terrainGenerator.message = message;
     }
     
     void Update()
@@ -162,6 +179,7 @@ public class GUIManager : MonoBehaviour
         {
             erosionMenuFlag = false;
         }
+
     }
 
     // On-screen Menu Loop
@@ -205,6 +223,11 @@ public class GUIManager : MonoBehaviour
             erosion.OnGui(menu.yPos + 5);
         }
         
+        if (messageFlag && Time.frameCount < message.messageEndFrame)
+        {
+            message.OnGui(Screen.height - 100);
+        }
+
 
     }
 
