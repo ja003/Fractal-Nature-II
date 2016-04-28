@@ -35,8 +35,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 300; 
-        terrainHeight = 300;
+        terrainWidth = 150; 
+        terrainHeight = 150;
         patchSize = 64;
         scaleTerrainY = 12;
 
@@ -68,14 +68,16 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //terrainGenerator.build();
 
         //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
+
+        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
     }
 
     void FixedUpdate()
-    {
+    {/*
         if(Time.frameCount == 1)
         {
             localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
-        }
+        }*/
     }
     
     public void AssignFunctions()

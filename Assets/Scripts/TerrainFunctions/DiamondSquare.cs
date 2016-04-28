@@ -229,6 +229,8 @@ public class DiamondSquare
         if (!pow2(s) || rMin >= rMax)
         {
             UnityEngine.Debug.Log("size has to be power of 2. size = " + size);
+            UnityEngine.Debug.Log("rMin = " + rMin);
+            UnityEngine.Debug.Log("rMax = " + rMax);
             return;
         }
 

@@ -313,6 +313,8 @@ public class GlobalCoordinates {
     public void DoubleSizeOf(ref float[,] quadrant)
     {
         int newQuadrantSize = (int)Math.Sqrt(quadrant.Length) * 2;
+
+
         float[,] newQuadrant = new float[newQuadrantSize, newQuadrantSize];
         for (int x = 0; x < newQuadrantSize; x++)
         {
@@ -329,6 +331,7 @@ public class GlobalCoordinates {
             }
         }
         quadrant = newQuadrant;
+
     }
 
     /// <summary>

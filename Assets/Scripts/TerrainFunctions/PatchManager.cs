@@ -6,14 +6,16 @@ public class PatchManager {
     public int patchSize;
     public GlobalCoordinates rMin;
     public GlobalCoordinates rMax;
-    public GlobalCoordinates roughness;
+    public GlobalCoordinates noise;
+    public GlobalCoordinates patchLevel;
 
     public PatchManager(int patchSize)
     {
         this.patchSize = patchSize;
         rMin = new GlobalCoordinates(100);
         rMax = new GlobalCoordinates(100);
-        roughness = new GlobalCoordinates(100);
+        noise = new GlobalCoordinates(100);
+        patchLevel = new GlobalCoordinates(100);//-1 = random,0=low,1=medium,2=high
     }
 
     /// <summary>
@@ -36,8 +38,8 @@ public class PatchManager {
                     case PatchInfo.rMax:
                         v = rMax.GetValue(x, z);
                         break;
-                    case PatchInfo.rougness:
-                        v = roughness.GetValue(x, z);
+                    case PatchInfo.noise:
+                        v = noise.GetValue(x, z);
                         break;
                 }
                 if(v != 666)
@@ -73,8 +75,8 @@ public class PatchManager {
                     case PatchInfo.rMax:
                         v = rMax.GetValue(x, z);
                         break;
-                    case PatchInfo.rougness:
-                        v = roughness.GetValue(x, z);
+                    case PatchInfo.noise:
+                        v = noise.GetValue(x, z);
                         break;
                 }
                 if (v < min)
@@ -90,15 +92,37 @@ public class PatchManager {
             return min;
     }
 
-    public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float roughnessV)
+    public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float noise)
     {
+        SetValues(center, patchSize, rMinV, rMaxV, noise, PatchLevel.random);
+    }
+
+    public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float noise, PatchLevel level)
+    {
+        switch (level)
+        {
+            case PatchLevel.random:
+                patchLevel.SetValue(center.x, center.z, -1);
+                break;
+            case PatchLevel.low:
+                patchLevel.SetValue(center.x, center.z, 0);
+                break;
+            case PatchLevel.medium:
+                patchLevel.SetValue(center.x, center.z, 1);
+                break;
+            case PatchLevel.high:
+                patchLevel.SetValue(center.x, center.z, 2);
+                break;
+        }
+
         for (int x = center.x - patchSize / 2; x < center.x + patchSize / 2; x++)
         {
             for (int z = center.z - patchSize / 2; z < center.z + patchSize / 2; z++)
             {
                 rMin.SetValue(x, z, rMinV);
                 rMax.SetValue(x, z, rMaxV);
-                roughness.SetValue(x, z, roughnessV);
+                this.noise.SetValue(x, z, noise);
+                
             }
         }
     }
@@ -109,5 +133,5 @@ public enum PatchInfo
 {
     rMin,
     rMax,
-    rougness
+    noise
 }
