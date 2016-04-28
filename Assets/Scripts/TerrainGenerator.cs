@@ -48,7 +48,7 @@ public class TerrainGenerator
     //------/LAYERS-----
 
     //------PATCH PARAMETERS-----
-    public float roughness = 3;
+    public float noise = 3;
     public float roughness_min = 1;
     public float roughness_max = 4;
     public int rStep = 10;
@@ -69,7 +69,7 @@ public class TerrainGenerator
     public bool debugHeightmap = true;
     public bool debugRmin = false;
     public bool debugRmax = false;
-    public bool debugRoughness = false;
+    public bool debugNoise = false;
 
     public float terrainBrightness = +0.1f;
 
@@ -166,40 +166,127 @@ public class TerrainGenerator
 
         localTerrain.UpdateSize(patchSize, patchSize);
 
-        /*
-        int _x = centerOnGrid.x;
-        int _z = centerOnGrid.z - patchSize;
-        Vertex tmpCenter = new Vertex(_x, _z);
-        rMin = -0.8f;
-        rMax = -0.2f;
-        roughness = 1;
-        localTerrain.MoveVisibleTerrain(tmpCenter, false);
-        ds.Initialize(patchSize, roughness, rMin, rMax);
-        pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+        int _x;
+        int _z;
+        Vertex tmpCenter;
 
+
+        //x,-2
+        for (int i = 0; i <= 2; i++)
+        {
+            for (int x = -2; x <= 2; x++)
+            {
+                for (int z = -2; z <= 2; z++)
+                {
+                    
+                    if(i == 0 && (x == -2|| x == 2 || z == -2|| z == 2))
+                    {
+                        _x = centerOnGrid.x + x* patchSize;
+                        _z = centerOnGrid.z + z * patchSize;
+                        tmpCenter = new Vertex(_x, _z);
+                        rMin = -1f;
+                        rMax = -0.7f;
+                        noise = 2;
+                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                        ds.Initialize(patchSize, noise, rMin, rMax);
+                        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                    }
+                    
+                    if (i == 1 && (x == -1 || x == 1 || z == -1 || z == 1) && 
+                        !(x == -2 || x == 2 || z == -2 || z == 2))
+                    {
+                        _x = centerOnGrid.x + x * patchSize;
+                        _z = centerOnGrid.z + z * patchSize;
+                        tmpCenter = new Vertex(_x, _z);
+                        rMin = -0.4f;
+                        rMax = 0.5f;
+                        noise = 2;
+                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                        ds.Initialize(patchSize, noise, rMin, rMax);
+                        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                    }
+
+                    if (i == 2 && (x == 0 && z == 0))
+                    {
+                        _x = centerOnGrid.x + x * patchSize;
+                        _z = centerOnGrid.z + z * patchSize;
+                        tmpCenter = new Vertex(_x, _z);
+                        rMin = 0.4f;
+                        rMax = 1.2f;
+                        noise = 3;
+                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                        ds.Initialize(patchSize, noise, rMin, rMax);
+                        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                    }
+
+                }
+            }
+        }
+        
+
+        /*
+        //0,2
+        rMin = -1f;
+        rMax = -0.6f;
+        noise = 3;
+        _x = centerOnGrid.x;
+        _z = centerOnGrid.z + 2*patchSize;
+        tmpCenter = new Vertex(_x, _z);
+        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+        ds.Initialize(patchSize, noise, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+
+        ////
+
+
+        //0,-1
+        _x = centerOnGrid.x;
+        _z = centerOnGrid.z - patchSize;
+        tmpCenter = new Vertex(_x, _z);
+        rMin = 0f;
+        rMax = 0.5f;
+        noise = 2;
+        localTerrain.MoveVisibleTerrain(tmpCenter, false);
+        ds.Initialize(patchSize, noise, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+
+
+        //0,0
+        rMin = 0f;
+        rMax = 0.5f;
+        noise = 3;
         _x = centerOnGrid.x;
         _z = centerOnGrid.z;
         tmpCenter = new Vertex(_x, _z);
         localTerrain.MoveVisibleTerrain(tmpCenter, false);
-        ds.Initialize(patchSize, roughness, rMin, rMax);
-        pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+        ds.Initialize(patchSize, noise, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
 
+        //0,1
+        rMin = 0f;
+        rMax = 0.5f;
+        noise = 2;
         _x = centerOnGrid.x;
         _z = centerOnGrid.z + patchSize;
         tmpCenter = new Vertex(_x, _z);
         localTerrain.MoveVisibleTerrain(tmpCenter, false);
-        ds.Initialize(patchSize, roughness, rMin, rMax);
-        pm.SetValues(tmpCenter, patchSize, rMin, rMax, roughness);
+        ds.Initialize(patchSize, noise, rMin, rMax);
+        pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+
         */
+
+
+
+
 
         rMin = -0.5f;
         rMax = 0.5f;
-        roughness = 3;
+        noise = 1;
 
         int generationReadyFrame = 0;
         int generationProgress = 1;
         int duration = 30;
-
+        /*
         for (int x = x_min; x <= x_max; x += patchSize)
         {
             for (int z = z_min; z <= z_max; z += patchSize)
@@ -230,7 +317,7 @@ public class TerrainGenerator
                     
                 //}
             }
-        }
+        }*/
 
         //move back
         localTerrain.MoveVisibleTerrain(center, false);
@@ -245,16 +332,16 @@ public class TerrainGenerator
     {
         float roughnessAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rougness);
         if (roughnessAvg != 666)
-            roughness += UnityEngine.Random.Range(-0.5f, 0.4f);
-        if (roughness < roughness_min)
-            roughness = roughness_min;
-        if (roughness > roughness_max)
-            roughness = roughness_max;
+            noise += UnityEngine.Random.Range(-0.5f, 0.4f);
+        if (noise < roughness_min)
+            noise = roughness_min;
+        if (noise > roughness_max)
+            noise = roughness_max;
 
         //rMin
         float rMinAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rMin);
         if (rMinAvg != 666)
-            rMin += UnityEngine.Random.Range(-roughness / rStep, roughness / rStep);
+            rMin += UnityEngine.Random.Range(-noise / rStep, noise / rStep);
         if (rMin < rMin_min)
             rMin = rMin_min;
         if (rMin > rMin_max)
@@ -264,7 +351,7 @@ public class TerrainGenerator
         //rMax
         float rMaxAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rMax);
         if (rMaxAvg != 666)
-            rMax += UnityEngine.Random.Range(-roughness / rStep, roughness / rStep);
+            rMax += UnityEngine.Random.Range(-noise / rStep, noise / rStep);
         if (rMax < rMax_min)
             rMax = rMax_min;
         if (rMax > rMax_max)
@@ -273,14 +360,14 @@ public class TerrainGenerator
 
         //dif
         if (rMax - rMin < minRdif)
-            rMax += roughness / 3;
+            rMax += noise / 3;
         if (rMax - rMin > maxRdif)
             rMax = rMin + maxRdif;
         //Debug.Log(roughness);
         //Debug.Log(rMin);
         //Debug.Log(rMax);
 
-        pm.SetValues(center, patchSize, rMin, rMax, roughness);
+        pm.SetValues(center, patchSize, rMin, rMax, noise);
     }
     
       
@@ -816,7 +903,7 @@ public class TerrainGenerator
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)
                             this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
-                        if(debugRoughness)
+                        if(debugNoise)
                             this_color = (pm.roughness.GetValue(c.x, c.z) - roughness_min) / (roughness_max - roughness_min);
 
 
@@ -834,14 +921,14 @@ public class TerrainGenerator
                         if (colorMode)
                         {
                             float secondary = this_color / 2;
-                            if (this_color < 0.3f)
+                            if (this_color < 0.33f)
                             {
                                 if (this_color < 0.1)
                                     this_color = 0.1f;
                                 heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
                             new Color(secondary, secondary, this_color));
                             }
-                            else if (this_color < 0.6f)
+                            else if (this_color < 0.66f)
                             {
                                 heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
                             new Color(secondary, this_color, secondary));

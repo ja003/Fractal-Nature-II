@@ -11,7 +11,7 @@ public class GUIMesh {
     int sideOffset;
 
     public float scaleY;
-    public float roughness;
+    public float noise;
     public float visibleArea;
 
     GUIManager gm;
@@ -25,7 +25,7 @@ public class GUIMesh {
         topOffset = gm.topOffset;
         buttonHeight = gm.smallButtonHeight;
         sideOffset = 10;
-        roughness = gm.cm.terrainGenerator.roughness;
+        noise = gm.cm.terrainGenerator.noise;
         scaleY = gm.scaleY;
         visibleArea = gm.visibleArea;
     }
@@ -95,17 +95,17 @@ public class GUIMesh {
         yPos += buttonHeight + 5;
         
         //ROUGNESS
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 4*sideOffset, buttonHeight), "Roughness = " + (int)roughness
-            + "." + (int)((roughness - (int)roughness)*100));
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 4*sideOffset, buttonHeight), "Noise = " + (int)noise
+            + "." + (int)((noise - (int)noise)*100));
 
-        roughness = GUI.HorizontalSlider(new Rect(
+        noise = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + buttonWidth + 3*sideOffset, yPos + 5,
                 menuWidth - 4*sideOffset - buttonWidth - 5,
-                buttonHeight), roughness, 0, 5);
+                buttonHeight), noise, 0, 5);
 
-        if (roughness != gm.cm.terrainGenerator.roughness)
+        if (noise != gm.cm.terrainGenerator.noise)
         {
-            gm.cm.terrainGenerator.roughness = roughness;
+            gm.cm.terrainGenerator.noise = noise;
         }
 
         yPos += buttonHeight + 5;

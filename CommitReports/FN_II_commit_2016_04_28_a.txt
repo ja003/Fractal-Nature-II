@@ -1,0 +1,4 @@
+Terrain planner
+
+- roughness parameter renamed to noise
+- terraing generation planning

@@ -35,8 +35,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 100; 
-        terrainHeight = 100;
+        terrainWidth = 300; 
+        terrainHeight = 300;
         patchSize = 64;
         scaleTerrainY = 12;
 
@@ -74,7 +74,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
     {
         if(Time.frameCount == 1)
         {
-            localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
+            localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
         }
     }
     
@@ -192,11 +192,20 @@ public class CameraManager : MonoBehaviour, ICameraManager
         }
         if (Input.GetKey("4") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("thermal erosion");
+            /*Debug.Log("thermal erosion");
 
             erosionGenerator.te.ThermalErosionStep(localTerrain.GetVisibleArea(), 500, 0.00002f, 0.2f);
 
-            terrainGenerator.build();
+            terrainGenerator.build();*/
+            Debug.Log("color peaks");
+
+            List<Vertex> closestPeaks =
+                terrainGenerator.ds.mountainPeaksManager.GetClosestPeaks(localTerrain.localTerrainC.center);
+            foreach (Vertex v in closestPeaks)
+            {
+                riverGenerator.fd.ColorPixel(v.x, v.z, 3, riverGenerator.fd.greenColor);
+            }
+
             lastActionFrame = Time.frameCount;
         }
 

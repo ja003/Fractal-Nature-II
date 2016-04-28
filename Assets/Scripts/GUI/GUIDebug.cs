@@ -9,7 +9,7 @@ public class GUIDebug {
     int buttonHeight;
     public float yPos;
     int sideOffset;
-    bool colorMode;
+    bool colorMode = false;
     bool waterMap = true;
     bool sedimentMap = true;
     bool thermalMap = true;
@@ -64,9 +64,9 @@ public class GUIDebug {
         }
         yPos += buttonHeight + 5;
 
-        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "roughness"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "noise"))
         {
-            ChangeDebugMode(DebugMode.roughness);
+            ChangeDebugMode(DebugMode.noise);
             gm.cm.terrainGenerator.build();
         }
         yPos += buttonHeight + 5;
@@ -195,15 +195,15 @@ public class GUIDebug {
         gm.cm.terrainGenerator.debugHeightmap = false;
         gm.cm.terrainGenerator.debugRmin = false;
         gm.cm.terrainGenerator.debugRmax = false;
-        gm.cm.terrainGenerator.debugRoughness = false;
+        gm.cm.terrainGenerator.debugNoise = false;
         if(mode == DebugMode.heightmap)
             gm.cm.terrainGenerator.debugHeightmap = true;
         else if (mode == DebugMode.rMin)
             gm.cm.terrainGenerator.debugRmin = true;
         else if (mode == DebugMode.rMax)
             gm.cm.terrainGenerator.debugRmax = true;
-        else if (mode == DebugMode.roughness)
-            gm.cm.terrainGenerator.debugRoughness = true;
+        else if (mode == DebugMode.noise)
+            gm.cm.terrainGenerator.debugNoise = true;
 
     }
 }
@@ -214,5 +214,5 @@ public enum DebugMode
     heightmap,
     rMin,
     rMax, 
-    roughness
+    noise
 }
