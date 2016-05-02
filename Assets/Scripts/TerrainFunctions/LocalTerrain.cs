@@ -22,10 +22,10 @@ public class LocalTerrain {
     public GlobalTerrain gt;
     public LayerManager lm;
 
-    public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain)
+    public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain, LayerManager layerManager)
     {
         gt = globalTerrain;
-        lm = new LayerManager();
+        lm = layerManager;
 
         localTerrainC = new LocalCoordinates(new Vector3(0, 0, 0), terrainWidth, terrainHeight);
 
@@ -47,6 +47,7 @@ public class LocalTerrain {
         eg = erosionGenerator;
 
         lm.AssignFunctions(tg, fg, rg, eg);
+        
     }
 
     /// <summary>

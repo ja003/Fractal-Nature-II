@@ -21,6 +21,8 @@ public class FunctionRiverPlanner  {
     public Color blueColor = new Color(0, 0, 1);
     public Color pinkColor = new Color(1, 0, 1);
 
+    RiverInfo errorRiver; //only as error message carrier
+
     public FunctionRiverPlanner()
     {
     }
@@ -33,6 +35,9 @@ public class FunctionRiverPlanner  {
         fmc = rg.fmc;
         frd = rg.frd;
 
+        errorRiver = new RiverInfo(rg);
+        errorRiver.errorMessage = "-";
+
         terrainWidth = rg.lt.terrainWidth;
         terrainHeight = rg.lt.terrainHeight;
     }
@@ -40,24 +45,26 @@ public class FunctionRiverPlanner  {
     /// <summary>
     /// find river path from given starting point on visible area
     /// </summary>
-    public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides, int gridStep)
+    public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides, int gridStep, bool forceRiver)
     {
         //return GetRiverPathFrom(start, reachedSides, rg.lt.GetVisibleArea());
         //Debug.Log(rg.lt.globalTerrainC.definedArea);
-        return GetRiverFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea, gridStep);
+        return GetRiverFrom(start, reachedSides, rg.lt.globalTerrainC.definedArea, gridStep, forceRiver);
     }
 
     public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides,
-        Area restrictedArea, int gridStep)
+        Area restrictedArea, int gridStep, bool forceRiver)
     {
-        return GetRiverFrom(start, reachedSides, restrictedArea, new RiverInfo(rg), gridStep);
+        return GetRiverFrom(start, reachedSides, restrictedArea, new RiverInfo(rg), gridStep, forceRiver);
     }
 
     /// <summary>
     /// find river path from given starting point on restricted area
+    /// forceRiver = generates river even on not very suitable terrain 
+    ///     used when generating connecting river
     /// </summary>
     public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides,
-        Area restrictedArea, RiverInfo ignoreRiver, int gridStep)
+        Area restrictedArea, RiverInfo ignoreRiver, int gridStep, bool forceRiver)
     {
         fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
@@ -173,6 +180,8 @@ public class FunctionRiverPlanner  {
                         if (i > terrainWidth* terrainHeight)
                         {
                             Debug.Log("FAIL");
+                            errorRiver.errorMessage = "algorithm timeout";
+                            return errorRiver;
                             finalIndex = i;
                             reachedSide = Direction.top;
                             break;
@@ -216,12 +225,20 @@ public class FunctionRiverPlanner  {
                 break;
             }
             threshold += step; 
+            if(!forceRiver && threshold > rg.riverLevel + 2 * step)
+            {
+                Debug.Log("threshold too high: " + threshold);
+                errorRiver.errorMessage = "threshold too high: " + threshold;
+                return errorRiver;
+            }
 
             if (threshold > maxThreshold)
             {
                 Debug.Log("step=" + step);
                 Debug.Log("max=" + maxThreshold);
                 Debug.Log("FAILz");
+                errorRiver.errorMessage = "reached max threshold: " + threshold;
+                return errorRiver;
                 break;
             }
         }

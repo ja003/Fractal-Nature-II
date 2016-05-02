@@ -242,7 +242,6 @@ public class DiamondSquare
         closestPeaks = mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
         
         float defaultHeight = -20; //only to detect deffects in process. If terrain has some bad height (too high/low), there is some error
-        float defaultHeight2 = 20;//debug
 
         bool overwrite = false;
         // Seed the first four corners

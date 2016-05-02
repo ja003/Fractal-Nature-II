@@ -1,0 +1,6 @@
+River upgrade
+
+- river now takes into account all layers 
+- added error message when creating new river 
+- river don't have to be always generated when there is not suitable terrain
+- connecting rivers are generated always 

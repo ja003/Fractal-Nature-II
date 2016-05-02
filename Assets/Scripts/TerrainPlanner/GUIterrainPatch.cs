@@ -10,37 +10,40 @@ public class GUIterrainPatch {
     float centerX = Screen.width / 2;
     float centerZ = Screen.height / 2;
 
-    int patchSize = 64;
+    int patchSize = 128;
     float low_rMin = -1f;
-    float low_rMax = -0.3f;
+    float low_rMax = -0.5f;
     float low_noise = 2;
 
     float medium_rMin = -0.5f;
-    float medium_rMax = 0.5f;
+    float medium_rMax = 0.3f;
     float medium_noise = 2;
 
-    float high_rMin = 0.4f;
-    float high_rMax = 1.2f;
-    float high_noise = 3;
+    float high_rMin = 0.3f;
+    float high_rMax = 1f;
+    float high_noise = 2;
 
     public int count = 3;
 
     public GUIterrainPatch()
     {
         pm = new PatchManager(patchSize);
+        SetDefaultPatch();
     }
 
     public void OnGui()
     {
-        centerX = Screen.width / 2;
-        centerZ = Screen.height / 2;
+        
+
+        centerX = Screen.width / 2 - buttonWidth/2;
+        centerZ = Screen.height / 2 - buttonHeight/2;
 
         //center
         PatchLevel level = GetPatchLevel(0, 0);
         if (GUI.Button(new Rect(centerX, centerZ, buttonWidth, buttonHeight),LevelString(level)))
         {
             SetPatchValue(0, 0, GetNextLevel(level));
-            Debug.Log("0,0");
+            //Debug.Log("0,0");
         }
         //quadrant 1
         for (int x = 1; x < count; x++)
@@ -51,7 +54,7 @@ public class GUIterrainPatch {
                 if (GUI.Button(new Rect(centerX + x* buttonWidth, centerZ - z* buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
                 {
                     SetPatchValue(x,z, GetNextLevel(level));
-                    Debug.Log(x + "," + z);
+                    //Debug.Log(x + "," + z);
                 }
 
             }
@@ -65,7 +68,7 @@ public class GUIterrainPatch {
                 if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
                 {
                     SetPatchValue(x, z, GetNextLevel(level));
-                    Debug.Log(x + "," + z);
+                    //Debug.Log(x + "," + z);
                 }
 
             }
@@ -79,7 +82,7 @@ public class GUIterrainPatch {
                 if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
                 {
                     SetPatchValue(x, z, GetNextLevel(level));
-                    Debug.Log(x + "," + z);
+                    //Debug.Log(x + "," + z);
                 }
 
             }
@@ -93,13 +96,34 @@ public class GUIterrainPatch {
                 if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
                 {
                     SetPatchValue(x, z, GetNextLevel(level));
-                    Debug.Log(x + "," + z);
+                    //Debug.Log(x + "," + z);
                 }
 
             }
         }
 
     }
+
+    public void SetDefaultPatch()
+    {
+        for(int x = -2; x <= 2; x++)
+        {
+            for (int z = -2; z <= 2; z++)
+            {
+                SetPatchValue(x,z, PatchLevel.low);
+            }
+        }
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int z = -1; z <= 1; z++)
+            {
+                SetPatchValue(x, z, PatchLevel.medium);
+            }
+        }
+
+        SetPatchValue(0, 0, PatchLevel.high);
+    }
+
 
     /// <summary>
     /// returns set level on patch [x,z]

@@ -62,8 +62,8 @@ public class GUIManager : MonoBehaviour
         generalSettingsFlag = false;
         erosionMenuFlag = false;
         filterMenuFlag = false ;
-        riverMenuFlag = false;
-        debugMenuFlag = true;
+        riverMenuFlag = true;
+        debugMenuFlag = false;
 
         messageFlag = false;
         //messageEndFrame = 666;
@@ -71,7 +71,7 @@ public class GUIManager : MonoBehaviour
         terrainProcessing = false;
 
         scaleY = cm.scaleTerrainY;
-        visibleArea = cm.terrainWidth * 2;
+        visibleArea = cm.terrainWidth;
         //visibleArea = 100;
         patchSize = cm.patchSize;
 

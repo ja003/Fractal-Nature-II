@@ -17,6 +17,7 @@ public class TerrainPlannerGui : MonoBehaviour
 
     void OnGUI()
     {
+
         if (plannerActive)
         {
             tp.OnGui();

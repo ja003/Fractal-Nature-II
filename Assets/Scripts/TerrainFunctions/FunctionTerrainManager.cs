@@ -40,11 +40,11 @@ public class FunctionTerrainManager {
         {
             for (int z = _z - regionSize; z < _z + regionSize; z++)
             {
-                if(lm.GetTerrainValue(x, z) != 666)
+                if(lm.GetCurrentHeight(x, z) != 666)
                 //if (lt.ft.GetValue(x, z) != 666)
                 {
                     //heightSum += lm.GetTerrainValue(x, z);// lt.ft.GetValue(x, z);
-                    heightSum += lm.GetTerrainValue(x, z);// lt.lm.GetValue(x, z, ignoreLayers);
+                    heightSum += lm.GetCurrentHeight(x, z);// lt.lm.GetValue(x, z, ignoreLayers);
                     count++;
                 }
             }
@@ -132,30 +132,30 @@ public class FunctionTerrainManager {
 
         //suposing that if point is not defined than its not < threshold
         //left
-        if (CheckBounds(x - step,z,0,x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x - step, z) < threshold)
-            { neighbours.Add(new Vertex(x - step, z, lm.GetTerrainValue(x - step, z))); }
+        if (CheckBounds(x - step,z,0,x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x - step, z) < threshold)
+            { neighbours.Add(new Vertex(x - step, z, lm.GetCurrentHeight(x - step, z))); }
         //up
-        if (CheckBounds(x, z + step, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x, z + step) < threshold)
-            { neighbours.Add(new Vertex(x, z + step, lm.GetTerrainValue(x, z + step))); }
+        if (CheckBounds(x, z + step, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x, z + step) < threshold)
+            { neighbours.Add(new Vertex(x, z + step, lm.GetCurrentHeight(x, z + step))); }
         //righ
-        if (CheckBounds(x + step, z, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x + step, z) < threshold)
-            { neighbours.Add(new Vertex(x + step, z, lm.GetTerrainValue(x + step, z))); }
+        if (CheckBounds(x + step, z, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x + step, z) < threshold)
+            { neighbours.Add(new Vertex(x + step, z, lm.GetCurrentHeight(x + step, z))); }
         //down
-        if (CheckBounds(x, z - step, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x, z - step) < threshold)
-            { neighbours.Add(new Vertex(x, z - step, lm.GetTerrainValue(x, z - step))); }
+        if (CheckBounds(x, z - step, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x, z - step) < threshold)
+            { neighbours.Add(new Vertex(x, z - step, lm.GetCurrentHeight(x, z - step))); }
 
         //leftUp
-        if (CheckBounds(x - step, z + step, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x - step, z + step)< threshold)
-            { neighbours.Add(new Vertex(x - step, z + step, lm.GetTerrainValue(x - step, z + step))); }
+        if (CheckBounds(x - step, z + step, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x - step, z + step)< threshold)
+            { neighbours.Add(new Vertex(x - step, z + step, lm.GetCurrentHeight(x - step, z + step))); }
         //rightUp
-        if (CheckBounds(x + step, z + step, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x + step, z + step) < threshold)
-            { neighbours.Add(new Vertex(x + step, z + step, lm.GetTerrainValue(x + step, z + step))); }
+        if (CheckBounds(x + step, z + step, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x + step, z + step) < threshold)
+            { neighbours.Add(new Vertex(x + step, z + step, lm.GetCurrentHeight(x + step, z + step))); }
         //righDown
-        if (CheckBounds(x + step, z - step, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x + step, z - step) < threshold)
-            { neighbours.Add(new Vertex(x + step, z - step, lm.GetTerrainValue(x + step, z - step))); }
+        if (CheckBounds(x + step, z - step, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x + step, z - step) < threshold)
+            { neighbours.Add(new Vertex(x + step, z - step, lm.GetCurrentHeight(x + step, z - step))); }
         //leftDown
-        if (CheckBounds(x - step, z - step, 0, x_min, x_max, z_min, z_max) && lm.GetTerrainValue(x - step, z - step) < threshold)
-            { neighbours.Add(new Vertex(x - step, z - step, lm.GetTerrainValue(x - step, z - step))); }
+        if (CheckBounds(x - step, z - step, 0, x_min, x_max, z_min, z_max) && lm.GetCurrentHeight(x - step, z - step) < threshold)
+            { neighbours.Add(new Vertex(x - step, z - step, lm.GetCurrentHeight(x - step, z - step))); }
         
         return neighbours;
     }
@@ -170,22 +170,22 @@ public class FunctionTerrainManager {
         int x = center.x;
         int z = center.z;
         //left
-        neighbours.Add(new Vertex(x - step, z, lm.GetTerrainValue(x-step,z)));
+        neighbours.Add(new Vertex(x - step, z, lm.GetCurrentHeight(x-step,z)));
         //up
-        neighbours.Add(new Vertex(x, z + step, lm.GetTerrainValue(x, z + step))); 
+        neighbours.Add(new Vertex(x, z + step, lm.GetCurrentHeight(x, z + step))); 
         //righ
-        neighbours.Add(new Vertex(x + step, z, lm.GetTerrainValue(x + step, z))); 
+        neighbours.Add(new Vertex(x + step, z, lm.GetCurrentHeight(x + step, z))); 
         //down
-        neighbours.Add(new Vertex(x, z - step, lm.GetTerrainValue(x, z - step))); 
+        neighbours.Add(new Vertex(x, z - step, lm.GetCurrentHeight(x, z - step))); 
 
         //leftUp
-        neighbours.Add(new Vertex(x - step, z + step, lm.GetTerrainValue(x - step, z + step))); 
+        neighbours.Add(new Vertex(x - step, z + step, lm.GetCurrentHeight(x - step, z + step))); 
         //rightUp
-        neighbours.Add(new Vertex(x + step, z + step, lm.GetTerrainValue(x + step, z + step))); 
+        neighbours.Add(new Vertex(x + step, z + step, lm.GetCurrentHeight(x + step, z + step))); 
         //righDown
-        neighbours.Add(new Vertex(x + step, z - step, lm.GetTerrainValue(x + step, z - step))); 
+        neighbours.Add(new Vertex(x + step, z - step, lm.GetCurrentHeight(x + step, z - step))); 
         //leftDown
-        neighbours.Add(new Vertex(x - step, z - step, lm.GetTerrainValue(x - step, z - step)));
+        neighbours.Add(new Vertex(x - step, z - step, lm.GetCurrentHeight(x - step, z - step)));
 
         return neighbours;
     }
@@ -200,13 +200,13 @@ public class FunctionTerrainManager {
         int x = center.x;
         int z = center.z;
         //left
-        neighbours.Add(new Vertex(x - step, z, lm.GetTerrainValue(x - step, z)));
+        neighbours.Add(new Vertex(x - step, z, lm.GetCurrentHeight(x - step, z)));
         //up
-        neighbours.Add(new Vertex(x, z + step, lm.GetTerrainValue(x, z + step)));
+        neighbours.Add(new Vertex(x, z + step, lm.GetCurrentHeight(x, z + step)));
         //righ
-        neighbours.Add(new Vertex(x + step, z, lm.GetTerrainValue(x + step, z)));
+        neighbours.Add(new Vertex(x + step, z, lm.GetCurrentHeight(x + step, z)));
         //down
-        neighbours.Add(new Vertex(x, z - step, lm.GetTerrainValue(x, z - step)));
+        neighbours.Add(new Vertex(x, z - step, lm.GetCurrentHeight(x, z - step)));
         
         return neighbours;
     }
@@ -284,12 +284,13 @@ public class FunctionTerrainManager {
     /// <summary>
     /// used to find lowest region for river generation
     /// finds point on visible terrain with lowest neighbourhood where no river is defined
-    /// returns local point
+    /// returns global point
     /// </summary>
     public Vertex GetLowestRegionCenter(int radius, int offset)
     {
-        double lowestSum = 100;
-        Vertex lowestRegionCenter = new Vertex(offset, offset, 10);
+        double lowestSum = 666;
+        Vertex lowestRegionCenter = lt.GetGlobalCoordinate(offset, offset);
+        //new Vertex(offset, offset, 10);
         for (int x = offset; x < lt.terrainWidth - offset; x += radius/2)
         {
             for (int z = offset; z < lt.terrainHeight - offset; z += radius/2)
@@ -305,6 +306,30 @@ public class FunctionTerrainManager {
                  }*/
                 Vertex globalC = lt.GetGlobalCoordinate(x, z);
                 if (!rg.IsRiverDefined(globalC.x, globalC.z))
+                {
+                    double sum = 0;
+                    for (int i = globalC.x - radius; i < globalC.x + radius; i++)
+                    {
+                        for (int j = globalC.z - radius; j < globalC.z + radius; j++)
+                        {
+                            //sum += lt.GetLocalHeight(x, z);
+                            sum += lm.GetCurrentHeight(i, j);
+
+                            //if (CheckBounds(i, j))
+                            //    sum += vertices[i, j].y;
+                            //else
+                            //    sum += 1;
+                        }
+                    }
+                    if (sum < lowestSum)
+                    {
+                        lowestSum = sum;
+                        lowestRegionCenter.Rewrite(globalC.x, globalC.z, lm.GetCurrentHeight(globalC.x, globalC.z));
+                    }
+                }
+
+
+                /*if (!rg.IsRiverDefined(globalC.x, globalC.z))
                 {
                     double sum = 0;
                     for (int i = x - radius; i < x + radius; i++)
@@ -324,7 +349,7 @@ public class FunctionTerrainManager {
                         lowestSum = sum;
                         lowestRegionCenter.Rewrite(x, z, lt.GetLocalHeight(x, z));
                     }
-                }
+                }*/
 
             }
         }
@@ -647,12 +672,12 @@ public class FunctionTerrainManager {
     {
 
 
-        Vertex highestPoint = new Vertex(x_min+10, z_min+10, lm.GetTerrainValue(x_min+10,z_min + 10));
+        Vertex highestPoint = new Vertex(x_min+10, z_min+10, lm.GetCurrentHeight(x_min+10,z_min + 10));
         for (int x = x_min; x < x_max - 1; x++)
         {
             for (int z = z_min; z < z_max - 1; z++)
             {
-                float height = lm.GetTerrainValue(x, z);
+                float height = lm.GetCurrentHeight(x, z);
                 if (height != 666 && height > highestPoint.height)
                     highestPoint = new Vertex(x, z, height);
             }
@@ -719,7 +744,8 @@ public class FunctionTerrainManager {
         {
             for (int z = point.z - radius; z < point.z + radius; z += step)
             {
-                float v = lt.globalTerrainC.GetValue(x, z);
+                //float v = lt.globalTerrainC.GetValue(x, z);
+                float v = lt.lm.GetCurrentHeight(x, z);
                 if (v != 666)
                     sum += v;
             }

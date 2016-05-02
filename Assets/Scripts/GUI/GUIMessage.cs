@@ -18,6 +18,7 @@ public class GUIMessage {
 
         textStyle = new GUIStyle();
         textStyle.alignment = TextAnchor.MiddleCenter;
+        gm.cm.guiMessage = this;
     }
 
     public void OnGui(int yPosition)

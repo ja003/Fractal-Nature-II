@@ -33,6 +33,8 @@ public class RiverInfo  {
     public float areaEffect;
     public float depth;
 
+    public string errorMessage;
+
     public RiverInfo(RiverGenerator rg)
     {
         riverPath = new List<Vertex>();

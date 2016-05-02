@@ -20,7 +20,7 @@ public class GUIRiver
     //public float areaEffect;
 
 
-    GUIManager gm;
+    public GUIManager gm;
 
     public List<bool> riverFlags;
 
@@ -135,6 +135,7 @@ public class GUIRiver
                 selectedRiver.globalRiverC.ResetQuadrants();
                 rg.frd.DigRiver(selectedRiver);
                 gm.cm.terrainGenerator.build();
+                selectedRiver.DrawRiver();
             }
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + 10 * sideOffset + buttonWidth/3, yPos, 3*sideOffset, buttonHeight), "X"))

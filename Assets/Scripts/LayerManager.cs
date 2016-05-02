@@ -67,6 +67,10 @@ public class LayerManager {
                 case Layer.river:
                     foreach(RiverInfo r in rg.rivers)
                     {
+                        //Debug.Log(r);
+                        //Debug.Log(rg.rivers[0]);
+                        //Debug.Log(rg.riverGui.riverFlags[0]);
+
                         if (rg.riverGui.riverFlags[rg.rivers.IndexOf(r)])
                         {
                             value = r.globalRiverC.GetValue(x, z);
@@ -257,7 +261,10 @@ public class LayerManager {
             + erosionHydraulicSediment + erosionThermal;
     }
     
-    public float GetTerrainValue(int x, int z)
+    /// <summary>
+    /// returns value from active layers
+    /// </summary>
+    public float GetCurrentHeight(int x, int z)
     {
         return GetValueFromLayers(x, z, activeLayers);
     }
@@ -290,5 +297,18 @@ public class LayerManager {
             activeLayers.Add(Layer.erosionHydraulic);
         if (tg.erosionThermalLayer)
             activeLayers.Add(Layer.erosionThermal);
+
+        //Debug.Log("update: " + this);
+    }
+
+    public override string ToString()
+    {
+        string s = "active layers: ";
+        foreach(Layer layer in activeLayers)
+        {
+            s += layer + "\n";
+        }
+
+        return s;
     }
 }

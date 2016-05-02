@@ -25,6 +25,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
     private GridManager gridManager;
 
+    public GUIMessage guiMessage;
+
     public int terrainWidth;
     public int terrainHeight;
     public int patchSize; //size of generated terrain patch
@@ -35,15 +37,17 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 150; 
-        terrainHeight = 150;
+        terrainWidth = 100; 
+        terrainHeight = 100;
         patchSize = 64;
         scaleTerrainY = 12;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
 
+        layerManager = new LayerManager();
+
         globalTerrain = new GlobalTerrain(quadrantSize);
-        localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30, globalTerrain);
+        localTerrain = new LocalTerrain(terrainWidth, terrainHeight, 30, globalTerrain, layerManager);
         filterGenerator = new FilterGenerator(quadrantSize, localTerrain);
 
         functionMathCalculator = new FunctionMathCalculator();
@@ -57,7 +61,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         erosionGenerator = new ErosionGenerator(localTerrain);
 
         gridManager = new GridManager(new Vector3(0,0,0), patchSize, patchSize);
-        layerManager = new LayerManager();
+        
 
         AssignFunctions();
         terrainGenerator.initialize(scaleTerrainY);
@@ -73,11 +77,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
     }
 
     void FixedUpdate()
-    {/*
+    {
         if(Time.frameCount == 1)
         {
-            localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
-        }*/
+            //localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
+
+            //localTerrain.lm = layerManager;
+            //Debug.Log("updated");
+        }
     }
     
     public void AssignFunctions()
@@ -104,7 +111,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         layerManager.AssignFunctions(terrainGenerator, filterGenerator, riverGenerator, erosionGenerator);
 
         erosionGenerator.AssignFunctions(functionTerrainManager);
-        
+
+        layerManager = localTerrain.lm;
     }
 
     int lastActionFrame = 0;

@@ -94,7 +94,7 @@ public class TerrainGenerator
         }
         catch (Exception e)
         {
-            Debug.Log("TerrainPlanner not found");
+            Debug.Log("TerrainPlanner not found"); 
             pm = new PatchManager(patchSize);
             patchCountPregenerate = 2;
         }
@@ -165,11 +165,11 @@ public class TerrainGenerator
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
         //Debug.Log("patchSize: " + patchSize);
 
-        Debug.Log("pregenerating");
-        Debug.Log("center: " + center);
-        Debug.Log("centerOnGrid: " + centerOnGrid);
-        Debug.Log("visibleArea: " + visibleArea);
-        Debug.Log("surroundingArea: " + surroundingArea);
+        //Debug.Log("pregenerating");
+        //Debug.Log("center: " + center);
+        //Debug.Log("centerOnGrid: " + centerOnGrid);
+        //Debug.Log("visibleArea: " + visibleArea);
+        //Debug.Log("surroundingArea: " + surroundingArea);
 
         int x_min = (int)surroundingArea.botLeft.x;
         int z_min = (int)surroundingArea.botLeft.z;
@@ -184,8 +184,20 @@ public class TerrainGenerator
         Vertex tmpCenter;
         int count = patchCountPregenerate;
         count = 1;
-        
-        for (int i = 0; i <= 3; i++)//0 = low, 1 = medium, 2 = high, 3 = random,
+
+        List<PatchLevel> patchOrder = new List<PatchLevel>();
+        patchOrder.Add(PatchLevel.low);
+        patchOrder.Add(PatchLevel.medium);
+        patchOrder.Add(PatchLevel.high);
+        patchOrder.Add(PatchLevel.random);
+
+        if(pm.patchLevel.GetValue(0,0) == -1)
+        {
+            //...
+        }
+
+        //for (int i = 0; i <= 3; i++)//0 = low, 1 = medium, 2 = high, 3 = random,
+        foreach (PatchLevel i in patchOrder)
         {
             //for (int x = -count; x <= count; x++)
             //{
@@ -199,37 +211,39 @@ public class TerrainGenerator
                     _z = centerOnGrid.z + z * patchSize;
                     _x = x;
                     _z = z;
-                    
+
+                    pm.patchLevel.SetValue(_x, _z, 1);
+
                     int level = (int)pm.patchLevel.GetValue(_x, _z, -1);
 
 
-                    rMin = pm.rMin.GetValue(_x, _z);
-                    rMax = pm.rMax.GetValue(_x, _z);
-                    noise = pm.noise.GetValue(_x, _z);
+                    rMin = pm.rMin.GetValue(_x, _z,-1);
+                    rMax = pm.rMax.GetValue(_x, _z, 1);
+                    noise = pm.noise.GetValue(_x, _z, 2);
 
                     tmpCenter = new Vertex(_x, _z);
-                    if (i == 0 && level == 0)
+                    if (i == PatchLevel.low && level == 0)
                     {
                         localTerrain.MoveVisibleTerrain(tmpCenter, false);
                         ds.Initialize(patchSize, noise, rMin, rMax);
                         //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
                     }
 
-                    if (i == 1 && level == 1)
+                    if (i == PatchLevel.high && level == 2)
                     {
                         localTerrain.MoveVisibleTerrain(tmpCenter, false);
                         ds.Initialize(patchSize, noise, rMin, rMax);
                         //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
                     }
 
-                    if (i == 2 && level == 2)
+                    if (i == PatchLevel.medium && level == 1)
                     {
                         localTerrain.MoveVisibleTerrain(tmpCenter, false);
                         ds.Initialize(patchSize, noise, rMin, rMax);
                         //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
                     }
 
-                    if (i == 3 && level == -1)
+                    if (i == PatchLevel.random && level == -1)
                     {
                         rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
                         rMax = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMax);
@@ -783,9 +797,11 @@ public class TerrainGenerator
 
     public void build()
     {
+
         //move terrain
         //Debug.Log("move to " + localTerrain.center);
         MoveTerrain(localTerrain.localTerrainC.center);
+        
 
         ApplyLayers();
 

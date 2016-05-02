@@ -644,7 +644,7 @@ public class HydraulicErosion  {
     public float GetTerrainWatterValue(int x, int z) //not sure how to name this:/
     {
         //float value = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z) + GetWaterValue(x, z);
-        float value = lm.GetTerrainValue(x, z) + GetWaterValue(x, z);
+        float value = lm.GetCurrentHeight(x, z) + GetWaterValue(x, z);
         /*if(eg.lt.rg.rivers.Count > 0 && eg.lt.rg.rivers[0].globalRiverC.IsDefined(x, z) && counter < 10)
         {
             Debug.Log(eg.GetTerrainValue(x, z));
