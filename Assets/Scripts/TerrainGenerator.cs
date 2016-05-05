@@ -447,7 +447,7 @@ public class TerrainGenerator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
         //
-        defaultTerrain = true;
+        //defaultTerrain = true;
 
         if (defaultTerrain)
             GenerateDefaultTerrain(TerrainType.gradient_radialMinus, terrainWidth); //can't generate river first!

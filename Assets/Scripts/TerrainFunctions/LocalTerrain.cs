@@ -25,6 +25,7 @@ public class LocalTerrain {
     public LocalTerrain(int terrainWidth, int terrainHeight, int stepSize, GlobalTerrain globalTerrain, LayerManager layerManager)
     {
         gt = globalTerrain;
+        gt.lt = this;
         lm = layerManager;
 
         localTerrainC = new LocalCoordinates(new Vector3(0, 0, 0), terrainWidth, terrainHeight);

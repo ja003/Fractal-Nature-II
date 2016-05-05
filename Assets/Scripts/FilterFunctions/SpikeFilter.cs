@@ -37,15 +37,18 @@ public class SpikeFilter {
         {
             for (int z = z_min; z < z_max; z++)
             {
-                if (!globalFilterSpikeC.IsDefined(x, z))
+                if (lt.globalTerrainC.IsDefined(x, z) && !globalFilterSpikeC.IsDefined(x, z))
                 {
                     float average = lt.gt.GetNeighbourAverage(x, z, 2);
-                    float height = lt.gt.GetHeight(x, z);
+                    if (average != 666)
+                    {
+                        float height = lt.lm.GetCurrentHeight(x, z);// lt.gt.GetHeight(x, z);
 
-                    if (height < average - epsilon)
-                        fg.SetGlobalValue(x, z, height-(average - epsilon), false, globalFilterSpikeC);
-                    else if (height > average + epsilon)
-                        fg.SetGlobalValue(x, z, height-(average + epsilon), false, globalFilterSpikeC);
+                        if (height < average - epsilon)
+                            fg.SetGlobalValue(x, z, height - (average - epsilon), false, globalFilterSpikeC);
+                        else if (height > average + epsilon)
+                            fg.SetGlobalValue(x, z, height - (average + epsilon), false, globalFilterSpikeC);
+                    }
                 }
             }
         }

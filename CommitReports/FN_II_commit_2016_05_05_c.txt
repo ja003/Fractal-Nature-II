@@ -1,0 +1,3 @@
+Filters fix
+
+- fixed filters work with undefined regions

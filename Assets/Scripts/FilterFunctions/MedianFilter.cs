@@ -40,17 +40,19 @@ public class MedianFilter  {
         List<Layer> ignoreLayers = new List<Layer>();
         ignoreLayers.Add(Layer.filterMedian);
 
+
+        float median;
         for (int x = x_min; x < x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                //if(fg.GetGlobalValue(x,z,globalFilterMedianC)
-                //if(!globalFilterMedianC.IsDefined(x, z)){ //TODO: mountain filter sometimes changes provious values, therefore median has to also overwrite
-
-                fg.SetGlobalValue(x, z, lt.lm.GetCurrentHeight(x, z) - ftm.GetGlobalMedian(x, z, 2), true, globalFilterMedianC);
-                //}
-                //fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - ftm.GetGlobalMedian(x, z, 2), false, globalFilterMedianC);
-                //fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) - lt.gt.GetNeighbourAverage(x, z, 2), false, globalFilterMedianC);
+                if (lt.globalTerrainC.IsDefined(x, z) && !globalFilterMedianC.IsDefined(x, z))
+                {
+                    median = ftm.GetGlobalMedian(x, z, 2);
+                    if (median != 666) {
+                        fg.SetGlobalValue(x, z, lt.lm.GetCurrentHeight(x, z) - median, true, globalFilterMedianC);
+                    }
+                }
             }
         }
     }

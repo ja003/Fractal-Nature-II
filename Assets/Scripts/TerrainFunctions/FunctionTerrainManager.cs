@@ -27,6 +27,7 @@ public class FunctionTerrainManager {
     /// <summary>
     /// returns median of given area
     /// operates with global coordinates
+    /// returns 666 if 1 of neighbours is not defined
     /// </summary>
     public float GetGlobalMedian(int _x, int _z, int regionSize)
     {
@@ -40,17 +41,21 @@ public class FunctionTerrainManager {
         {
             for (int z = _z - regionSize; z < _z + regionSize; z++)
             {
-                if(lm.GetCurrentHeight(x, z) != 666)
-                //if (lt.ft.GetValue(x, z) != 666)
+                //if(lm.GetCurrentHeight(x, z) != 666)
+                if (lt.globalTerrainC.IsDefined(x,z))
                 {
                     //heightSum += lm.GetTerrainValue(x, z);// lt.ft.GetValue(x, z);
                     heightSum += lm.GetCurrentHeight(x, z);// lt.lm.GetValue(x, z, ignoreLayers);
                     count++;
                 }
+                else
+                {
+                    return 666;
+                }
             }
         }
         if (count == 0)
-            return 10;//shouldnt happen
+            return 666;//shouldnt happen
         return heightSum / count;
     }
 

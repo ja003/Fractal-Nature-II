@@ -38,30 +38,36 @@ public class GaussianFilter {
         float[,] kernel =  initGaussKernel(blurring_factor, kernel_size);
         int half_step = (int)(kernel_size / 2);
 
-
+        
         //Iterate through the mesh
         for (int x = x_min; x < x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
+                
                 if (lt.globalTerrainC.IsDefined(x, z))
                 {
                     float sum = 0.0f;
-                    float val = lt.globalTerrainC.GetValue(x, z);
-
+                    float centerVal = lt.lm.GetCurrentHeight(x, z);
+                    bool definedNeighb = true;
                     //Iterate through kernel
                     for (int m = -1 * half_step; m <= half_step; m++)
                     {
                         for (int n = -1 * half_step; n <= half_step; n++)
                         {
-                            float value = lt.globalTerrainC.GetValue(x + m, z + n);
-                            if (value == 666)
-                                value = lt.globalTerrainC.GetValue(x, z);
-
-                            sum += value * kernel[m + half_step, n + half_step];
+                            if (definedNeighb)
+                            {
+                                float value;
+                                if (!lt.globalTerrainC.IsDefined(x + m, z + n))
+                                    definedNeighb = false;
+                                //value = centerVal;
+                                value = lt.lm.GetCurrentHeight(x + m, z + n);
+                                sum += value * kernel[m + half_step, n + half_step];
+                            }
                         }
                     }
-                    fg.SetGlobalValue(x, z, val - sum, false, globalFilterGaussianC);
+                    if(definedNeighb)//don't generate filter on edge
+                        fg.SetGlobalValue(x, z, centerVal - sum, false, globalFilterGaussianC);
                 }
             }
         }

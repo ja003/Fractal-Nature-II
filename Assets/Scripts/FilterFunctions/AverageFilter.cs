@@ -34,14 +34,22 @@ public class AverageFilter {
         int z_max = region.topRight.z;
 
 
+        float height;
+        float neighbourAverage;
         for (int x = x_min; x < x_max; x++)
         {
             for (int z = z_min; z < z_max; z++)
             {
-                if (!globalFilterAverageC.IsDefined(x, z))
+                
+                if (lt.globalTerrainC.IsDefined(x, z) && !globalFilterAverageC.IsDefined(x, z))
                 {
-                    fg.SetGlobalValue(x, z, lt.gt.GetHeight(x, z) -
-                        lt.gt.GetNeighbourAverage(x, z, 2), false, globalFilterAverageC);
+                    height = lt.lm.GetCurrentHeight(x, z);
+                    neighbourAverage = lt.gt.GetNeighbourAverage(x, z, 2);
+                    if (neighbourAverage != 666)
+                    {
+                        fg.SetGlobalValue(x, z, height -
+                            neighbourAverage, false, globalFilterAverageC);
+                    }
                 }
             }
         }

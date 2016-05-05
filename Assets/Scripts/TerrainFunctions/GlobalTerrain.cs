@@ -5,7 +5,7 @@ using System;
 public class GlobalTerrain : IGlobalTerrain
 {
     public GlobalCoordinates globalTerrainC;
-
+    public LocalTerrain lt;
     
 
     public GlobalTerrain(int quadrantSize)
@@ -53,6 +53,7 @@ public class GlobalTerrain : IGlobalTerrain
 
     /// <summary>
     /// returns average of neighbour vertices heights in given area
+    /// 666 if 1 of neighbours is not defined
     /// </summary>
     public float GetNeighbourAverage(int _x, int _z, int area)
     {
@@ -64,8 +65,12 @@ public class GlobalTerrain : IGlobalTerrain
             {
                 if (GetHeight(x, z) != 666)
                 {
-                    heightAverage += GetHeight(x, z);
+                    heightAverage += lt.lm.GetCurrentHeight(x, z);//  GetHeight(x, z);
                     neighboursCount++;
+                }
+                else
+                {
+                    return 666;
                 }
             }
         }
@@ -86,19 +91,18 @@ public class GlobalTerrain : IGlobalTerrain
     /// returns highest neighbour of given point
     /// 0 if no neighbour is defined
     /// </summary>
-    /// <param name="_x"></param>
-    /// <param name="_z"></param>
-    /// <returns></returns>
     public float GetHighestNeighbour(int _x,int _z)
     {
         float highest = -666;
+        float height = -666;
         for (int x = _x - 1; x <= _x + 1; x++)
         {
             for (int z = _z - 1; z <= _z + 1; z++)
             {
-                if (GetHeight(x, z) != 666 && GetHeight(x, z) > highest)
+                height = lt.lm.GetCurrentHeight(x, z);
+                if (GetHeight(x, z) != 666 && height > highest)
                 {
-                    highest = GetHeight(x, z);
+                    highest = height;
                 }
             }
         }
