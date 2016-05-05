@@ -102,16 +102,19 @@ public class PatchManager {
         switch (level)
         {
             case PatchLevel.random:
-                patchLevel.SetValue(center.x, center.z, -1);
+                patchLevel.SetValue(center.x, center.z, -1, true);
                 break;
             case PatchLevel.low:
-                patchLevel.SetValue(center.x, center.z, 0);
+                //Debug.Log(center + ": LOW");
+                patchLevel.SetValue(center.x, center.z, 0, true);
                 break;
             case PatchLevel.medium:
-                patchLevel.SetValue(center.x, center.z, 1);
+                //Debug.Log(center + ": MEDIUM");
+                patchLevel.SetValue(center.x, center.z, 1, true);
                 break;
             case PatchLevel.high:
-                patchLevel.SetValue(center.x, center.z, 2);
+                //Debug.Log(center + ": HIGH");
+                patchLevel.SetValue(center.x, center.z, 2, true);
                 break;
         }
 

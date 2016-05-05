@@ -37,8 +37,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
         guiManager = GameObject.Find("GUI").GetComponent<GUIManager>();
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
-        terrainWidth = 100; 
-        terrainHeight = 100;
+        terrainWidth = 50; 
+        terrainHeight = 50;
         patchSize = 64;
         scaleTerrainY = 12;
 
@@ -153,6 +153,15 @@ public class CameraManager : MonoBehaviour, ICameraManager
             lastActionFrame = Time.frameCount;
         }
 
+
+        if (Input.GetKey("m") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("mark axis");
+            terrainGenerator.markAxis = !terrainGenerator.markAxis;
+            terrainGenerator.build();
+            lastActionFrame = Time.frameCount;
+        }
+
         if (Input.GetKey("u") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("delete water");
@@ -251,24 +260,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("1") && lastActionFrame < Time.frameCount - 30)
         {
-            Vertex start = new Vertex(-140, -140);
-            start.height = localTerrain.globalTerrainC.GetValue(start.x, start.z);
-            Vertex end = new Vertex(140, 140);
-            end.height = localTerrain.globalTerrainC.GetValue(end.x, end.z);
-
-            if(riverGenerator.rivers.Count > 0)
-            {
-                start = riverGenerator.rivers[riverGenerator.rivers.Count - 1].riverPath[0];
-                start.height = localTerrain.globalTerrainC.GetValue(start.x, start.z);
-                end = riverGenerator.rivers[riverGenerator.rivers.Count - 1].GetLastVertex();
-                end.height = localTerrain.globalTerrainC.GetValue(end.x, end.z);
-
-            }
-
-
-            RiverInfo river = riverGenerator.frp.GetRiverFromTo(start, end);
-            Debug.Log(river);
-            river.DrawRiver();
+            Debug.Log("print terrain");
+            terrainGenerator.PrintTerrain();
+           
             lastActionFrame = Time.frameCount;
         }
 

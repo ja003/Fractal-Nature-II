@@ -11,7 +11,7 @@ public class TerrainPlannerGui : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        tp = new GUIterrainPatch();
+        tp = new GUIterrainPatch(64);//TODO: set patch size
         DontDestroyOnLoad(transform.gameObject);
     }
 

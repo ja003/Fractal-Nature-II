@@ -39,24 +39,18 @@ public class DiamondSquare
         
         GenerateTerrain(patchSize, noise, rMin, rMax);
     }
-
-    // TODO: break these off into a util class
-    private int RandRange(Random r, int rMin, int rMax)
-    {
-        return rMin + r.Next() * (rMax - rMin);
-    }
-
-    private double RandRange(Random r, double rMin, double rMax)
-    {
-        return rMin + r.NextDouble() * (rMax - rMin);
-    }
+    
 
     private float RandRange(Random r, float rMin, float rMax)
     {
-        return rMin + (float)r.NextDouble() * (rMax - rMin);
+        //return rMin + (float)r.NextDouble() * (rMax - rMin);
+        //return r.Next(rMin, rMax);
+        return UnityEngine.Random.Range(rMin, rMax);
     }
-
-    // Returns true if a is a power of 2, else false
+    
+    /// <summary>
+    /// Returns true if a is a power of 2, else false 
+    /// </summary>    
     private bool pow2(int a)
     {
         return (a & (a - 1)) == 0;
@@ -70,6 +64,15 @@ public class DiamondSquare
     /// </summary>
     public void SetLocalHeight(int x, int z, float value, bool overwrite)
     {
+        if(counter < 10 && Double.IsNaN(value))
+        {
+            counter++;
+            UnityEngine.Debug.Log(x + "," + z);
+            UnityEngine.Debug.Log(rMin);
+            UnityEngine.Debug.Log(rMax);
+            UnityEngine.Debug.Log(noise);
+        }
+
         lt.SetLocalHeight(x, z, value, overwrite);
     }
 
@@ -153,10 +156,12 @@ public class DiamondSquare
         {
             factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(0, 0, closestPeaks)) / maxDistance;
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
+            value = rMin;
+            value = RandRange(rand, rMin, rMin + noise);
             //value = 1;
-            if(debugPeaks)
+            if (debugPeaks)
                 SetLocalHeight(0, 0, factor, overwrite); //DEBUG PEAKS
-            //factor = 1;
+            factor = 1;
             SetLocalHeight(0, 0, value * factor, overwrite);
         }
 
@@ -169,10 +174,12 @@ public class DiamondSquare
         {
             factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(s, 0, closestPeaks)) / maxDistance;
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
+            value = rMin;
+            value = RandRange(rand, rMin, rMin + noise);
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(s, 0, factor, overwrite); //DEBUG PEAKS
-            //factor = 1;
+            factor = 1;
             SetLocalHeight(s, 0, value * factor, overwrite);
         }
 
@@ -185,10 +192,12 @@ public class DiamondSquare
         {
             factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(0, s, closestPeaks)) / maxDistance;
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
+            value = rMin;
+            value = RandRange(rand, rMin, rMin + noise);
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(0, s, factor, overwrite); //DEBUG PEAKS
-            //factor = 1;
+            factor = 1;
             SetLocalHeight(0, s, value * factor, overwrite);
         }
 
@@ -201,10 +210,12 @@ public class DiamondSquare
         {
             factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(s, s, closestPeaks)) / maxDistance;
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
+            value = rMin;
+            value = RandRange(rand, rMin, rMin + noise);
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(s,s, factor, overwrite); //DEBUG PEAKS
-            //factor = 1;
+            factor = 1;
             SetLocalHeight(s, s, value * factor, overwrite);
         }
     }
@@ -216,6 +227,7 @@ public class DiamondSquare
     bool debugPeaks = false;
     float rMin;
     float rMax;
+    float noise;
     List<Vertex> closestPeaks;
     Random rand;
 
@@ -238,6 +250,7 @@ public class DiamondSquare
 
         this.rMin = rMin;
         this.rMax = rMax;
+        this.noise = noise;
         this.rand = (seed == 0 ? new Random() : new Random(seed));
         closestPeaks = mountainPeaksManager.GetClosestPeaks(tg.localTerrain.localTerrainC.center);
         
@@ -362,6 +375,17 @@ public class DiamondSquare
         //modNoise *= (float)Math.Sqrt(factor);
         float minNoise = -modNoise * lowFactor;// + (float)Math.Sqrt(factor);
         float maxNoise = modNoise * highFactor;// + (float)Math.Sqrt(factor);
+        /*if(counter < 10)
+        {
+            counter++;
+            UnityEngine.Debug.Log(modNoise);
+            UnityEngine.Debug.Log(rMin);
+            UnityEngine.Debug.Log(rMax);
+        }*/
+
+
+        //minNoise = rMin/10 * modNoise;
+        //maxNoise = rMax/10 * modNoise;
 
         float height = initValue + RandRange(rand, minNoise, maxNoise);
         

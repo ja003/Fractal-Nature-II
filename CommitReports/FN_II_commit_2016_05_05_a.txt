@@ -1,0 +1,4 @@
+Terrain generator fix
+
+- DS corner setup more dependent on rMin
+- fixed grid point getter 

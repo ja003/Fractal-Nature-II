@@ -20,8 +20,8 @@ public class GridManager {
     /// </summary>
     public Vector3 GetPointOnGrid(Vector3 point)
     {
-        int xVal = (int)(point.x / (stepX / 2));
-        int zVal = (int)(point.z / (stepZ / 2));
+        int xVal = (int)(point.x / (stepX ));
+        int zVal = (int)(point.z / (stepZ ));
 
         Vector3 closestCenter = new Vector3(666, 0, 666);
         for(int xi = -1; xi <= 1; xi++)
@@ -30,9 +30,9 @@ public class GridManager {
             {
                 Vector3 centerOnGrid = 
                     new Vector3(
-                        globalCenter.x + (xVal + xi) * stepX/2,
+                        globalCenter.x + (xVal + xi) * stepX,
                         0,
-                        globalCenter.z + (zVal + zi) * stepZ/2);
+                        globalCenter.z + (zVal + zi) * stepZ);
 
                 //Debug.Log(centerOnGrid);
                 if (Vector3.Distance(point, centerOnGrid) <

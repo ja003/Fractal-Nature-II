@@ -10,24 +10,25 @@ public class GUIterrainPatch {
     float centerX = Screen.width / 2;
     float centerZ = Screen.height / 2;
 
-    int patchSize = 128;
+    int patchSize = 64;
     float low_rMin = -1f;
-    float low_rMax = -0.5f;
+    float low_rMax = -0.3f;
     float low_noise = 2;
 
-    float medium_rMin = -0.5f;
-    float medium_rMax = 0.3f;
+    float medium_rMin = -0.3f;
+    float medium_rMax = 0.5f;
     float medium_noise = 2;
 
-    float high_rMin = 0.3f;
+    float high_rMin = 0.5f;
     float high_rMax = 1f;
     float high_noise = 2;
 
     public int count = 3;
 
-    public GUIterrainPatch()
+    public GUIterrainPatch(int patchSize)
     {
         pm = new PatchManager(patchSize);
+        this.patchSize = patchSize;
         SetDefaultPatch();
     }
 
@@ -113,6 +114,7 @@ public class GUIterrainPatch {
                 SetPatchValue(x,z, PatchLevel.low);
             }
         }
+        
         for (int x = -1; x <= 1; x++)
         {
             for (int z = -1; z <= 1; z++)

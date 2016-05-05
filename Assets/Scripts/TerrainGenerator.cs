@@ -27,6 +27,7 @@ public class TerrainGenerator
     public int patchSize;
 
     public bool waterMesh = true;
+    public bool markAxis = true;
 
     //------LAYERS-----
 
@@ -55,7 +56,7 @@ public class TerrainGenerator
 
     public float rMin = -0.5f;
     float rMin_min = -1;
-    float rMin_max = 0;
+    float rMin_max = 0.5f;
 
     public float rMax = 0.5f;
     float rMax_min = 0;
@@ -71,7 +72,7 @@ public class TerrainGenerator
     public bool debugRmax = false;
     public bool debugNoise = false;
 
-    public float terrainBrightness = +0.1f;
+    public float terrainBrightness = -0.1f;
 
     int patchCountPregenerate;
 
@@ -95,8 +96,12 @@ public class TerrainGenerator
         catch (Exception e)
         {
             Debug.Log("TerrainPlanner not found"); 
-            pm = new PatchManager(patchSize);
-            patchCountPregenerate = 2;
+            //pm = new PatchManager(patchSize);
+            GUIterrainPatch gtp = new GUIterrainPatch(patchSize);
+            gtp.SetDefaultPatch();
+            pm = gtp.pm;
+
+            patchCountPregenerate = 2; //not used now
         }
 
     }
@@ -165,11 +170,15 @@ public class TerrainGenerator
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
         //Debug.Log("patchSize: " + patchSize);
 
-        //Debug.Log("pregenerating");
-        //Debug.Log("center: " + center);
-        //Debug.Log("centerOnGrid: " + centerOnGrid);
+        Debug.Log("-----------------------");
+        Debug.Log("center: " + center);
+        Debug.Log("centerOnGrid: " + centerOnGrid);
         //Debug.Log("visibleArea: " + visibleArea);
         //Debug.Log("surroundingArea: " + surroundingArea);
+
+
+
+
 
         int x_min = (int)surroundingArea.botLeft.x;
         int z_min = (int)surroundingArea.botLeft.z;
@@ -186,9 +195,9 @@ public class TerrainGenerator
         count = 1;
 
         List<PatchLevel> patchOrder = new List<PatchLevel>();
+        patchOrder.Add(PatchLevel.high);
         patchOrder.Add(PatchLevel.low);
         patchOrder.Add(PatchLevel.medium);
-        patchOrder.Add(PatchLevel.high);
         patchOrder.Add(PatchLevel.random);
 
         if(pm.patchLevel.GetValue(0,0) == -1)
@@ -197,6 +206,9 @@ public class TerrainGenerator
         }
 
         //for (int i = 0; i <= 3; i++)//0 = low, 1 = medium, 2 = high, 3 = random,
+
+        //Debug.Log("generating on: " + surroundingArea);
+
         foreach (PatchLevel i in patchOrder)
         {
             //for (int x = -count; x <= count; x++)
@@ -206,62 +218,78 @@ public class TerrainGenerator
             for (int x = x_min; x <= x_max; x += patchSize)
             {
                 for (int z = z_min; z <= z_max; z += patchSize)
-                { 
-                    _x = centerOnGrid.x + x * patchSize;
-                    _z = centerOnGrid.z + z * patchSize;
-                    _x = x;
-                    _z = z;
-
-                    pm.patchLevel.SetValue(_x, _z, 1);
-
-                    int level = (int)pm.patchLevel.GetValue(_x, _z, -1);
-
-
-                    rMin = pm.rMin.GetValue(_x, _z,-1);
-                    rMax = pm.rMax.GetValue(_x, _z, 1);
-                    noise = pm.noise.GetValue(_x, _z, 2);
-
-                    tmpCenter = new Vertex(_x, _z);
-                    if (i == PatchLevel.low && level == 0)
+                {
+                    if (localTerrain.globalTerrainC.IsDefined(x, z))
                     {
-                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
-                        ds.Initialize(patchSize, noise, rMin, rMax);
-                        //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                        //Debug.Log("defined: " + x + "," + z);
                     }
-
-                    if (i == PatchLevel.high && level == 2)
+                    else
                     {
-                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
-                        ds.Initialize(patchSize, noise, rMin, rMax);
-                        //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
-                    }
 
-                    if (i == PatchLevel.medium && level == 1)
-                    {
-                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
-                        ds.Initialize(patchSize, noise, rMin, rMax);
-                        //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
-                    }
+                        _x = centerOnGrid.x + x * patchSize;
+                        _z = centerOnGrid.z + z * patchSize;
+                        _x = x;
+                        _z = z;
 
-                    if (i == PatchLevel.random && level == -1)
-                    {
-                        rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
-                        rMax = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMax);
-                        noise = pm.GetNeighbourAverage(_x, _z, PatchInfo.noise);
+                        //pm.patchLevel.SetValue(_x, _z, 1);
 
-                        if(rMin == 666)
-                            rMin = -1 ;
-                        if(rMax == 666)
-                            rMax = 1;
-                        if(noise == 666)
-                            noise = 3;
+                        int level = (int)pm.patchLevel.GetValue(_x, _z, -1);
 
-                        if (rMax <= rMin)
-                            rMax = rMin + 0.5f;
 
-                        localTerrain.MoveVisibleTerrain(tmpCenter, false);
-                        ds.Initialize(patchSize, noise, rMin, rMax);
-                        //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                        rMin = pm.rMin.GetValue(_x, _z, -1);
+                        rMax = pm.rMax.GetValue(_x, _z, 1);
+                        noise = pm.noise.GetValue(_x, _z, 2);
+
+                        tmpCenter = new Vertex(_x, _z);
+                        if (i == PatchLevel.low && level == 0)
+                        {
+                            //Debug.Log(x + "," + z);
+                            //Debug.Log(i);
+                            localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                            ds.Initialize(patchSize, noise, rMin, rMax);
+                            //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                        }
+
+                        if (i == PatchLevel.high && level == 2)
+                        {
+                            Debug.Log(x + "," + z);
+                            Debug.Log(i);
+                            localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                            ds.Initialize(patchSize, noise, rMin, rMax);
+                            //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                        }
+
+                        if (i == PatchLevel.medium && level == 1)
+                        {
+                            //Debug.Log(x + "," + z);
+                            //Debug.Log(i);
+                            localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                            ds.Initialize(patchSize, noise, rMin, rMax);
+                            //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                        }
+
+                        if (i == PatchLevel.random && level == -1)
+                        {
+                            //Debug.Log(x + "," + z);
+                            //Debug.Log(i);
+                            rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
+                            rMax = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMax);
+                            noise = pm.GetNeighbourAverage(_x, _z, PatchInfo.noise);
+
+                            if (rMin == 666)
+                                rMin = -1;
+                            if (rMax == 666)
+                                rMax = 1;
+                            if (noise == 666)
+                                noise = 3;
+
+                            if (rMax <= rMin)
+                                rMax = rMin + 0.5f;
+
+                            localTerrain.MoveVisibleTerrain(tmpCenter, false);
+                            ds.Initialize(patchSize, noise, rMin, rMax);
+                            //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
+                        }
                     }
 
                 }
@@ -853,8 +881,11 @@ public class TerrainGenerator
 
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)
-                            this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
-                        if(debugNoise)
+                            this_color = (pm.rMin.GetValue(c.x, c.z) -rMin_min) / (rMin_max - rMin_min);
+                        //this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
+                        if (debugRmax)
+                            this_color = pm.rMax.GetValue(c.x, c.z) + (-rMax_min);
+                        if (debugNoise)
                             this_color = (pm.noise.GetValue(c.x, c.z) - roughness_min) / (roughness_max - roughness_min);
 
 
@@ -926,16 +957,20 @@ public class TerrainGenerator
         counter = 0;
 
         ///mark axis
-        Color markColor = new Color(1, 0, 0);
-        for (int x = 0; x <= 30; x++)
+        if (markAxis)
         {
-            for (int z = 0; z <= 10; z++)
+            Color markColor = new Color(1, 0, 0);
+            for (int x = 0; x <= 30; x++)
             {
-                heightMap.SetPixel(x, z, new Color(1, 1, 0));
-                heightMap.SetPixel(z, x, new Color(1, 0, 1));
+                for (int z = 0; z <= 10; z++)
+                {
+                    heightMap.SetPixel(x, z, new Color(1, 1, 0));
+                    heightMap.SetPixel(z, x, new Color(1, 0, 1));
+                }
             }
+            heightMap.SetPixel(patchWidth, patchHeight, new Color(1, 0, 0));
         }
-        heightMap.SetPixel(patchWidth, patchHeight, new Color(1, 0, 0));
+        
 
         //Apply changes to heighmap teture
         heightMap.Apply();
@@ -1040,7 +1075,29 @@ public class TerrainGenerator
         }
     }
 
-
+    public void PrintTerrain()
+    {
+        Area area = localTerrain.GetVisibleArea();
+        string s = area + ": ";
+        string undef = "undefined: ";
+        string _s = "";
+        for(int x = area.botLeft.x; x < area.topRight.x; x++)
+        {
+            for (int z = area.botLeft.z; z < area.topRight.z; z++)
+            {
+                float val = localTerrain.globalTerrainC.GetValue(x, z);
+                _s = "" + val;
+                s += _s.Substring(0, Mathf.Min(_s.Length, 4)) + ",";
+                if(val == 666)
+                {
+                    undef += "[" + x + "," + z + "],";
+                }
+            }
+            s += "| \n";
+        }
+        Debug.Log(s);
+        Debug.Log(undef);
+    }
 
 
     int patchWidth;
