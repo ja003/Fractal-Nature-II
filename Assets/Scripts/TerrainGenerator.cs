@@ -252,8 +252,8 @@ public class TerrainGenerator
 
                         if (i == PatchLevel.high && level == 2)
                         {
-                            Debug.Log(x + "," + z);
-                            Debug.Log(i);
+                            //Debug.Log(x + "," + z);
+                            //Debug.Log(i);
                             localTerrain.MoveVisibleTerrain(tmpCenter, false);
                             ds.Initialize(patchSize, noise, rMin, rMax);
                             //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
@@ -447,8 +447,10 @@ public class TerrainGenerator
         //rt.GenerateRandomTerrain(botLeft, topRight);
 
         //
-        if(defaultTerrain)
-            GenerateDefaultTerrain(TerrainType.river, terrainWidth);
+        defaultTerrain = true;
+
+        if (defaultTerrain)
+            GenerateDefaultTerrain(TerrainType.gradient_radialMinus, terrainWidth); //can't generate river first!
         else
             PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
 

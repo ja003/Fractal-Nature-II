@@ -1,0 +1,4 @@
+Orthogonal camera
+
+- added orthogonal camera
+- improved camera control

@@ -40,7 +40,7 @@ public class GUIRiver
         sideOffset = 10;
         scaleY = gm.scaleY;
         visibleArea = gm.visibleArea;
-
+        
         rg = gm.cm.riverGenerator;
         rg.riverGui = this;
 

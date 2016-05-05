@@ -72,6 +72,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //terrainGenerator.build();
 
         //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
+        
 
         localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
     }
@@ -275,19 +276,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
             terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
-
-        if (Input.GetKey("p") && lastActionFrame < Time.frameCount - 30)
-        {
-            Debug.Log("diamond square");
-
-            lastActionFrame = Time.frameCount;
-        }
-        if (Input.GetKey("o") && lastActionFrame < Time.frameCount - 30)
-        {
-            Debug.Log("applying diamond square");
-
-            lastActionFrame = Time.frameCount;
-        }
+        
+        
     }
 
     public void UpdatePatchSize(int patchSize)

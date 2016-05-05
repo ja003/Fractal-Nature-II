@@ -72,9 +72,12 @@ public class RiverGenerator  {
         river.depth = 0.15f;
 
         rivers.Add(river);
+        Debug.Log(riverGui);
+        riverGui.riverFlags.Add(true);
+
         frd.DigRiver(rivers[rivers.Count - 1]);
 
-        riverGui.riverFlags.Add(true);
+        
     }
 
     public void DeleteRiverAt(int i)
