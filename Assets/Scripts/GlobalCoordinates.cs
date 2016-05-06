@@ -82,9 +82,9 @@ public class GlobalCoordinates {
             return undefinedValue;
     }
 
-    public float GetValue(Vector3 point)
+    public float GetValue(Vertex point)
     {
-        return GetValue((int)point.x, (int)point.z);
+        return GetValue(point.x, point.z);
     }
 
     /// <summary>

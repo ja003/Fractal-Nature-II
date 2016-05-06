@@ -146,6 +146,13 @@ public class DiamondSquare
         //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(0, s));
         //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(s, s));
 
+        float rMinTop = 666;
+        float rMinRight = 666;
+        float rMinBot = 666;
+        float rMinLeft = 666;
+
+        float rMinNeigbourMax = 666;
+
         neighbourhood = lt.GetNeighbourHeight(0, 0);
         //UnityEngine.Debug.Log(lt.GetLocalHeight(0, 0));
         if (neighbourhood != 666)
@@ -158,6 +165,11 @@ public class DiamondSquare
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             value = rMin;
             value = RandRange(rand, rMin, rMin + noise);
+            
+            rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(0, 0).x, lt.GetGlobalCoordinate(0, 0).z, PatchInfo.rMin, 1);
+            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            //UnityEngine.Debug.Log(rMinNeigbourMax);
+
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(0, 0, factor, overwrite); //DEBUG PEAKS
@@ -176,6 +188,11 @@ public class DiamondSquare
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             value = rMin;
             value = RandRange(rand, rMin, rMin + noise);
+
+            rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(s, 0).x, lt.GetGlobalCoordinate(s, 0).z, PatchInfo.rMin, 1);
+            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            //UnityEngine.Debug.Log(rMinNeigbourMax);
+
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(s, 0, factor, overwrite); //DEBUG PEAKS
@@ -194,6 +211,11 @@ public class DiamondSquare
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             value = rMin;
             value = RandRange(rand, rMin, rMin + noise);
+
+            rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(0, s).x, lt.GetGlobalCoordinate(0, s).z, PatchInfo.rMin, 1);
+            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            //UnityEngine.Debug.Log(rMinNeigbourMax);
+
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(0, s, factor, overwrite); //DEBUG PEAKS
@@ -212,6 +234,11 @@ public class DiamondSquare
             value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
             value = rMin;
             value = RandRange(rand, rMin, rMin + noise);
+
+            rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(s,s).x, lt.GetGlobalCoordinate(s,s).z, PatchInfo.rMin, 1);
+            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            //UnityEngine.Debug.Log(rMinNeigbourMax);
+
             //value = 1;
             if (debugPeaks)
                 SetLocalHeight(s,s, factor, overwrite); //DEBUG PEAKS

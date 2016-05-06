@@ -19,9 +19,9 @@ public class GUIterrainPatch {
     float medium_rMax = 0.5f;
     float medium_noise = 2;
 
-    float high_rMin = 0.5f;
-    float high_rMax = 1f;
-    float high_noise = 2;
+    float high_rMin = 0.7f;
+    float high_rMax = 1.5f;
+    float high_noise = 3;
 
     public int count = 3;
 

@@ -208,6 +208,7 @@ public class TerrainGenerator
         //for (int i = 0; i <= 3; i++)//0 = low, 1 = medium, 2 = high, 3 = random,
 
         //Debug.Log("generating on: " + surroundingArea);
+        bool debug = false;
 
         foreach (PatchLevel i in patchOrder)
         {
@@ -243,8 +244,11 @@ public class TerrainGenerator
                         tmpCenter = new Vertex(_x, _z);
                         if (i == PatchLevel.low && level == 0)
                         {
-                            //Debug.Log(x + "," + z);
-                            //Debug.Log(i);
+                            if (debug)
+                            {
+                                Debug.Log(x + "," + z);
+                                Debug.Log(i);
+                            }
                             localTerrain.MoveVisibleTerrain(tmpCenter, false);
                             ds.Initialize(patchSize, noise, rMin, rMax);
                             //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
@@ -252,8 +256,11 @@ public class TerrainGenerator
 
                         if (i == PatchLevel.high && level == 2)
                         {
-                            //Debug.Log(x + "," + z);
-                            //Debug.Log(i);
+                            if (debug)
+                            {
+                                Debug.Log(x + "," + z);
+                                Debug.Log(i);
+                            }
                             localTerrain.MoveVisibleTerrain(tmpCenter, false);
                             ds.Initialize(patchSize, noise, rMin, rMax);
                             //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
@@ -261,8 +268,11 @@ public class TerrainGenerator
 
                         if (i == PatchLevel.medium && level == 1)
                         {
-                            //Debug.Log(x + "," + z);
-                            //Debug.Log(i);
+                            if (debug)
+                            {
+                                Debug.Log(x + "," + z);
+                                Debug.Log(i);
+                            }
                             localTerrain.MoveVisibleTerrain(tmpCenter, false);
                             ds.Initialize(patchSize, noise, rMin, rMax);
                             //pm.SetValues(tmpCenter, patchSize, rMin, rMax, noise);
@@ -270,8 +280,11 @@ public class TerrainGenerator
 
                         if (i == PatchLevel.random && level == -1)
                         {
-                            //Debug.Log(x + "," + z);
-                            //Debug.Log(i);
+                            if (debug)
+                            {
+                                Debug.Log(x + "," + z);
+                                Debug.Log(i);
+                            }
                             rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
                             rMax = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMax);
                             noise = pm.GetNeighbourAverage(_x, _z, PatchInfo.noise);
@@ -883,12 +896,12 @@ public class TerrainGenerator
 
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)
-                            this_color = (pm.rMin.GetValue(c.x, c.z) -rMin_min) / (rMin_max - rMin_min);
+                            this_color = (pm.rMin.GetValue(c.x, c.z) -rMin_min) / (rMin_max - rMin_min) +terrainBrightness;
                         //this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
                         if (debugRmax)
-                            this_color = pm.rMax.GetValue(c.x, c.z) + (-rMax_min);
+                            this_color = pm.rMax.GetValue(c.x, c.z) + (-rMax_min) + terrainBrightness;
                         if (debugNoise)
-                            this_color = (pm.noise.GetValue(c.x, c.z) - roughness_min) / (roughness_max - roughness_min);
+                            this_color = (pm.noise.GetValue(c.x, c.z) - roughness_min) / (roughness_max - roughness_min) + terrainBrightness;
 
 
                         if (counter < 10 && (this_color < 0 || this_color > 1) && this_color < 50)

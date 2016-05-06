@@ -56,12 +56,12 @@ public class PatchManager {
     }
 
     /// <summary>
-    /// returns minimal value or given parameter from neighbouring patches
+    /// returns minimal value of given parameter from neighbouring patches
     /// 666 if none is defined    
     public float GetNeighbourMin(int _x, int _z, PatchInfo parameter)
     {
         int count = 0;
-        float min = 0;
+        float min = 666;
         for (int x = _x - patchSize; x <= _x + patchSize; x += patchSize)
         {
             for (int z = _z - patchSize; z <= _z + patchSize; z += patchSize)
@@ -92,6 +92,46 @@ public class PatchManager {
             return min;
     }
 
+    /// <summary>
+    /// returns maximal value of given parameter from neighbouring patches
+    /// 666 if none is defined    
+    public float GetNeighbourMax(int _x, int _z, PatchInfo parameter, int stepSize)
+    {
+        int count = 0;
+        float max = -666;
+        //Debug.Log(_x + "," + _z);
+        for (int x = _x - stepSize; x <= _x + stepSize; x += stepSize)
+        {
+            for (int z = _z - stepSize; z <= _z + stepSize; z += stepSize)
+            {
+                float v = -666;
+                switch (parameter)
+                {
+                    case PatchInfo.rMin:
+                        v = rMin.GetValue(x, z);
+                        break;
+                    case PatchInfo.rMax:
+                        v = rMax.GetValue(x, z);
+                        break;
+                    case PatchInfo.noise:
+                        v = noise.GetValue(x, z);
+                        break;
+                }
+                if (v > max)
+                {
+                    max = v;
+                    count++;
+                }
+                //Debug.Log(x + "," + z + ": " + v);
+            }
+        }
+        if (count == 0)
+            return 666;
+        else
+            return max;
+    }
+
+
     public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float noise)
     {
         SetValues(center, patchSize, rMinV, rMaxV, noise, PatchLevel.random);
@@ -118,9 +158,9 @@ public class PatchManager {
                 break;
         }
 
-        for (int x = center.x - patchSize / 2; x < center.x + patchSize / 2; x++)
+        for (int x = center.x - patchSize / 2; x <= center.x + patchSize / 2; x++)
         {
-            for (int z = center.z - patchSize / 2; z < center.z + patchSize / 2; z++)
+            for (int z = center.z - patchSize / 2; z <= center.z + patchSize / 2; z++)
             {
                 rMin.SetValue(x, z, rMinV);
                 rMax.SetValue(x, z, rMaxV);

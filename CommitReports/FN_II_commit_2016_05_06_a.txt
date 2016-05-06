@@ -1,0 +1,4 @@
+Terrain patches 
+
+- changed DS corner setup
+- now based on maximal rMin value from neighbouring patches 
