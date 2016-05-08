@@ -67,9 +67,9 @@ public class LayerManager {
                 case Layer.river:
                     foreach(RiverInfo r in rg.rivers)
                     {
-                        Debug.Log(r);
-                        Debug.Log(rg.rivers[0]);
-                        Debug.Log(rg.riverGui.riverFlags[0]);
+                        //Debug.Log(r);
+                        //Debug.Log(rg.rivers[0]);
+                        //Debug.Log(rg.riverGui.riverFlags[0]);
 
                         if (rg.riverGui.riverFlags[rg.rivers.IndexOf(r)])
                         {

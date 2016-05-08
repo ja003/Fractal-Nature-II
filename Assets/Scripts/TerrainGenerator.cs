@@ -98,7 +98,7 @@ public class TerrainGenerator
             Debug.Log("TerrainPlanner not found"); 
             //pm = new PatchManager(patchSize);
             GUIterrainPatch gtp = new GUIterrainPatch(patchSize);
-            gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
+            gtp.SetDefaultPatch(DefaultTerrain.valleys);
             pm = gtp.pm;
 
             patchCountPregenerate = 2; //not used now

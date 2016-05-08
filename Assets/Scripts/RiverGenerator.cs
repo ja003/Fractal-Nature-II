@@ -85,11 +85,7 @@ public class RiverGenerator  {
         rivers.RemoveAt(i);
         riverGui.riverFlags.RemoveAt(i);
     }
-
-    public void GenerateNewRiver2()
-    {
-
-    }
+    
 
     public float riverLevel = 0;
 
@@ -101,12 +97,14 @@ public class RiverGenerator  {
         ShowErrorMessage("There is no place for another river");
     }
 
+    int messageDuration = 120;
+
     void ShowErrorMessage(string message)
     {
         if (gm == null)
             gm = riverGui.gm.message;
 
-        gm.ShowMessage(message, 60);
+        gm.ShowMessage(message, messageDuration);
     }
 
     public bool forceRiverGeneration = false;
@@ -128,7 +126,7 @@ public class RiverGenerator  {
         }
 
         //globalStart.height = start.height;
-
+        
         RiverInfo river = frp.GetRiverFrom(globalStart, new List<Direction>(), gridStep, forceRiverGeneration);
         Debug.Log(river);
         if (river.riverPath.Count == 0)
@@ -154,30 +152,39 @@ public class RiverGenerator  {
             ShowErrorMessage("river part 2 - fail\n" + river2.errorMessage);
             return;
         }
-
+        
         // connect them
         river.ConnectWith(river2);
         river.DrawRiver();
 
         Debug.Log(river);
 
-        riverGui.riverFlags.Add(true);//has to be called before distort or dig
-        rivers.Add(river);
+        Debug.Log(riverGui);
+        Debug.Log(riverGui.riverFlags);
+        Debug.Log(rivers);
+
+
+        AddRiver(river);
 
         frd.DistortPath(river.riverPath, river.gridStep/3, river.gridStep);
 
         river.width = width;
         river.areaEffect = areaEffect;
         river.depth = depth;
-
-        //rivers.Add(river);
+        
         frd.DigRiver(rivers[rivers.Count - 1]);
-
-        //riverGui.riverFlags.Add(true);
 
         Debug.Log("distorted: " + river);
     }
 
+    /// <summary>
+    /// adds new river to the river list and riverFlag to river GUI menu
+    /// </summary>
+    public void AddRiver(RiverInfo river)
+    {
+        rivers.Add(river);
+        riverGui.riverFlags.Add(true);
+    }
     /// <summary>
     /// generates rivers starting from given river's starting and ending point
     /// operation is processed only if points are in visible terrain and not on border
