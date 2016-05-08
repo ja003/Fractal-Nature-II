@@ -4,32 +4,38 @@ using System.Collections;
 public class GUIterrainPatch {
 
     public PatchManager pm;
+    
 
     float buttonWidth = 40;
     float buttonHeight = 40;
     float centerX = Screen.width / 2;
     float centerZ = Screen.height / 2;
 
+    
     public int patchSize = 64;
-    float low_rMin = -1f;
-    float low_rMax = -0.3f;
-    float low_noise = 2;
 
-    float medium_rMin = -0.3f;
-    float medium_rMax = 0.5f;
-    float medium_noise = 2;
 
-    float high_rMin = 0.7f;
-    float high_rMax = 1.5f;
-    float high_noise = 3;
+    float low_rMin;
+    float low_rMax;
+    float low_noise;
 
-    public int count = 3;
+    float medium_rMin;
+    float medium_rMax;
+    float medium_noise;
+
+    float high_rMin;
+    float high_rMax;
+    float high_noise;
+
+    public int patchCount;
 
     public GUIterrainPatch(int patchSize)
     {
         pm = new PatchManager(patchSize);
         this.patchSize = patchSize;
-        SetDefaultPatch();
+
+        SetPatchAttributes();
+        SetDefaultPatch(DefaultTerrain.valleys);
     }
 
     public void OnGui()
@@ -48,9 +54,9 @@ public class GUIterrainPatch {
             //Debug.Log("0,0");
         }
         //quadrant 1
-        for (int x = 1; x < count; x++)
+        for (int x = 1; x < patchCount; x++)
         {
-            for (int z = 0; z < count; z++)
+            for (int z = 0; z < patchCount; z++)
             {
                 level = GetPatchLevel(x,z);
                 GUI.color = GetLevelColor(level);
@@ -64,9 +70,9 @@ public class GUIterrainPatch {
             }
         }
         //quadrant 2
-        for (int x = 0; x > -count; x--)
+        for (int x = 0; x > -patchCount; x--)
         {
-            for (int z = 1; z < count; z++)
+            for (int z = 1; z < patchCount; z++)
             {
                 level = GetPatchLevel(x, z);
                 GUI.color = GetLevelColor(level);
@@ -79,9 +85,9 @@ public class GUIterrainPatch {
             }
         }
         //quadrant 3
-        for (int x = -1; x > -count; x--)
+        for (int x = -1; x > -patchCount; x--)
         {
-            for (int z = 0; z >- count; z--)
+            for (int z = 0; z >- patchCount; z--)
             {
                 level = GetPatchLevel(x, z);
                 GUI.color = GetLevelColor(level);
@@ -94,9 +100,9 @@ public class GUIterrainPatch {
             }
         }
         //quadrant 4
-        for (int x = 0; x < count; x++)
+        for (int x = 0; x < patchCount; x++)
         {
-            for (int z = -1; z > -count; z--)
+            for (int z = -1; z > -patchCount; z--)
             {
                 level = GetPatchLevel(x, z);
                 GUI.color = GetLevelColor(level);
@@ -114,25 +120,119 @@ public class GUIterrainPatch {
 
     }
 
-    public void SetDefaultPatch()
+    public void SetPatchAttributes()
     {
-        for(int x = -2; x <= 2; x++)
+        float scale = 1.1f;
+
+        low_rMin = scale * -1f;
+        low_rMax = scale * -0.3f;
+        low_noise = 2;
+
+        medium_rMin = scale * -0.3f;
+        medium_rMax = scale * 0.5f;
+        medium_noise = 2;
+
+        high_rMin = scale * 0.7f;
+        high_rMax = scale * 1.5f;
+        high_noise = 3;
+    }
+
+    bool valleyDir = true;
+    public void SetDefaultPatch(DefaultTerrain type)
+    {
+        int w = 4; 
+        int count = 5;//more than enough
+        switch (type)
         {
-            for (int z = -2; z <= 2; z++)
+            case DefaultTerrain.hillGrid:
+                w = 4;
+                for (int x = -count*w; x <= count * w; x += w)
+                {
+                    for (int z = -count * w; z <= count * w; z += w)
+                    {
+                        SetHill(x, z);
+                    }
+                }
+                pm.SetPatchOrder(PatchOrder.HLM);
+
+                break;
+            case DefaultTerrain.valleys:
+                w = 4;
+                for (int i = -count * w; i <= count * w; i += w)
+                {
+                    SetValley(i, 0, w, 10, valleyDir);
+                }
+                valleyDir = !valleyDir;
+                pm.SetPatchOrder(PatchOrder.LHM);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// sets valey lines starting in [x,z]
+    /// </summary>
+    /// <param name="valleyDir">true = vertical, false = horizontal</param>
+    public void SetValley(int _x, int _z, int width, int length, bool valleyDir)
+    {
+        if (valleyDir)
+        {
+            for (int x = _x - width; x <= _x + width; x++)
             {
-                SetPatchValue(x,z, PatchLevel.low);
+                for (int z = -length; z < length; z++)
+                {
+                    if (x % width == 0)
+                        SetPatchValue(x, z, PatchLevel.low);
+                    else if (x % width == 1 || x % width == -1)
+                        SetPatchValue(x, z, PatchLevel.medium);
+                    else
+                        SetPatchValue(x, z, PatchLevel.high);
+                }
             }
         }
-        
-        for (int x = -1; x <= 1; x++)
+        else
         {
-            for (int z = -1; z <= 1; z++)
+            for (int z = _x - width; z <= _x + width; z++)
+            {
+                for (int x = -length; x < length; x++)
+                {
+                    if (z % width == 0)
+                        SetPatchValue(x, z, PatchLevel.low);
+                    else if (z % width == 1 || z % width == -1)
+                        SetPatchValue(x, z, PatchLevel.medium);
+                    else
+                        SetPatchValue(x, z, PatchLevel.high);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// sets hill on [x,z] patch
+    /// L|L|L|L|L
+    /// L|M|M|M|L
+    /// L|M|H|M|L
+    /// L|M|M|M|L
+    /// L|L|L|L|L
+    /// </summary>
+    public void SetHill(int _x, int _z)
+    {
+        for (int x = _x - 2; x <= _x+2; x++)
+        {
+            for (int z = _z - 2; z <= _z+2; z++)
+            {
+                SetPatchValue(x, z, PatchLevel.low);
+            }
+        }
+
+        for (int x = _x - 1; x <= _x+ 1; x++)
+        {
+            for (int z = _z - 1; z <= _z+1; z++)
             {
                 SetPatchValue(x, z, PatchLevel.medium);
             }
         }
 
-        SetPatchValue(0, 0, PatchLevel.high);
+        SetPatchValue(_x, _z, PatchLevel.high);
     }
 
 
@@ -249,4 +349,10 @@ public enum PatchLevel
     medium,
     high,
     random    
+}
+
+public enum DefaultTerrain
+{
+    hillGrid,
+    valleys
 }

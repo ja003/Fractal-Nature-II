@@ -62,7 +62,7 @@ public class MountainPeaksManager {
     /// </summary>
     public List<Vertex> GetClosestPeaks(Vector3 center)
     {
-        Vertex centerCoordOnGrid = gridManager.GetCoordinatesOnGrid(center); 
+        Vertex centerCoordOnGrid = gridManager.GetGridCoordinates(center); 
         List<Vertex> closestPeaks = new List<Vertex>();
         int x = centerCoordOnGrid.x;
         int z = centerCoordOnGrid.z;

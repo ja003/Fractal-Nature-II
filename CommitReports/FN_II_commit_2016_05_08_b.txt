@@ -1,0 +1,4 @@
+Default patch setup
+
+- optimized rMin, rMax and noise setup
+- added default patch setup

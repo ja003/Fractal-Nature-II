@@ -3,12 +3,12 @@ using System.Collections;
 
 public class GridManager {
 
-    public Vector3 globalCenter;
+    public Vertex globalCenter;
     public int stepX;
     public int stepZ;
 
     //TODO: delete stepZ? DS has to have squared area
-    public GridManager(Vector3 globalCenter,int stepX, int stepZ)
+    public GridManager(Vertex globalCenter,int stepX, int stepZ)
     {
         this.globalCenter = globalCenter;
         this.stepX = stepX;
@@ -18,20 +18,19 @@ public class GridManager {
     /// <summary>
     /// returns projection of point on the grid defined by center, width and height
     /// </summary>
-    public Vector3 GetPointOnGrid(Vector3 point)
+    public Vertex GetPointOnGrid(Vertex point)
     {
         int xVal = (int)(point.x / (stepX ));
         int zVal = (int)(point.z / (stepZ ));
 
-        Vector3 closestCenter = new Vector3(666, 0, 666);
+        Vertex closestCenter = new Vertex(666, 666);
         for(int xi = -1; xi <= 1; xi++)
         {
             for (int zi = -1; zi <= 1; zi++)
             {
-                Vector3 centerOnGrid = 
-                    new Vector3(
+                Vertex centerOnGrid = 
+                    new Vertex(
                         globalCenter.x + (xVal + xi) * stepX,
-                        0,
                         globalCenter.z + (zVal + zi) * stepZ);
 
                 //Debug.Log(centerOnGrid);
@@ -48,12 +47,11 @@ public class GridManager {
 
     /// <summary>
     /// returns coordinates of closest grid node to the point
-    /// in vector form (x,0,z)
     /// </summary>
-    public Vertex GetCoordinatesOnGrid(Vector3 point)
+    public Vertex GetGridCoordinates(Vertex point)
     {
-        int x = (int)(point.x / stepX);
-        int z = (int)(point.z / stepZ);
+        int x = point.x / stepX;
+        int z = point.z / stepZ;
         return new Vertex(x, z);
     }
 
@@ -66,9 +64,9 @@ public class GridManager {
     /// <summary>
     /// maps grid point to real coordinates
     /// </summary>
-    public Vector3 GetRealCoordinates(Vector3 gridPoint)
+    public Vertex GetRealCoordinates(Vertex gridPoint)
     {
-        return new Vector3(gridPoint.x * stepX, 0, gridPoint.z * stepZ);
+        return new Vertex(gridPoint.x * stepX, gridPoint.z * stepZ);
     }
 
     public Area GetPointArea(int gridX, int gridZ)

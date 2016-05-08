@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PatchManager {
 
@@ -9,6 +10,10 @@ public class PatchManager {
     public GlobalCoordinates noise;
     public GlobalCoordinates patchLevel;
 
+    public GridManager gm;
+
+    public List<PatchLevel> patchOrder;
+
     public PatchManager(int patchSize)
     {
         this.patchSize = patchSize;
@@ -16,6 +21,9 @@ public class PatchManager {
         rMax = new GlobalCoordinates(100);
         noise = new GlobalCoordinates(100);
         patchLevel = new GlobalCoordinates(100);//-1 = random,0=low,1=medium,2=high
+        
+        gm = new GridManager(new Vector3(0, 0, 0), patchSize, patchSize);
+        SetPatchOrder(PatchOrder.LMH);
     }
 
     /// <summary>
@@ -131,13 +139,15 @@ public class PatchManager {
             return max;
     }
 
-
+    /// <summary>
+    /// sets random rMin, rMax and noise values
+    /// </summary>
     public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float noise)
     {
         SetValues(center, patchSize, rMinV, rMaxV, noise, PatchLevel.random);
     }
 
-    public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float noise, PatchLevel level)
+    public void SetValues(Vertex center, int patchSize, float rMinV, float rMaxV, float noiseV, PatchLevel level)
     {
         switch (level)
         {
@@ -158,6 +168,10 @@ public class PatchManager {
                 break;
         }
 
+        rMin.SetValue(center.x, center.z, rMinV);
+        rMax.SetValue(center.x, center.z, rMaxV);
+        noise.SetValue(center.x, center.z, noiseV);
+        /*
         for (int x = center.x - patchSize / 2; x <= center.x + patchSize / 2; x++)
         {
             for (int z = center.z - patchSize / 2; z <= center.z + patchSize / 2; z++)
@@ -167,7 +181,60 @@ public class PatchManager {
                 this.noise.SetValue(x, z, noise);
                 
             }
+        }*/
+    }
+
+    /// <summary>
+    /// returns value of given parameter of patch containing point [x,z]
+    /// </summary>
+    public float GetValue(int x, int z, PatchInfo parameter)
+    {
+        Vertex center = gm.GetPointOnGrid(new Vertex(x, z));
+        switch (parameter)
+        {
+            case PatchInfo.rMin:
+                return rMin.GetValue(center.x, center.z);
+            case PatchInfo.rMax:
+                return rMax.GetValue(center.x, center.z);
+            case PatchInfo.noise:
+                return noise.GetValue(center.x, center.z);
         }
+
+        return 666;
+    }
+
+    /// <summary>
+    /// sets order in which will be patches generated
+    /// </summary>
+    public void SetPatchOrder(PatchOrder order)
+    {
+        patchOrder = new List<PatchLevel>();
+        switch (order)
+        {
+            case PatchOrder.HLM:
+                patchOrder.Add(PatchLevel.high);
+                patchOrder.Add(PatchLevel.low);
+                patchOrder.Add(PatchLevel.medium);
+                break;
+            case PatchOrder.HML:
+                patchOrder.Add(PatchLevel.high);
+                patchOrder.Add(PatchLevel.medium);
+                patchOrder.Add(PatchLevel.low);
+                break;
+            case PatchOrder.LHM:
+                patchOrder.Add(PatchLevel.low);
+                patchOrder.Add(PatchLevel.high);
+                patchOrder.Add(PatchLevel.medium);
+                break;
+            case PatchOrder.LMH:
+                patchOrder.Add(PatchLevel.low);
+                patchOrder.Add(PatchLevel.medium);
+                patchOrder.Add(PatchLevel.high);
+                break;
+        }
+
+        patchOrder.Add(PatchLevel.random);
+
     }
 
 }
@@ -177,4 +244,18 @@ public enum PatchInfo
     rMin,
     rMax,
     noise
+}
+
+/// <summary>
+/// order in which patches level are generated
+/// affects final height distribution of terrain
+/// random levels are always generated last
+/// L = low, M = medium, H = high
+/// </summary>
+public enum PatchOrder
+{
+    LMH,
+    HML,
+    LHM,
+    HLM
 }

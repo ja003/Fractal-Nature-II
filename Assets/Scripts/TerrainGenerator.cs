@@ -50,8 +50,8 @@ public class TerrainGenerator
 
     //------PATCH PARAMETERS-----
     public float noise = 3;
-    public float roughness_min = 1;
-    public float roughness_max = 4;
+    public float noise_min = 1;
+    public float noise_max = 4;
     public int rStep = 10;
 
     public float rMin = -0.5f;
@@ -91,14 +91,14 @@ public class TerrainGenerator
         try
         {
             pm =  GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.pm;
-            patchCountPregenerate = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.count;
+            patchCountPregenerate = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.patchCount;
         }
         catch (Exception e)
         {
             Debug.Log("TerrainPlanner not found"); 
             //pm = new PatchManager(patchSize);
             GUIterrainPatch gtp = new GUIterrainPatch(patchSize);
-            gtp.SetDefaultPatch();
+            gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
             pm = gtp.pm;
 
             patchCountPregenerate = 2; //not used now
@@ -170,9 +170,9 @@ public class TerrainGenerator
         Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
         //Debug.Log("patchSize: " + patchSize);
 
-        Debug.Log("-----------------------");
-        Debug.Log("center: " + center);
-        Debug.Log("centerOnGrid: " + centerOnGrid);
+        //Debug.Log("-----------------------");
+        //Debug.Log("center: " + center);
+        //Debug.Log("centerOnGrid: " + centerOnGrid);
         //Debug.Log("visibleArea: " + visibleArea);
         //Debug.Log("surroundingArea: " + surroundingArea);
 
@@ -194,12 +194,12 @@ public class TerrainGenerator
         int count = patchCountPregenerate;
         count = 1;
 
-        List<PatchLevel> patchOrder = new List<PatchLevel>();
-        
+        /*List<PatchLevel> patchOrder = new List<PatchLevel>();
+
         patchOrder.Add(PatchLevel.low);
         patchOrder.Add(PatchLevel.medium);
-        patchOrder.Add(PatchLevel.random);
         patchOrder.Add(PatchLevel.high);
+        patchOrder.Add(PatchLevel.random);*/
 
         if (pm.patchLevel.GetValue(0,0) == -1)
         {
@@ -211,7 +211,7 @@ public class TerrainGenerator
         //Debug.Log("generating on: " + surroundingArea);
         bool debug = false;
 
-        foreach (PatchLevel i in patchOrder)
+        foreach (PatchLevel i in pm.patchOrder)
         {
             //for (int x = -count; x <= count; x++)
             //{
@@ -241,6 +241,7 @@ public class TerrainGenerator
                         rMin = pm.rMin.GetValue(_x, _z, -1);
                         rMax = pm.rMax.GetValue(_x, _z, 1);
                         noise = pm.noise.GetValue(_x, _z, 2);
+                        
 
                         tmpCenter = new Vertex(_x, _z);
                         if (i == PatchLevel.low && level == 0)
@@ -324,10 +325,10 @@ public class TerrainGenerator
         float roughnessAvg = pm.GetNeighbourAverage(x, z, PatchInfo.noise);
         if (roughnessAvg != 666)
             noise += UnityEngine.Random.Range(-0.5f, 0.4f);
-        if (noise < roughness_min)
-            noise = roughness_min;
-        if (noise > roughness_max)
-            noise = roughness_max;
+        if (noise < noise_min)
+            noise = noise_min;
+        if (noise > noise_max)
+            noise = noise_max;
 
         //rMin
         float rMinAvg = pm.GetNeighbourAverage(x, z, PatchInfo.rMin);
@@ -897,12 +898,13 @@ public class TerrainGenerator
 
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)
-                            this_color = (pm.rMin.GetValue(c.x, c.z) -rMin_min) / (rMin_max - rMin_min) +terrainBrightness;
+                            this_color = Mathf.Clamp((pm.GetValue(c.x, c.z, PatchInfo.rMin) + Mathf.Abs(rMin_min) ) / (rMin_max - rMin_min) + terrainBrightness, 0,1);
+                            //this_color = (pm.rMin.GetValue(c.x, c.z) -rMin_min) / (rMin_max - rMin_min) +terrainBrightness;
                         //this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
                         if (debugRmax)
-                            this_color = pm.rMax.GetValue(c.x, c.z) + (-rMax_min) + terrainBrightness;
+                            this_color = Mathf.Clamp((pm.GetValue(c.x, c.z, PatchInfo.rMax))/ (rMax_max - rMax_min) + terrainBrightness, 0,1);
                         if (debugNoise)
-                            this_color = (pm.noise.GetValue(c.x, c.z) - roughness_min) / (roughness_max - roughness_min) + terrainBrightness;
+                            this_color = Mathf.Clamp((pm.GetValue(c.x, c.z, PatchInfo.noise)) / (noise_max - noise_min) + terrainBrightness,0,1);
 
 
                         if (counter < 10 && (this_color < 0 || this_color > 1) && this_color < 50)
@@ -919,6 +921,8 @@ public class TerrainGenerator
                         if (colorMode)
                         {
                             float secondary = this_color / 2;
+                            if (secondary < 0.1)
+                                secondary = 0.1f;
                             if (this_color < 0.33f)
                             {
                                 if (this_color < 0.1)

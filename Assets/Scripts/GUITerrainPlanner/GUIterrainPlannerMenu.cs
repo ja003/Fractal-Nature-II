@@ -35,26 +35,25 @@ public class GUIterrainPlannerMenu : MonoBehaviour
     void OnGUI()
     {
 
-        
-
-        if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "Fractal Nature"))
-        {
-            plannerMenu = !plannerMenu;
-        }
-        if (plannerMenu)
-        {
-            planner.OnGui(yPos + buttonHeight + 5);
-            hint.OnGui(planner.yPosMax);
-        }
-
 
         if (plannerActive)
         {
+            if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "Fractal Nature"))
+            {
+                plannerMenu = !plannerMenu;
+            }
+            if (plannerMenu)
+            {
+                planner.OnGui(yPos + buttonHeight + 5);
+                hint.OnGui(planner.yPosMax);
+            }
+            
             patch.OnGui();
             if (GUI.Button(new Rect(Screen.width / 2 - 75, Screen.height * 0.9f, 150, 40), "GENERATE"))
             {
                 Debug.Log("GENERATE");
                 plannerActive = false;
+                plannerMenu = false;
                 Application.LoadLevel("testScene");
             }
         }

@@ -14,7 +14,7 @@ public class GUIterrainPlanner : MonoBehaviour
     public int sideOffset;
     public float buttonWidth;
 
-    float patchCount = 3;
+    float patchCount = 6;
 
     public GUIterrainPlanner(GUIterrainPlannerMenu tpm)
     {
@@ -46,7 +46,7 @@ public class GUIterrainPlanner : MonoBehaviour
                 Screen.width - menuWidth + 4 * sideOffset + 10, yPos + 5,
                 menuWidth - (6*sideOffset),
                 buttonHeight), patchCount, 1, 10);
-        tpm.patch.count = (int)patchCount;
+        tpm.patch.patchCount = (int)patchCount;
 
 
         yPos += smallButtonHeight;
@@ -87,21 +87,21 @@ public class GUIterrainPlanner : MonoBehaviour
         //default terrain
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "default terrain");
         yPos += smallButtonHeight;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Random Hills"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Grid of hills"))
         {
-            patch.SetDefaultPatch();
+            patch.SetDefaultPatch(DefaultTerrain.hillGrid);
+        }
+
+        yPos += buttonHeight + 5;
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Valleys"))
+        {
+            patch.SetDefaultPatch(DefaultTerrain.valleys);
         }
 
         yPos += buttonHeight + 5;
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Random Hills"))
         {
-            patch.SetDefaultPatch();
-        }
-
-        yPos += buttonHeight + 5;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Random Hills"))
-        {
-            patch.SetDefaultPatch();
+            patch.SetDefaultPatch(DefaultTerrain.hillGrid);
         }
 
         yPos += buttonHeight + 10;
