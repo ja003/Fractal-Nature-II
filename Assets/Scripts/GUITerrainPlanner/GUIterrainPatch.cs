@@ -10,7 +10,7 @@ public class GUIterrainPatch {
     float centerX = Screen.width / 2;
     float centerZ = Screen.height / 2;
 
-    int patchSize = 64;
+    public int patchSize = 64;
     float low_rMin = -1f;
     float low_rMax = -0.3f;
     float low_noise = 2;
@@ -34,14 +34,15 @@ public class GUIterrainPatch {
 
     public void OnGui()
     {
-        
+        Color origColor = GUI.color;
 
         centerX = Screen.width / 2 - buttonWidth/2;
         centerZ = Screen.height / 2 - buttonHeight/2;
 
         //center
         PatchLevel level = GetPatchLevel(0, 0);
-        if (GUI.Button(new Rect(centerX, centerZ, buttonWidth, buttonHeight),LevelString(level)))
+        GUI.color = GetLevelColor(level);
+        if (GUI.Button(new Rect(centerX, centerZ, buttonWidth, buttonHeight),GetLevelString(level)))
         {
             SetPatchValue(0, 0, GetNextLevel(level));
             //Debug.Log("0,0");
@@ -52,7 +53,9 @@ public class GUIterrainPatch {
             for (int z = 0; z < count; z++)
             {
                 level = GetPatchLevel(x,z);
-                if (GUI.Button(new Rect(centerX + x* buttonWidth, centerZ - z* buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
+                GUI.color = GetLevelColor(level);
+
+                if (GUI.Button(new Rect(centerX + x* buttonWidth, centerZ - z* buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
                     SetPatchValue(x,z, GetNextLevel(level));
                     //Debug.Log(x + "," + z);
@@ -66,7 +69,8 @@ public class GUIterrainPatch {
             for (int z = 1; z < count; z++)
             {
                 level = GetPatchLevel(x, z);
-                if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
+                GUI.color = GetLevelColor(level);
+                if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
                     SetPatchValue(x, z, GetNextLevel(level));
                     //Debug.Log(x + "," + z);
@@ -80,7 +84,8 @@ public class GUIterrainPatch {
             for (int z = 0; z >- count; z--)
             {
                 level = GetPatchLevel(x, z);
-                if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
+                GUI.color = GetLevelColor(level);
+                if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
                     SetPatchValue(x, z, GetNextLevel(level));
                     //Debug.Log(x + "," + z);
@@ -94,7 +99,8 @@ public class GUIterrainPatch {
             for (int z = -1; z > -count; z--)
             {
                 level = GetPatchLevel(x, z);
-                if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), LevelString(level)))
+                GUI.color = GetLevelColor(level);
+                if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
                     SetPatchValue(x, z, GetNextLevel(level));
                     //Debug.Log(x + "," + z);
@@ -102,6 +108,9 @@ public class GUIterrainPatch {
 
             }
         }
+
+
+        GUI.color = origColor;
 
     }
 
@@ -191,20 +200,46 @@ public class GUIterrainPatch {
         return PatchLevel.random;
     }
 
-    public string LevelString(PatchLevel level)
+    public string GetLevelString(PatchLevel level)
     {
         switch (level)
         {
             case PatchLevel.random:
                 return "?";
             case PatchLevel.low:
-                return "low";
+                return "L";
             case PatchLevel.medium:
-                return "medium";
+                return "M";
             case PatchLevel.high:
-                return "high";
+                return "H";
         }
         return "X";
+    }
+
+    public Color GetLevelColor(PatchLevel level)
+    {
+        switch (level)
+        {
+            case PatchLevel.random:
+                return Color.grey;
+            case PatchLevel.low:
+                return Color.blue;
+            case PatchLevel.medium:
+                return Color.green;
+            case PatchLevel.high:
+                return Color.red;
+        }
+        return Color.grey;
+    }
+
+    /// <summary>
+    /// updates patchSize
+    /// resets PatchManager
+    /// </summary>
+    public void UpdatePatchSize(int patchSize)
+    {
+        this.patchSize = patchSize;
+        pm = new PatchManager(patchSize);
     }
 }
 

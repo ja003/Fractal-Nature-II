@@ -1,0 +1,4 @@
+Terrain planner menu
+
+- added terrain planner menu
+- implemented update od terrain patch size

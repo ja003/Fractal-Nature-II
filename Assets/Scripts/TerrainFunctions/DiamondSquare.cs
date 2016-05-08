@@ -152,6 +152,7 @@ public class DiamondSquare
         float rMinLeft = 666;
 
         float rMinNeigbourMax = 666;
+        bool rMinMaxMethod = true;
 
         neighbourhood = lt.GetNeighbourHeight(0, 0);
         //UnityEngine.Debug.Log(lt.GetLocalHeight(0, 0));
@@ -166,8 +167,10 @@ public class DiamondSquare
             value = rMin;
             value = RandRange(rand, rMin, rMin + noise);
             
+            
             rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(0, 0).x, lt.GetGlobalCoordinate(0, 0).z, PatchInfo.rMin, 1);
-            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            if (rMinMaxMethod)
+                value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
             //UnityEngine.Debug.Log(rMinNeigbourMax);
 
             //value = 1;
@@ -190,7 +193,8 @@ public class DiamondSquare
             value = RandRange(rand, rMin, rMin + noise);
 
             rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(s, 0).x, lt.GetGlobalCoordinate(s, 0).z, PatchInfo.rMin, 1);
-            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            if (rMinMaxMethod)
+                value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
             //UnityEngine.Debug.Log(rMinNeigbourMax);
 
             //value = 1;
@@ -213,7 +217,8 @@ public class DiamondSquare
             value = RandRange(rand, rMin, rMin + noise);
 
             rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(0, s).x, lt.GetGlobalCoordinate(0, s).z, PatchInfo.rMin, 1);
-            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            if (rMinMaxMethod)
+                value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
             //UnityEngine.Debug.Log(rMinNeigbourMax);
 
             //value = 1;
@@ -236,7 +241,8 @@ public class DiamondSquare
             value = RandRange(rand, rMin, rMin + noise);
 
             rMinNeigbourMax = tg.pm.GetNeighbourMax(lt.GetGlobalCoordinate(s,s).x, lt.GetGlobalCoordinate(s,s).z, PatchInfo.rMin, 1);
-            value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
+            if (rMinMaxMethod)
+                value = rMinNeigbourMax != 666 ? rMinNeigbourMax : rMin;
             //UnityEngine.Debug.Log(rMinNeigbourMax);
 
             //value = 1;

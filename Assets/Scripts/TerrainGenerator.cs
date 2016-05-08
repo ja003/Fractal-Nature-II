@@ -27,7 +27,7 @@ public class TerrainGenerator
     public int patchSize;
 
     public bool waterMesh = true;
-    public bool markAxis = true;
+    public bool markAxis = false;
 
     //------LAYERS-----
 
@@ -90,8 +90,8 @@ public class TerrainGenerator
         this.patchSize = patchSize;
         try
         {
-            pm =  GameObject.Find("TerrainPlanner").GetComponent<TerrainPlannerGui>().tp.pm;
-            patchCountPregenerate = GameObject.Find("TerrainPlanner").GetComponent<TerrainPlannerGui>().tp.count;
+            pm =  GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.pm;
+            patchCountPregenerate = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.count;
         }
         catch (Exception e)
         {
@@ -195,12 +195,13 @@ public class TerrainGenerator
         count = 1;
 
         List<PatchLevel> patchOrder = new List<PatchLevel>();
-        patchOrder.Add(PatchLevel.high);
+        
         patchOrder.Add(PatchLevel.low);
         patchOrder.Add(PatchLevel.medium);
         patchOrder.Add(PatchLevel.random);
+        patchOrder.Add(PatchLevel.high);
 
-        if(pm.patchLevel.GetValue(0,0) == -1)
+        if (pm.patchLevel.GetValue(0,0) == -1)
         {
             //...
         }
