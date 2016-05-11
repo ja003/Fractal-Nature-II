@@ -39,7 +39,7 @@ public class GUIDebug {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,17 * buttonHeight), "Debug");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,17.5f * buttonHeight), "Debug");
 
         yPos += buttonHeight + 5;
         
@@ -85,6 +85,7 @@ public class GUIDebug {
         }        
         yPos += buttonHeight;
 
+        rightMenuOffset += 3; //just for togglers
         bool colorModeFlag = colorMode;
         colorModeFlag = GUI.Toggle(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), colorMode, "  color mode");
         if (colorModeFlag != colorMode)
@@ -123,7 +124,7 @@ public class GUIDebug {
             gm.cm.terrainGenerator.erosionThermalLayer = thermalMap;
             gm.cm.terrainGenerator.build();
         }
-
+        rightMenuOffset -= 3;
 
         yPos += buttonHeight + 5;
 

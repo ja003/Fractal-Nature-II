@@ -75,7 +75,7 @@ public class GUIErosion {
 
         yPos = yPosition;
                 
-        yPos += 2;
+        yPos += 5;
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Hydraulic erosion"))
         {
             hydraulicErosionMenu = !hydraulicErosionMenu;
@@ -84,9 +84,10 @@ public class GUIErosion {
         //HYDRAULIC EROSION
         if (hydraulicErosionMenu)
         {
-            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 16.5f * buttonHeight), "");
+            yPos -= 2;
+            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 18f * buttonHeight), "");
 
-            yPos += buttonHeight + 5;
+            yPos += buttonHeight + 7;
             ///RAIN
             bool startRainFlag = startRain;
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startRainString))
@@ -236,7 +237,7 @@ public class GUIErosion {
             }
         }
 
-        yPos += buttonHeight + 5;
+        yPos += buttonHeight + 8;
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Thermal erosion"))
         {
             thermalErosionMenu = !thermalErosionMenu;
@@ -245,9 +246,10 @@ public class GUIErosion {
         ///////////////THERMAL EROSION
         if (thermalErosionMenu)
         {
-            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 6.5f * buttonHeight), "");
+            yPos -= 2;
+            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 6.8f * buttonHeight), "");
 
-            yPos += buttonHeight + 5;
+            yPos += buttonHeight + 7;
             
 
             bool startErosionTFlag = startErosionT;
@@ -287,7 +289,8 @@ public class GUIErosion {
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
                     menuWidth - sideOffset - buttonWidth - 5,
                     buttonHeight), thermalStrength, 0, 0.5f);
-            yPos += buttonHeight;
+
+            yPos += buttonHeight+2;
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))
             {

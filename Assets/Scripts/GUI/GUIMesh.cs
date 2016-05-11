@@ -36,7 +36,7 @@ public class GUIMesh {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 13 * buttonHeight), "Mesh Control");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 12.5f * buttonHeight), "Mesh Control");
 
         yPos += buttonHeight;
 
@@ -50,7 +50,7 @@ public class GUIMesh {
         yPos += buttonHeight;
         visibleArea = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + sideOffset, yPos + 5,
-                menuWidth - sideOffset - 5,
+                menuWidth - sideOffset - 15,
                 buttonHeight), gm.visibleArea, 64, 500);
         //if scale has been changed, perform scale action
         if (GetAreaValue(visibleArea) != gm.visibleArea)
@@ -74,11 +74,11 @@ public class GUIMesh {
         }
 
         // 128x128 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2* sideOffset, yPos, buttonWidth, buttonHeight), "128x128"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2* sideOffset-2, yPos, buttonWidth, buttonHeight), "128x128"))
         {
             UpdatePatchSize(128);
         }
-        yPos += buttonHeight;
+        yPos += buttonHeight + 2;
 
         // 256x256 patch size
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "256x256"))
@@ -87,7 +87,7 @@ public class GUIMesh {
         }
 
         // 512x512 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2 * sideOffset, yPos, buttonWidth, buttonHeight), "512x512"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2 * sideOffset-2, yPos, buttonWidth, buttonHeight), "512x512"))
         {
             UpdatePatchSize(512);
         }
@@ -116,7 +116,7 @@ public class GUIMesh {
             //Debug.Log("generating on: " + gm.cm.gameObject.transform.position);
             gm.cm.localTerrain.UpdateVisibleTerrain(gm.cm.gameObject.transform.position, false);
         }
-        yPos += 1.5f * buttonHeight;
+        yPos += 1.5f * buttonHeight + 2;
 
         // DELETE meshes
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2 * sideOffset, buttonHeight), "DELETE"))

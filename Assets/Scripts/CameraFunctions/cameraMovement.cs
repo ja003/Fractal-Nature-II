@@ -9,6 +9,7 @@ public class cameraMovement : MonoBehaviour {
 	
 	public float playerSpeed = 3.0f;
 	public Vector3 camera_pos;
+    public GUICamera gui_camera;
 
     int lastActionFrame = 0;
 
@@ -75,12 +76,15 @@ public class cameraMovement : MonoBehaviour {
             transform.localEulerAngles = new Vector3(90, 0, 0);
             transform.position = new Vector3(0, 100, 0);
             transform.GetComponent<Camera>().orthographicSize = 50;
+
+            gui_camera.projectionString = "orthographic";
         }
         else
         {
             transform.GetComponent<Camera>().orthographic = false;
             transform.position = lastPosition;
             transform.localEulerAngles = lastLocalRotation;
+            gui_camera.projectionString = "perspective";
         }
 
         perspective = !perspective;

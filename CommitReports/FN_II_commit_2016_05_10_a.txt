@@ -1,0 +1,4 @@
+GUI update 
+
+- fixed menu sizes and posittions
+- added camera projection toggle button

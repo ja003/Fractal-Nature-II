@@ -74,7 +74,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
         
 
-        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
+        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
     }
 
     void FixedUpdate()

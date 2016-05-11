@@ -51,9 +51,9 @@ public class GUIExport {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, buttonHeight + 4), " ");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, buttonHeight + 6), " ");
 
-        yPos += 2;
+        yPos += 3;
 
         if (GUI.Button(new Rect(Screen.width - menuWidth + 10, yPos, buttonWidth, buttonHeight), "EXPORT MESH"))
         {
@@ -64,7 +64,7 @@ public class GUIExport {
 
         if (exportMenuVisible)
         {
-            yPos2 = 0;
+            yPos2 = 5;
             float menu2Width = 2 * menuWidth;
 
             GUI.Box(new Rect(Screen.width - menu2Width, yPos2, menuWidth - rightMenuOffset, buttonHeight * 5), "Export");
