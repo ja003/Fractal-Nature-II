@@ -346,11 +346,20 @@ public class FunctionRiverDigger {
             counter++;
         }
 
-        //return MySinc(distance, width, (dif + 1)*maxDepth);
-        return MyArctan(distance, width, (dif + 1) * maxDepth);
+        switch (depthFunction)
+        {
+            case DepthFunction.sinc:
+                return MySinc(distance, width, (dif + 1) * maxDepth * 5);
+            case DepthFunction.arctan:
+                return MyArctan(distance, width, (dif + 1) * maxDepth);
+            default:
+                return MyArctan(distance, width, (dif + 1) * maxDepth);
+        }
     }
     
     int counter = 0;
+
+    public DepthFunction depthFunction;
 
     private float MySinc(float x, float width, float depth)
     {
@@ -359,12 +368,12 @@ public class FunctionRiverDigger {
             return -depth;
         }
         double r = -(depth/ Math.PI) * (Math.Sin(x * Math.PI / width) / x) * width;
-
+        /*
         if(counter < 10)
         {
             Debug.Log(x + "," + width + "," + depth + " = " + r);
             counter++;
-        }
+        }*/
 
         /*if (Double.IsNaN(r) && counter < 10)
         {
@@ -386,4 +395,11 @@ public class FunctionRiverDigger {
         return depth * Mathf.Atan(Mathf.Abs(x) - width / 2) - depth * (Mathf.PI / 2);
     }
 
+    
+}
+
+public enum DepthFunction
+{
+    sinc,
+    arctan
 }

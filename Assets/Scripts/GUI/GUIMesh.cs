@@ -58,15 +58,18 @@ public class GUIMesh {
             UpdateVisibleArea(GetAreaValue(visibleArea));
         }
 
-        yPos += buttonHeight;
-
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - rightMenuOffset, buttonHeight),
-            "Patch Size = " + gm.patchSize + "x" + gm.patchSize);
-        
-
         yPos += buttonHeight + 5;
 
+        // TERRAIN PLANNER
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2 * sideOffset, 1.5f * buttonHeight), "TERRAIN PLANNER"))
+        {
+            GameObject tp = GameObject.Find("TerrainPlanner");
+            Object.Destroy(tp);
+            Application.LoadLevel("terrainPlanner");
+        }
+        yPos += 2*buttonHeight;
 
+        /*
         // 64x64 patch size
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "64x64"))
         {
@@ -91,11 +94,10 @@ public class GUIMesh {
         {
             UpdatePatchSize(512);
         }
+        yPos += buttonHeight + 5;*/
 
-        yPos += buttonHeight + 5;
-        
         //ROUGNESS
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 4*sideOffset, buttonHeight), "Noise = " + (int)noise
+        /*GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 4*sideOffset, buttonHeight), "Noise = " + (int)noise
             + "." + (int)((noise - (int)noise)*100));
 
         noise = GUI.HorizontalSlider(new Rect(
@@ -108,7 +110,7 @@ public class GUIMesh {
             gm.cm.terrainGenerator.noise = noise;
         }
 
-        yPos += buttonHeight + 5;
+        yPos += buttonHeight + 5;*/
 
         // GENERATE
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2*sideOffset, 1.5f* buttonHeight), "GENERATE"))

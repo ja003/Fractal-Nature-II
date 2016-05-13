@@ -54,8 +54,8 @@ public class GUIErosion {
 
 
     float erosionStrength = 0.1f;
-    float viscosity = 0.1f;
-    float deposition = 0.1f;
+    float viscosity = 0.15f;
+    float deposition = 0.15f;
     float evaporation = 0.05f;
 
     bool hydraulicErosionMenu = true;
@@ -85,7 +85,7 @@ public class GUIErosion {
         if (hydraulicErosionMenu)
         {
             yPos -= 2;
-            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 18f * buttonHeight), "");
+            GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 16f * buttonHeight), "");
 
             yPos += buttonHeight + 7;
             ///RAIN
@@ -163,7 +163,7 @@ public class GUIErosion {
                     buttonHeight), erosionStrength, 0, 0.2f);
             yPos += buttonHeight;
 
-            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "deposition");
+            /*GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "deposition");
             deposition = GUI.HorizontalSlider(new Rect(
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
                     menuWidth - sideOffset - buttonWidth - 5,
@@ -176,7 +176,7 @@ public class GUIErosion {
                     menuWidth - sideOffset - buttonWidth - 5,
                     buttonHeight), viscosity, 0, 0.2f);
             yPos += buttonHeight;
-
+            */
             GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "evaporation");
             evaporation = GUI.HorizontalSlider(new Rect(
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
@@ -220,12 +220,15 @@ public class GUIErosion {
                     buttonHeight), windStrength, 0, 100);
             yPos += buttonHeight;
 
-            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "angle: " + (int)(90 * windAngle) + "." +
-                Mathf.Abs((int)((90 * windAngle - (int)(90 * windAngle)) * 100)));
+            /*GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "angle: " + (int)(90 * windAngle) + "." +
+                Mathf.Abs((int)((90 * windAngle - (int)(90 * windAngle)) * 100)));*/
+            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "effect: ");
+
+            //renamed to "effect" because "windAngle" is not very intuitive
             windAngle = GUI.HorizontalSlider(new Rect(
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
                     menuWidth - sideOffset - buttonWidth - 5,
-                    buttonHeight), windAngle, -1, 1);
+                    buttonHeight), windAngle, 1, -1);
             yPos += buttonHeight + 5;
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))

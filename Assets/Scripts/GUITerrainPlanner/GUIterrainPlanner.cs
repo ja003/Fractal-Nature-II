@@ -15,6 +15,7 @@ public class GUIterrainPlanner : MonoBehaviour
     public float buttonWidth;
 
     float patchCount = 6;
+    float extraPatches = 1;
 
     public GUIterrainPlanner(GUIterrainPlannerMenu tpm)
     {
@@ -33,22 +34,29 @@ public class GUIterrainPlanner : MonoBehaviour
     public void OnGui(int yPos)
     {
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, 8 * buttonHeight), "Terrain planner");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, 9 * buttonHeight), "Terrain planner");
 
         yPos += smallButtonHeight;
 
         //Patch count
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "count: ");
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, smallButtonHeight), "count: ");
 
 
         //Debug.Log(spikeThresholdFlag);
         patchCount = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + 4 * sideOffset + 10, yPos + 5,
                 menuWidth - (6*sideOffset),
-                buttonHeight), patchCount, 1, 10);
-        tpm.patch.patchCount = (int)patchCount;
+                smallButtonHeight), patchCount, 1, 10);
+        tpm.patch.patchCount = (int)patchCount; 
+        yPos += smallButtonHeight;
 
-
+        //extra patch count
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 5, smallButtonHeight), "pregenerate: " + (int)extraPatches);
+        extraPatches = GUI.HorizontalSlider(new Rect(
+                Screen.width - menuWidth + 9 * sideOffset + 10, yPos + 5,
+                menuWidth - (11 * sideOffset),
+                smallButtonHeight), extraPatches, 0, 10);
+        tpm.patch.UpdateExtraPatchCount((int)extraPatches);
         yPos += smallButtonHeight;
 
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - rightOffset, buttonHeight),

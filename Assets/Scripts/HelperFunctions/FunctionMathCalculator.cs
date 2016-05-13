@@ -316,46 +316,50 @@ public class FunctionMathCalculator {
     /// calculates surrounding area of given visible area
     /// starts in center and moves by step = patchSize
     /// </summary>
-    public Area GetSurroundingAreaFrom(Vector3 centerOnGrid,Area visibleArea,int patchSize)
+    /// <param name="extraPatchCount">how many extra patches will be contained</param>
+    /// <returns></returns>
+    public Area GetSurroundingAreaOf(Vertex centerOnGrid,Area visibleArea,int patchSize, int extraPatchCount)
     {
-        Vector3 botLeft;
-        Vector3 topRight;
+        Vertex botLeft;
+        Vertex topRight;
 
         if (!visibleArea.Contains(centerOnGrid) || patchSize <= 0)
         {
             Debug.Log("centerOnGrid not in visible area: " + centerOnGrid);
-            botLeft = new Vector3(centerOnGrid.x - patchSize, 0, centerOnGrid.z - patchSize);
-            topRight = new Vector3(centerOnGrid.x + patchSize, 0, centerOnGrid.z + patchSize);
+            botLeft = new Vertex(centerOnGrid.x - patchSize,  centerOnGrid.z - patchSize);
+            topRight = new Vertex(centerOnGrid.x + patchSize,  centerOnGrid.z + patchSize);
             return new Area(botLeft, topRight);
         }
 
         //get most left coordinate
-        Vector3 pointLeft = centerOnGrid;
+        Vertex pointLeft = centerOnGrid.Clone(); ;
         while (visibleArea.Contains(pointLeft)){
             pointLeft.x -= patchSize;
         }
         //get most bot coordinate
-        Vector3 pointBot = centerOnGrid;
+        Vertex pointBot = centerOnGrid.Clone(); ;
         while (visibleArea.Contains(pointBot))
         {
             pointBot.z -= patchSize;
         }
 
         //get most right coordinate
-        Vector3 pointRight = centerOnGrid;
+        Vertex pointRight = centerOnGrid.Clone(); ;
         while (visibleArea.Contains(pointRight))
         {
             pointRight.x += patchSize;
         }
         //get most top coordinate
-        Vector3 pointTop = centerOnGrid;
+        Vertex pointTop = centerOnGrid.Clone(); ;
         while (visibleArea.Contains(pointTop))
         {
             pointTop.z += patchSize;
         }
 
-        botLeft = new Vector3(pointLeft.x, 0, pointBot.z);
-        topRight = new Vector3(pointRight.x, 0, pointTop.z);
+        botLeft = new Vertex(pointLeft.x - extraPatchCount * patchSize, 
+            pointBot.z - extraPatchCount * patchSize);
+        topRight = new Vertex(pointRight.x + extraPatchCount * patchSize,  
+            pointTop.z + extraPatchCount * patchSize);
 
         return new Area(botLeft, topRight);
     }

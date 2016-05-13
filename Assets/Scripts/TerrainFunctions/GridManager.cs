@@ -20,8 +20,8 @@ public class GridManager {
     /// </summary>
     public Vertex GetPointOnGrid(Vertex point)
     {
-        int xVal = (int)(point.x / (stepX ));
-        int zVal = (int)(point.z / (stepZ ));
+        int xVal = point.x / stepX;
+        int zVal = point.z / stepZ;
 
         Vertex closestCenter = new Vertex(666, 666);
         for(int xi = -1; xi <= 1; xi++)

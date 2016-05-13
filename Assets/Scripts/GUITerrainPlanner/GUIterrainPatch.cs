@@ -28,6 +28,7 @@ public class GUIterrainPatch {
     float high_noise;
 
     public int patchCount;
+    public int extraPatchCount = 1;
 
     public GUIterrainPatch(int patchSize)
     {
@@ -35,15 +36,22 @@ public class GUIterrainPatch {
         this.patchSize = patchSize;
 
         SetPatchAttributes();
-        SetDefaultPatch(DefaultTerrain.valleys);
+        SetDefaultPatch(DefaultTerrain.hillGrid);
     }
+
+   
 
     public void OnGui()
     {
         Color origColor = GUI.color;
-
         centerX = Screen.width / 2 - buttonWidth/2;
         centerZ = Screen.height / 2 - buttonHeight/2;
+        
+
+        GUI.Box(new Rect(centerX- (1+extraPatchCount)* buttonWidth,
+            centerZ- (1+extraPatchCount)* buttonHeight, 
+            (3+2*extraPatchCount) * buttonWidth, 
+            (3+2*extraPatchCount) * buttonHeight),"");
 
         //center
         PatchLevel level = GetPatchLevel(0, 0);
@@ -118,6 +126,18 @@ public class GUIterrainPatch {
 
         GUI.color = origColor;
 
+    }
+
+    /// <summary>
+    /// limit extra patch count for better visual look
+    /// </summary>
+    public void UpdateExtraPatchCount(int count)
+    {
+        if (count > patchCount - 2)
+        {
+            count = patchCount - 2;
+        }
+        extraPatchCount = count;
     }
 
     public void SetPatchAttributes()

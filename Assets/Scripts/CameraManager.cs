@@ -74,7 +74,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
         
 
-        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
+        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
     }
 
     void FixedUpdate()
@@ -272,12 +272,24 @@ public class CameraManager : MonoBehaviour, ICameraManager
         {
             Debug.Log("procedural texture");
             textureFlag = !textureFlag;
+            terrainGenerator.RefreshProceduralTexture();
             terrainGenerator.setTexture(textureFlag);
-            terrainGenerator.build();
+            //terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
-        
-        
+
+        if (Input.GetKey("n") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("river function change");
+            if (riverGenerator.frd.depthFunction == DepthFunction.arctan)
+                riverGenerator.frd.depthFunction = DepthFunction.sinc;
+            else
+                riverGenerator.frd.depthFunction = DepthFunction.arctan;
+            
+            lastActionFrame = Time.frameCount;
+        }
+
+
     }
 
     public void UpdatePatchSize(int patchSize)

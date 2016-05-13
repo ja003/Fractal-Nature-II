@@ -73,8 +73,7 @@ public class TerrainGenerator
     public bool debugNoise = false;
 
     public float terrainBrightness = -0.1f;
-
-    int patchCountPregenerate;
+    
 
     //------/PATCH PARAMETERS-----
 
@@ -90,8 +89,9 @@ public class TerrainGenerator
         this.patchSize = patchSize;
         try
         {
-            pm =  GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.pm;
-            patchCountPregenerate = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>().patch.patchCount;
+            GUIterrainPlannerMenu tpMenu = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>();
+            pm = tpMenu.patch.pm;
+            extraPatchCount = tpMenu.patch.extraPatchCount;
         }
         catch (Exception e)
         {
@@ -100,8 +100,8 @@ public class TerrainGenerator
             GUIterrainPatch gtp = new GUIterrainPatch(patchSize);
             gtp.SetDefaultPatch(DefaultTerrain.valleys);
             pm = gtp.pm;
-
-            patchCountPregenerate = 2; //not used now
+            
+            extraPatchCount = 1;
         }
 
     }
@@ -145,7 +145,7 @@ public class TerrainGenerator
         build();
     }
 
-    
+
     /*
     GlobalCoordinates rMinValues = new GlobalCoordinates(100);
     void SetRminValues(Vertex center, int patchSize, float value)
@@ -159,15 +159,15 @@ public class TerrainGenerator
         }
     }*/
 
-
+    public int extraPatchCount = 1;
     //// <summary>
     /// checks all points on grid in visible area are defined
     /// if not, regions with centers in points on the grid is generated
     /// </summary>
-    public void PregenerateRegions(Vertex center, Area visibleArea, int patchSize)
+    public void PregenerateRegions(Vertex center, Area visibleArea, int patchSize, int extraPatchCount)
     {
         Vertex centerOnGrid = gm.GetPointOnGrid(center);
-        Area surroundingArea = fmc.GetSurroundingAreaFrom(centerOnGrid, visibleArea, patchSize);
+        Area surroundingArea = fmc.GetSurroundingAreaOf(centerOnGrid.Clone(), visibleArea, patchSize, extraPatchCount);
         //Debug.Log("patchSize: " + patchSize);
 
         //Debug.Log("-----------------------");
@@ -175,7 +175,7 @@ public class TerrainGenerator
         //Debug.Log("centerOnGrid: " + centerOnGrid);
         //Debug.Log("visibleArea: " + visibleArea);
         //Debug.Log("surroundingArea: " + surroundingArea);
-
+        extraPatchCount = 0;
 
 
 
@@ -191,8 +191,6 @@ public class TerrainGenerator
         int _x;
         int _z;
         Vertex tmpCenter;
-        int count = patchCountPregenerate;
-        count = 1;
 
         /*List<PatchLevel> patchOrder = new List<PatchLevel>();
 
@@ -452,6 +450,8 @@ public class TerrainGenerator
         }
     }
 
+    
+
     /// <summary>
     /// generates terrain around given center
     /// and pregenerates neighbouring regions
@@ -467,7 +467,7 @@ public class TerrainGenerator
         if (defaultTerrain)
             GenerateDefaultTerrain(TerrainType.gradient_radialMinus, terrainWidth); //can't generate river first!
         else
-            PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize);
+            PregenerateRegions(center, localTerrain.GetVisibleArea(), patchSize, extraPatchCount);
 
         //ds.Initialize();
 
@@ -478,8 +478,16 @@ public class TerrainGenerator
 
         //AssignHeightsToVertices();
 
-        applyProceduralTex(true, sandColor, sandLimit, sandStrength, sandCoverage, true, grassColor, grassStrength, true, snowColor, snowLimit, snowStrength, snowCoverage, true, rockColor, slopeLimit, slopeStrength, noiseTexValue);
+        
 
+    }
+
+    /// <summary>
+    /// refresh procedural textur settings with default values
+    /// </summary>
+    public void RefreshProceduralTexture()
+    {
+        applyProceduralTex(true, sandColor, sandLimit, sandStrength, sandCoverage, true, grassColor, grassStrength, true, snowColor, snowLimit, snowStrength, snowCoverage, true, rockColor, slopeLimit, slopeStrength, noiseTexValue);
     }
 
     public void FixUnsetValues()
@@ -913,10 +921,10 @@ public class TerrainGenerator
                             //Debug.Log(localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshHeight) + ":" + this_color);
                             counter++;
                         }
-
+                        
                         heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
                             new Color(this_color, this_color, this_color));
-
+                        
 
                         if (colorMode)
                         {
@@ -1385,6 +1393,10 @@ public class TerrainGenerator
     {
 
         //Set procedural texture if true, otherwise set heighmap texture
+
+        Debug.Log(flag);
+        Debug.Log(heightMap);
+        Debug.Log(proceduralTexture);
 
         if (flag)
             for (int i = 0; i < 4; i++)

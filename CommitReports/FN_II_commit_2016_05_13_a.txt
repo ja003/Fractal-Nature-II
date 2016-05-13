@@ -1,0 +1,7 @@
+GUI upgrade
+
+- wind "angle" renamed to "effect"
+- removed density and visconsity attributes
+- removed patch size setup
+- added TerrainPlanner button
+- implemented extra patch pregeneration count setter
