@@ -68,6 +68,7 @@ public class GUIErosion {
     float thermalStrength = 0.2f;
 
     int refreshFrame = 15;
+    int refreshBuildFrame = 30;
 
     public void OnGui(int yPosition)
     {
@@ -105,7 +106,7 @@ public class GUIErosion {
 
                 gm.cm.erosionGenerator.he.DistributeWater(gm.cm.localTerrain.GetVisibleArea(), currentStep, maxWaterIncrease);
                 currentStep++;
-                gm.cm.terrainGenerator.build();
+                //gm.cm.terrainGenerator.build();
             }
 
             yPos += buttonHeight + 5;
@@ -129,12 +130,12 @@ public class GUIErosion {
                 {
                     gm.cm.erosionGenerator.he.FloodRiver(river);
                 }
-                gm.cm.terrainGenerator.build();
+                //gm.cm.terrainGenerator.build();
             }
 
             yPos += buttonHeight + 5;
 
-            ///EROSION
+            ///EROSION 
             bool startErosionFlag = startErosionH;
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startErosionHString))
             {
@@ -143,12 +144,25 @@ public class GUIErosion {
                     startErosionHString = "STOP EROSION";
                 else
                     startErosionHString = "START EROSION";
+
+                if (!startErosionH)
+                {
+                    gm.cm.terrainGenerator.build();
+                }
             }
+            if((startRain || floodRiver || startErosionH) && Time.frameCount % refreshBuildFrame == 0)
+            {
+                gm.cm.erosionGenerator.he.FilterErosionIn(gm.cm.localTerrain.GetVisibleArea(), 0.05f);
+                if(gm.cm.localTerrain.GetVisibleArea().GetSize() < 150)
+                    gm.cm.terrainGenerator.build();
+            }
+
+
             if (startErosionH && Time.frameCount % refreshFrame == 1)
             {
                 gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
 
-                gm.cm.terrainGenerator.build();
+                //gm.cm.terrainGenerator.build();
 
                 message.ShowMessage("hydraulic erosion step: " + erosionHCounter, refreshFrame);
                 erosionHCounter++;

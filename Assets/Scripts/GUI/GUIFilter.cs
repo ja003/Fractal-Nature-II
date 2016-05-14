@@ -20,7 +20,7 @@ public class GUIFilters
     public bool minThresholdFilter;
     public bool maxThresholdFilter;
 
-    float spikeThreshold = 0.1f;
+    public float spikeThreshold = 0.1f;
     float spikeThresholdFlag;
 
     float blurFactor = 1;

@@ -17,7 +17,7 @@ public class ErosionGenerator {
 
     public void AssignFunctions(FunctionTerrainManager functionTerrainManager)
     {
-        he.AssignFunctions(functionTerrainManager);
+        he.AssignFunctions(functionTerrainManager, lt.fg.sf);
         te.AssignFunctions(functionTerrainManager);
     }
     

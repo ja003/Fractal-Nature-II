@@ -22,6 +22,7 @@ public class HydraulicErosion  {
 
     public ErosionGenerator eg;
     public LayerManager lm;
+    public SpikeFilter sf;
 
     public FunctionTerrainManager ftm;
 
@@ -48,9 +49,15 @@ public class HydraulicErosion  {
         noWater = new HashSet<Vertex>();
     }
 
-    public void AssignFunctions(FunctionTerrainManager functionTerrainManager)
+    public void AssignFunctions(FunctionTerrainManager functionTerrainManager, SpikeFilter spikeFilter)
     {
         ftm = functionTerrainManager;
+        sf = spikeFilter;
+    }
+
+    public void FilterErosionIn(Area area, float epsilon)
+    {
+        sf.FilterMapInRegion(hydraulicErosionMap, area, epsilon);
     }
 
     public void FloodRiver(RiverInfo river)
@@ -73,7 +80,7 @@ public class HydraulicErosion  {
     {
         int x = Random.Range(area.botLeft.x, area.topRight.x);
         int z = Random.Range(area.botLeft.z, area.topRight.z);
-        x = 0;z = 0;
+        //x = 0;z = 0;
 
         float value = GetWaterValue(x, z) + Random.Range(0, maxWaterIncrease);
         value = GetWaterValue(x, z) + maxWaterIncrease;
@@ -299,17 +306,21 @@ public class HydraulicErosion  {
             float KS = Mathf.Max(0, Ks * (C - currentSediment));
             float KD = Mathf.Max(0, Kd * (currentSediment - C));
 
+            //KS /= Mathf.Max(1+currentHydraulicErosion, 1);
+            //KD /= Mathf.Max(1+currentHydraulicErosion, 1);
+
             if (KS != 0 && (C > currentSediment) && GetWaterValue(x, z) > currentSediment)
             {
                 float newVal = currentHydraulicErosion - KS / Mathf.Max(currentHydraulicErosion, 1);
 
-                //hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion - KS);
-                hydraulicErosionMap.SetValue(x, z, newVal);
+                hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion - KS);
+                //hydraulicErosionMap.SetValue(x, z, newVal);
                 sedimentMap.SetValue(x, z, currentSediment + KS);
             }
-            else if (KD != 0 && C != 0)
+            else if (KD != 0)
             {
                 //Debug.Log(KD);
+
                 hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion + KD);
                 sedimentMap.SetValue(x, z, currentSediment - KD);
             }
@@ -327,11 +338,14 @@ public class HydraulicErosion  {
     
     public void EvaporateWater(Area area, float evaporation)
     {
+        if (evaporation > 1)
+            evaporation = 1;
+
         foreach (Vertex v in erosionEffect)
         {
             int x = v.x;
             int z = v.z;
-            float newVal = GetWaterValue(x, z) * (1 - evaporation);
+            float newVal = GetWaterValue(x, z) * (1 - evaporation*evaporation);
             if (newVal < 0.01f)
             {
                 newVal = 0;

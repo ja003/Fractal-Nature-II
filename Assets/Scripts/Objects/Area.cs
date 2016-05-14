@@ -27,6 +27,14 @@ public class Area {
         return botLeft.x <= point.x && botLeft.z <= point.z &&
             point.x <= topRight.x && point.z <= topRight.z;
     }
+
+    /// <summary>
+    /// returns min of width and height
+    /// </summary>
+    public int GetSize()
+    {
+        return Mathf.Min(topRight.x - botLeft.x, topRight.z - botLeft.z);
+    }
     
     public override string ToString()
     {

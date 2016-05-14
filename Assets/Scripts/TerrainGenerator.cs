@@ -101,7 +101,7 @@ public class TerrainGenerator
             gtp.SetDefaultPatch(DefaultTerrain.valleys);
             pm = gtp.pm;
             
-            extraPatchCount = 1;
+            extraPatchCount = 0;
         }
 
     }
@@ -159,7 +159,7 @@ public class TerrainGenerator
         }
     }*/
 
-    public int extraPatchCount = 1;
+    public int extraPatchCount = 0;
     //// <summary>
     /// checks all points on grid in visible area are defined
     /// if not, regions with centers in points on the grid is generated

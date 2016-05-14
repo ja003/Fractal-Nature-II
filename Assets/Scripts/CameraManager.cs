@@ -288,6 +288,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
             
             lastActionFrame = Time.frameCount;
         }
+        if (Input.GetKey("b") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("filter erosion");
+            erosionGenerator.he.FilterErosionIn(localTerrain.GetVisibleArea(), guiManager.filter.spikeThreshold);
+            terrainGenerator.build();
+
+            lastActionFrame = Time.frameCount;
+        }
 
 
     }
