@@ -194,15 +194,15 @@ public class FunctionRiverDigger {
         //Debug.Log("digging: " + currentRiver);
         //Debug.Log("lowest: " + currentRiver.lowestPoint);
 
-        DigRiverPath(path, width, widthFactor, maxDepth);
+        DigRiverPath(path, width, widthFactor, maxDepth, river.shape);
 
-        DigCorners(path, width, widthFactor, maxDepth);
+        DigCorners(path, width, widthFactor, maxDepth, river.shape);
     }
 
     /// <summary>
     /// digs river path (not corners)
     /// </summary>
-    private void DigRiverPath(List<Vertex> path, int width, float widthFactor, float maxDepth)
+    private void DigRiverPath(List<Vertex> path, int width, float widthFactor, float maxDepth, RiverShape shape)
     {
         for (int i = 0; i < path.Count - 1; i++)
         {
@@ -211,7 +211,7 @@ public class FunctionRiverDigger {
             Vertex v2 = path[i + 1];
             Vertex next = i < path.Count - 2 ? path[i + 2] : path[i + 1];
 
-            DigRiverPart(v1, v2, previous, next, width, widthFactor, maxDepth);
+            DigRiverPart(v1, v2, previous, next, width, widthFactor, maxDepth, shape);
         }
     }
 
@@ -221,7 +221,7 @@ public class FunctionRiverDigger {
     /// </summary>
     /// <param name="previous">node before v1</param>
     /// <param name="next">node after v2</param>
-    private void DigRiverPart(Vertex v1, Vertex v2,Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
+    private void DigRiverPart(Vertex v1, Vertex v2,Vertex previous, Vertex next, int width, float widthFactor, float maxDepth, RiverShape shape)
     {
         Vertex botLeft = fmc.CalculateBotLeft(v1, v2, width, widthFactor);
         Vertex topRight = fmc.CalculateTopRight(v1, v2, width, widthFactor);
@@ -240,7 +240,7 @@ public class FunctionRiverDigger {
                 if (lt.globalTerrainC.IsDefined(x, z)&& distance < widthFactor * width && distanceFromCorners <= cornersDistance)
                 {
                     //float depth = GetDepth(lt.globalTerrainC.GetValue(x, z), distance, width, maxDepth);
-                    float depth = GetDepth(lt.lm.GetCurrentHeight(x, z), distance, width, maxDepth);
+                    float depth = GetDepth(lt.lm.GetCurrentHeight(x, z), distance, width, maxDepth, shape);
                     float distanceFromPrevNext = 0;
                     float PrevNextDistance = 0;
 
@@ -269,7 +269,7 @@ public class FunctionRiverDigger {
     /// <summary>
     /// dig corners
     /// </summary>
-    private void DigCorners(List<Vertex> path, int width, float widthFactor, float depth)
+    private void DigCorners(List<Vertex> path, int width, float widthFactor, float depth, RiverShape shape)
     {
         for (int i = 0; i < path.Count; i++)
         {
@@ -277,7 +277,7 @@ public class FunctionRiverDigger {
             Vertex corner = path[i];
             Vertex next = i < path.Count-1 ? path[i + 1] : path[i - 1];
             
-            DigCorner(corner, previous, next, width, widthFactor, depth);
+            DigCorner(corner, previous, next, width, widthFactor, depth, shape);
         }
 
 
@@ -287,7 +287,7 @@ public class FunctionRiverDigger {
     /// gigs only certain angle of corner
     /// the angle is determined by sharpness of the path (from prev->corner->next sequence)
     /// </summary>
-    private void DigCorner(Vertex corner, Vertex previous, Vertex next, int width, float widthFactor, float maxDepth)
+    private void DigCorner(Vertex corner, Vertex previous, Vertex next, int width, float widthFactor, float maxDepth, RiverShape shape)
     {
         Vertex botLeft = new Vertex(corner.x - (int)(widthFactor * width), 
             corner.z - (int)(widthFactor * width));
@@ -311,7 +311,7 @@ public class FunctionRiverDigger {
                     if (pointPreviousDistance  >= cornerPreviousDistance && 
                         pointNextDistance >= cornerNextDistance) {
                         //float depth = GetDepth(lt.globalTerrainC.GetValue(x, z), distance, width, maxDepth);
-                        float depth = GetDepth(lt.lm.GetCurrentHeight(x, z), distance, width, maxDepth);
+                        float depth = GetDepth(lt.lm.GetCurrentHeight(x, z), distance, width, maxDepth, shape);
                         //if (depth < globalRiverC.GetValue(x, z))
                         if (!currentRiver.globalRiverC.IsDefined(x,z) || depth < currentRiver.globalRiverC.GetValue(x, z))
                         {
@@ -329,7 +329,7 @@ public class FunctionRiverDigger {
     /// <summary>
     /// calls depth function (currently MySinc)
     /// </summary>
-    private float GetDepth(float origHeight, float distance, float width, float maxDepth)
+    private float GetDepth(float origHeight, float distance, float width, float maxDepth, RiverShape shape)
     {
         float dif = origHeight - currentRiver.lowestPoint.height;
         if (dif < 0)
@@ -346,11 +346,11 @@ public class FunctionRiverDigger {
             counter++;
         }
 
-        switch (depthFunction)
+        switch (shape)
         {
-            case DepthFunction.sinc:
+            case RiverShape.sinc:
                 return MySinc(distance, width, (dif + 1) * maxDepth * 5);
-            case DepthFunction.arctan:
+            case RiverShape.atan:
                 return MyArctan(distance, width, (dif + 1) * maxDepth);
             default:
                 return MyArctan(distance, width, (dif + 1) * maxDepth);
@@ -358,8 +358,6 @@ public class FunctionRiverDigger {
     }
     
     int counter = 0;
-
-    public DepthFunction depthFunction;
 
     private float MySinc(float x, float width, float depth)
     {
@@ -396,10 +394,4 @@ public class FunctionRiverDigger {
     }
 
     
-}
-
-public enum DepthFunction
-{
-    sinc,
-    arctan
 }

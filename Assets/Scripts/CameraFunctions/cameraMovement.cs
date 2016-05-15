@@ -64,6 +64,9 @@ public class cameraMovement : MonoBehaviour {
     //Vector3 lastRotation;
     Vector3 lastLocalRotation;
 
+    /// <summary>
+    /// switches between orthogonal and perspective projection
+    /// </summary>
     public void ChangeProjection()
     {
         if (perspective)
@@ -88,5 +91,21 @@ public class cameraMovement : MonoBehaviour {
         }
 
         perspective = !perspective;
+    }
+
+    /// <summary>
+    /// changes MainCamera's position
+    /// </summary>
+    public void ChangePosition(Vector3 position)
+    {
+        transform.position = position;
+    }
+
+    /// <summary>
+    /// changes MainCamera's position
+    /// </summary>
+    public void ChangeRotation(Vector3 rotation)
+    {
+        transform.localEulerAngles = rotation;
     }
 }

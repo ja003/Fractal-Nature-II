@@ -55,6 +55,10 @@ public class HydraulicErosion  {
         sf = spikeFilter;
     }
 
+    /// <summary>
+    /// hot-fix
+    /// filter erosion deffect with spike filter
+    /// </summary>
     public void FilterErosionIn(Area area, float epsilon)
     {
         sf.FilterMapInRegion(hydraulicErosionMap, area, epsilon);
@@ -98,16 +102,16 @@ public class HydraulicErosion  {
 
     float e = 0.01f;
 
-    public void HydraulicErosionStep(Area area)
+    public void HydraulicErosionStep()
     {
         //area, waterViscosity, strength,deposition, evaporation, windX, windZ, windStrength, windAngle
-        HydraulicErosionStep(area, 0.25f, 0.2f, 0.2f, 0.2f,0,0,100,-1);
+        HydraulicErosionStep(0.25f, 0.2f, 0.2f, 0.2f,0,0,100,-1);
     }
 
     /// <summary>
     /// perform 1 step number 'stepNumber' of hydraulic erosion on given area
     /// </summary>
-    public void HydraulicErosionStep(Area area, float waterViscosity, float strength,float deposition, float evaporation, int windX, int windZ, float windStrength, float windAngle)
+    public void HydraulicErosionStep(float waterViscosity, float strength,float deposition, float evaporation, int windX, int windZ, float windStrength, float windAngle)
     {
         // Kc = water viscosity
         // Ks = strength or (1.0 - terrainDensity)
@@ -117,9 +121,9 @@ public class HydraulicErosion  {
         // G  = gravity
 
         //DistributeWater(area, stepNumber, 0.1f);
-        UpdateOutflow(area, -666, 9.81f, windX, windZ, windStrength, windAngle);
-        UpdateSediment(area, -666, waterViscosity, strength, deposition);
-        EvaporateWater(area, evaporation);
+        UpdateOutflow(9.81f, windX, windZ, windStrength, windAngle);
+        UpdateSediment(waterViscosity, strength, deposition);
+        EvaporateWater(evaporation);
         //UpdateStepNumber(area, -666);
     }
 
@@ -136,7 +140,7 @@ public class HydraulicErosion  {
     public HashSet<Vertex> noWater;
 
 
-    public void UpdateOutflow(Area area, int stepNumber, float G,
+    public void UpdateOutflow(float G,
         int windX, int windZ, float windStrength, float windCoverage)
     {
         // Kc = water viscosity
@@ -256,7 +260,7 @@ public class HydraulicErosion  {
 
     float maxOutflow = 0.5f;
 
-    public void UpdateSediment(Area area, int stepNumber, float Kc, float Ks, float Kd)
+    public void UpdateSediment(float Kc, float Ks, float Kd)
     {
         float waterSum = 0;
 
@@ -336,7 +340,7 @@ public class HydraulicErosion  {
     }
 
     
-    public void EvaporateWater(Area area, float evaporation)
+    public void EvaporateWater(float evaporation)
     {
         if (evaporation > 1)
             evaporation = 1;

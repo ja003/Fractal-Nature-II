@@ -1,0 +1,10 @@
+Functional fix
+
+- added strength to threshold filter
+- fixed bad negative value display
+- implemented switching between river shape
+- implemented highlighting of selected river
+- clamped terrain brightness <0.1, 0.9>
+- camera is moved to center after default terrain is generated
+- romoved Area parameters from HydraulicErosion
+- switched SpikeFilter slider value

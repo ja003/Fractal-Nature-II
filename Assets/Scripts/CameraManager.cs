@@ -74,7 +74,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //Debug.Log(gridManager.GetCenterOnGrid(new Vector3(1, 0, 1)));
         
 
-        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
+        localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), true);
     }
 
     void FixedUpdate()
@@ -148,8 +148,8 @@ public class CameraManager : MonoBehaviour, ICameraManager
             Debug.Log("threshold ");
             terrainGenerator.filterMinThresholdLayer = !terrainGenerator.filterMinThresholdLayer;
             terrainGenerator.filterMaxThresholdLayer = !terrainGenerator.filterMaxThresholdLayer;
-            filterGenerator.tf.GenerateMinThresholdInRegion(localTerrain.GetVisibleArea(), 0);
-            filterGenerator.tf.GenerateMaxThresholdInRegion(localTerrain.GetVisibleArea(), 1);
+            filterGenerator.tf.GenerateMinThresholdInRegion(localTerrain.GetVisibleArea(), 0, 3);
+            filterGenerator.tf.GenerateMaxThresholdInRegion(localTerrain.GetVisibleArea(), 1, 3);
             terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
@@ -186,7 +186,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 10)
         {
             //Debug.Log("hydraulic erosion step " + hydraulicErosionStep);
-            erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea());
+            erosionGenerator.he.HydraulicErosionStep();
             terrainGenerator.build();
 
             //Debug.Log(erosionGenerator.he.ErosionValuesString(localTerrain.GetVisibleArea()));
@@ -200,7 +200,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
             //Debug.Log("hydraulic erosion " + hydraulicErosionStep + " steps ");
             for(int i = hydraulicErosionStep - 10; i < hydraulicErosionStep; i++)
             {
-                erosionGenerator.he.HydraulicErosionStep(localTerrain.GetVisibleArea());
+                erosionGenerator.he.HydraulicErosionStep();
             }
             //Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
             //Debug.Log(erosionGenerator.he.TerrainWaterValuesString(localTerrain.GetVisibleArea()));
@@ -280,11 +280,6 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("n") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("river function change");
-            if (riverGenerator.frd.depthFunction == DepthFunction.arctan)
-                riverGenerator.frd.depthFunction = DepthFunction.sinc;
-            else
-                riverGenerator.frd.depthFunction = DepthFunction.arctan;
             
             lastActionFrame = Time.frameCount;
         }

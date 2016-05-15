@@ -361,10 +361,13 @@ public class TerrainGenerator
     }
     
       
-
+    /// <summary>
+    /// generates terrain with predefined shape
+    /// moves camera to center
+    /// </summary>
     public void GenerateDefaultTerrain(TerrainType type, int size) 
     {
-        //int size = 50;
+        float factor = 1.5f;
         for (int x = -size; x < size; x++)
         {
             for (int z = -size; z < size; z++)
@@ -372,17 +375,17 @@ public class TerrainGenerator
                 switch (type)
                 {
                     case TerrainType.gradientX_lr:
-                        localTerrain.globalTerrainC.SetValue(x, z, (float)x / size);
+                        localTerrain.globalTerrainC.SetValue(x, z, factor*x / size);
                         break;
                     case TerrainType.gradientX_rl:
-                        localTerrain.globalTerrainC.SetValue(x, z, (float)(- x) / size);
+                        localTerrain.globalTerrainC.SetValue(x, z, factor * (- x) / size);
                         break;
 
                     case TerrainType.gradientZ_lr:
-                        localTerrain.globalTerrainC.SetValue(x, z, (float)z / size);
+                        localTerrain.globalTerrainC.SetValue(x, z, factor * z / size);
                         break;
                     case TerrainType.gradientZ_rl:
-                        localTerrain.globalTerrainC.SetValue(x, z, (float)(- z) / size);
+                        localTerrain.globalTerrainC.SetValue(x, z, factor * (- z) / size);
                         break;
 
                     case TerrainType.constant:
@@ -415,39 +418,17 @@ public class TerrainGenerator
                         localTerrain.globalTerrainC.SetValue(x, z, 0.5f);
                         break;
                 }
-
-                //
-                
-                //localTerrain.globalTerrainC.SetValue(x, z, (float)z / 50);
-                //localTerrain.globalTerrainC.SetValue(x, z, 0.5f);
-
-                /*localTerrain.globalTerrainC.SetValue(x, z, (float)x / 100);
-                if (x >= 30 && x <= 50 && z > -120)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if (x >= -50 && x <= -30 && z < 120)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if (x >= -120 && x <= -30 && z > -20 && z < 20)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if (x >= 30 && x <= 120 && z > -20 && z < 20)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                    */
-                /*int h = 30;
-                if (x >= -4*h && x <= -3*h && z > -5*h && z < h)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if (x >= -2 * h && x <= -h && z > -4*h && z < 5*h)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if (x >= h && x <= 2*h && z > -4*h && z < 5*h)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);
-                if (x >= 3* h && x <= 4 * h && z > -5*h && z < h)
-                    localTerrain.globalTerrainC.SetValue(x, z, 5, true);*/
-
-
             }
         }
         if(type == TerrainType.river)
         {
             riverGenerator.GenerateDefaultRiver();
         }
+
+        GameObject.Find("MainCamera").GetComponent<cameraMovement>().
+            ChangePosition(new Vector3(0, 100, 0));
+        GameObject.Find("MainCamera").GetComponent<cameraMovement>().
+            ChangeRotation(new Vector3(90, 0, 0));
     }
 
     
@@ -901,8 +882,8 @@ public class TerrainGenerator
                         //individualMeshHeight * i].y;
                         float this_color = 666;
                         if(debugHeightmap)
-                            this_color= ((vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
-                            +minusValue)/valueRange) + terrainBrightness;
+                            this_color= Mathf.Clamp(((vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
+                            +minusValue)/valueRange) + terrainBrightness, 0.1f, 0.9f);
 
                         Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
                         if(debugRmin)

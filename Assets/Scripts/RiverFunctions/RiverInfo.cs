@@ -30,8 +30,9 @@ public class RiverInfo  {
     public float threshold;
 
     public float width;
-    public float areaEffect;
+    public float areaEffect;//not used right now
     public float depth;
+    public RiverShape shape;
 
     public string errorMessage;
 
@@ -48,6 +49,7 @@ public class RiverInfo  {
         ftm = rg.ftm;
         fmc = rg.fmc;
         reachedSides = new List<Direction>();
+        shape = RiverShape.atan;
 
         lowestPoint = new Vertex(666, 666, 666);
 
@@ -377,6 +379,27 @@ public class RiverInfo  {
         }
 
     }
-    
 
+    public override bool Equals(object obj)
+    {
+        // If parameter is null return false.
+        if (obj == null)
+        {
+            return false;
+        }
+
+        // If parameter cannot be cast to Point return false.
+        RiverInfo r = obj as RiverInfo;
+        if ((System.Object)r == null)
+        {
+            return false;
+        }
+        
+        for(int i = 0; i < riverPath.Count;i++)
+        {
+            if (riverPath[i] != r.riverPath[i])
+                return false;
+        }
+        return true;
+    }
 }

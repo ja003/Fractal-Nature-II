@@ -160,7 +160,7 @@ public class GUIErosion {
 
             if (startErosionH && Time.frameCount % refreshFrame == 1)
             {
-                gm.cm.erosionGenerator.he.HydraulicErosionStep(gm.cm.localTerrain.GetVisibleArea(), viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
+                gm.cm.erosionGenerator.he.HydraulicErosionStep(viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
 
                 //gm.cm.terrainGenerator.build();
 
