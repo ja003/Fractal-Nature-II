@@ -61,7 +61,8 @@ public class FunctionRiverDigger {
     {
         for (int i = 1; i < path.Count - 1; i++)
         {
-            //do not disturn if nodes are too close to each other
+            //Debug.Log(path[i] + " => ");
+            //do not disturb if nodes are too close to each other
             if(!(Vector3.Distance(path[i], path[i-1]) < (gridStep/2) ||
                 Vector3.Distance(path[i], path[i + 1]) < (gridStep / 2)))
             {
@@ -82,6 +83,7 @@ public class FunctionRiverDigger {
                 }
                 v.Rewrite((int)(v.x + d * normal.x), (int)(v.z + d * normal.z), v.height);
             }
+            //Debug.Log(path[i]);
         }
     }
 

@@ -142,7 +142,7 @@ public class GUIterrainPatch {
 
     public void SetPatchAttributes()
     {
-        float scale = 1.1f;
+        float scale = 1.3f;
 
         low_rMin = scale * -1f;
         low_rMax = scale * -0.3f;
@@ -154,7 +154,7 @@ public class GUIterrainPatch {
 
         high_rMin = scale * 0.7f;
         high_rMax = scale * 1.5f;
-        high_noise = 3;
+        high_noise = 2.5f;
     }
 
     bool valleyDir = true;

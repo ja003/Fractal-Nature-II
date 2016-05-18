@@ -1,0 +1,5 @@
+Terrain planning
+
+- changed name from "Fractal Nature" to "Procedural Terrain"
+- removed 256 and 512 resolutions
+- implemented time estimate

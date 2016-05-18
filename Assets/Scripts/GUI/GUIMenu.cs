@@ -26,7 +26,7 @@ public class GUIMenu
         // Title
         //GUI.Box(new Rect(Screen.width - menuWidth, topOffset, menuWidth - rightOffset, buttonHeight), "Fractal Nature");
         yPos = yPosition;
-        if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "Fractal Nature"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "Procedural Terrain"))
         {
             SetMenuFlag(MenuEnum.fractalNature, !gm.fractalNatureFlag);
             Debug.Log("fractalNatureFlag: " + gm.fractalNatureFlag);

@@ -107,7 +107,7 @@ public class RiverGenerator  {
         gm.ShowMessage(message, messageDuration);
     }
 
-    public bool forceRiverGeneration = false;
+    public bool forceRiverGeneration = true;
 
     public void GenerateNewRiver(float width, float areaEffect, float depth, int gridStep)
     {

@@ -77,7 +77,7 @@ public class GUIterrainPlanner : MonoBehaviour
             patch.UpdatePatchSize(128);
         }
         yPos += buttonHeight;
-
+        /*
         // 256x256 patch size
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "256x256"))
         {
@@ -88,9 +88,10 @@ public class GUIterrainPlanner : MonoBehaviour
         if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2 * sideOffset, yPos, buttonWidth, buttonHeight), "512x512"))
         {
             patch.UpdatePatchSize(512);
-        }
+        }*/
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2*buttonWidth, buttonHeight), "estimated time: " + GetTimeEstimate(patch.patchSize,(int)Mathf.Pow(3+(int)extraPatches, 2)) + " sec");
 
-        yPos += buttonHeight + 5;
+        yPos += buttonHeight;
 
         //default terrain
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "default terrain");
@@ -105,15 +106,26 @@ public class GUIterrainPlanner : MonoBehaviour
         {
             patch.SetDefaultPatch(DefaultTerrain.valleys);
         }
-
+        /*
         yPos += buttonHeight + 5;
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Random Hills"))
         {
             patch.SetDefaultPatch(DefaultTerrain.hillGrid);
-        }
+        }*/
 
-        yPos += buttonHeight + 10;
+        yPos += buttonHeight + 20;
         yPosMax = yPos;
+    }
+
+    public int GetTimeEstimate(int patchSize, int patchCount)
+    {
+        float t = 1;
+        if (patchSize <= 64)
+            t = 1.5f;
+        else
+            t = 2f;
+
+        return (int)(patchCount * t);
     }
 
 }

@@ -38,7 +38,7 @@ public class GUIterrainPlannerMenu : MonoBehaviour
 
         if (plannerActive)
         {
-            if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "Fractal Nature"))
+            if (GUI.Button(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, buttonHeight), "Procedural Terrain"))
             {
                 plannerMenu = !plannerMenu;
             }

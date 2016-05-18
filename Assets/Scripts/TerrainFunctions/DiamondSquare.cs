@@ -64,14 +64,16 @@ public class DiamondSquare
     /// </summary>
     public void SetLocalHeight(int x, int z, float value, bool overwrite)
     {
-        if(counter < 10 && Double.IsNaN(value))
+        /*if(counter < 10 && Double.IsNaN(value))
         {
             counter++;
             UnityEngine.Debug.Log(x + "," + z);
             UnityEngine.Debug.Log(rMin);
             UnityEngine.Debug.Log(rMax);
             UnityEngine.Debug.Log(noise);
-        }
+        }*/
+        if (Double.IsNaN(value))
+            value = 0;
 
         lt.SetLocalHeight(x, z, value, overwrite);
     }
@@ -118,6 +120,8 @@ public class DiamondSquare
         {
             distance = maxDistance - 1;
         }
+        if (Double.IsNaN(distance))
+            distance = 0;
         return distance;
     }
     /*
@@ -430,7 +434,7 @@ public class DiamondSquare
         float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
 
         float modNoise = modNoiseOrig;// = modNoiseOrig * factor;
-        modNoise *= (float)Math.Sqrt(factor);
+        modNoise *= (float)Math.Sqrt(Math.Abs(factor));
         //if ((x > 10 && x <= 30))
         //{
         //    modNoise += factor;

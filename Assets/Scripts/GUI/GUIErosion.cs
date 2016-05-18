@@ -282,7 +282,8 @@ public class GUIErosion {
             {
                 gm.cm.erosionGenerator.te.ThermalErosionStep(gm.cm.localTerrain.GetVisibleArea(), (int)iterations, minDif, thermalStrength);
 
-                gm.cm.terrainGenerator.build();
+                if (gm.cm.localTerrain.GetVisibleArea().GetSize() < 150)
+                    gm.cm.terrainGenerator.build();
             }
 
             yPos += buttonHeight + 3;

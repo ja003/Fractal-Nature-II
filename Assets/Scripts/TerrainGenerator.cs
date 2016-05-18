@@ -98,7 +98,7 @@ public class TerrainGenerator
             Debug.Log("TerrainPlanner not found"); 
             //pm = new PatchManager(patchSize);
             GUIterrainPatch gtp = new GUIterrainPatch(patchSize);
-            gtp.SetDefaultPatch(DefaultTerrain.valleys);
+            gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
             pm = gtp.pm;
             
             extraPatchCount = 0;
@@ -175,7 +175,7 @@ public class TerrainGenerator
         //Debug.Log("centerOnGrid: " + centerOnGrid);
         //Debug.Log("visibleArea: " + visibleArea);
         //Debug.Log("surroundingArea: " + surroundingArea);
-        extraPatchCount = 0;
+        //extraPatchCount = 0;
 
 
 
@@ -239,7 +239,12 @@ public class TerrainGenerator
                         rMin = pm.rMin.GetValue(_x, _z, -1);
                         rMax = pm.rMax.GetValue(_x, _z, 1);
                         noise = pm.noise.GetValue(_x, _z, 2);
-                        
+
+                        //Debug.Log(x + "," + z);
+                        //Debug.Log("rMin:"+ rMin);
+                        //Debug.Log("rMax:" + rMax);
+                        //Debug.Log("noise:" + noise);
+
 
                         tmpCenter = new Vertex(_x, _z);
                         if (i == PatchLevel.low && level == 0)
