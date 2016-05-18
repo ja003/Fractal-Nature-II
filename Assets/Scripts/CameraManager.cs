@@ -39,7 +39,22 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
         terrainWidth = 100; 
         terrainHeight = 100;
-        patchSize = 64;
+
+        try
+        {
+            GUIterrainPlannerMenu tpMenu = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>();
+            patchSize = tpMenu.patch.patchSize;
+        }
+        catch (Exception e)
+        {
+            Debug.Log("TerrainPlanner not found");
+            patchSize = 64;
+        }
+
+        cameraMovement camera = transform.GetComponent<cameraMovement>();
+        camera.ChangePosition(new Vector3(0, 100, 0));
+        camera.ChangeRotation(new Vector3(90, 0, 0));
+
         scaleTerrainY = 12;
 
         int quadrantSize = Math.Max(terrainWidth, terrainHeight);
@@ -81,6 +96,9 @@ public class CameraManager : MonoBehaviour, ICameraManager
     {
         if(Time.frameCount == 1)
         {
+            cameraMovement camera = transform.GetComponent<cameraMovement>();
+            camera.ChangePosition(new Vector3(0, 100, 0));
+            camera.ChangeRotation(new Vector3(90, 0, 0));
             //localTerrain.UpdateVisibleTerrain(new Vector3(0, 0, 0), false);
 
             //localTerrain.lm = layerManager;
@@ -280,14 +298,14 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         if (Input.GetKey("n") && lastActionFrame < Time.frameCount - 30)
         {
-            
+            guiManager.erosion.refreshTerrain = !guiManager.erosion.refreshTerrain;
+            Debug.Log("refreshTerrain: " + guiManager.erosion.refreshTerrain);
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("b") && lastActionFrame < Time.frameCount - 30)
         {
-            Debug.Log("filter erosion");
-            erosionGenerator.he.FilterErosionIn(localTerrain.GetVisibleArea(), guiManager.filter.spikeThreshold);
-            terrainGenerator.build();
+            guiManager.msecMax = 0;
+            Debug.Log("msecMax reset");
 
             lastActionFrame = Time.frameCount;
         }

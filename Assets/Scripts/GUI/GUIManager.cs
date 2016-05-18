@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+//using UnityEditor;
 
 public class GUIManager : MonoBehaviour
 {
@@ -44,9 +45,11 @@ public class GUIManager : MonoBehaviour
     public GUIFilters filter;
     public GUIRiver river;
     GUIDebug debug;
-    GUIErosion erosion;
+    public GUIErosion erosion;
     public GUIMessage message;
 
+    float deltaTime = 0.0f;
+    public float msecMax = 0;
 
     void Start()
     {
@@ -98,7 +101,8 @@ public class GUIManager : MonoBehaviour
     
     void Update()
     {
-        if(Time.frameCount <= 1)
+        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        if (Time.frameCount <= 1)
         {
             scaleY = cm.scaleTerrainY;
             mesh.scaleY = scaleY;
@@ -185,6 +189,24 @@ public class GUIManager : MonoBehaviour
     // On-screen Menu Loop
     void OnGUI()
     {
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(0, 0, w, h * 2 / 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = h * 2 / 100;
+        style.normal.textColor = new Color(0.0f, 0.0f, 0.5f, 1.0f);
+        float msec = deltaTime * 1000.0f;
+        float fps = 1.0f / deltaTime;
+        string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+        GUI.Label(rect, text, style);
+        if(msec > msecMax)
+        {
+            msecMax = msec;
+            Debug.Log("msecMax: " + msecMax);
+        }
+
         //This section stores the data regarding the interactive menu.
         CascadeVisibility();
 

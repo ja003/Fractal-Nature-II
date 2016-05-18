@@ -56,7 +56,7 @@ public class ObjExporter
         int x_max = lm.lt.globalTerrainC.definedArea.topRight.x;
         int z_max = lm.lt.globalTerrainC.definedArea.topRight.z;
 
-        Debug.Log(lm.rg.lt.tg.scaleTerrain);
+        //Debug.Log(lm.rg.lt.tg.scaleTerrain);
 
         for (int x = x_min; x< x_max; x++)
         {

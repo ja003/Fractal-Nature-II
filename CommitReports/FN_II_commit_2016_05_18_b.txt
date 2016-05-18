@@ -1,0 +1,4 @@
+FPS counter
+
+- added fps counter
+- added toggler of refreshing terrain

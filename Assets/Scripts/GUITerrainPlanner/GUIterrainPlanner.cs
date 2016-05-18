@@ -89,7 +89,7 @@ public class GUIterrainPlanner : MonoBehaviour
         {
             patch.UpdatePatchSize(512);
         }*/
-        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2*buttonWidth, buttonHeight), "estimated time: " + GetTimeEstimate(patch.patchSize,(int)Mathf.Pow(3+(int)extraPatches, 2)) + " sec");
+        GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2*buttonWidth, buttonHeight), "estimated time: " + GetTimeEstimate(patch.patchSize,(int)Mathf.Pow(3+2*(int)extraPatches, 2)) + " sec");
 
         yPos += buttonHeight;
 
@@ -121,7 +121,7 @@ public class GUIterrainPlanner : MonoBehaviour
     {
         float t = 1;
         if (patchSize <= 64)
-            t = 1.5f;
+            t = 1.3f;
         else
             t = 2f;
 

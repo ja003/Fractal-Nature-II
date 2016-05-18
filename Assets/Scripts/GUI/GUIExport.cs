@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+//using UnityEditor;
 
 
 public class GUIExport {
@@ -75,7 +75,7 @@ public class GUIExport {
             yPos2 += buttonHeight/2 + 2;
             if (GUI.Button(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight/2), "..."))
             {
-                path = EditorUtility.SaveFolderPanel("Select destination","","");
+                path = "C:\\Users\\Vukmir\\Desktop\\obj";// EditorUtility.SaveFolderPanel("Select destination","","");
             }
             yPos2 += buttonHeight / 2 + 2;
             GUI.Label(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth/2, buttonHeight/2),"name: ");
