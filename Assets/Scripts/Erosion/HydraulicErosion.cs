@@ -64,6 +64,9 @@ public class HydraulicErosion  {
         sf.FilterMapInRegion(hydraulicErosionMap, area, epsilon);
     }
 
+    /// <summary>
+    /// distributes water on each node of river path
+    /// </summary>
     public void FloodRiver(RiverInfo river)
     {
         float value = 0.1f;
@@ -102,6 +105,9 @@ public class HydraulicErosion  {
 
     float e = 0.01f;
 
+    /// <summary>
+    /// calls HydraulicErosionStep with default values
+    /// </summary>
     public void HydraulicErosionStep()
     {
         //area, waterViscosity, strength,deposition, evaporation, windX, windZ, windStrength, windAngle
@@ -130,16 +136,16 @@ public class HydraulicErosion  {
     float T = 0.1f;  //delta time
     float L = 1.0f;  //pipe cross-sectional area
     float A = 1.0f;  //cell area
-    //int wind_x = -1; //-1,0,1
-    //int wind_z = 0; //-1,0,1
-    //int windStrength = 10;
-    //float windCoverage = -1f; //<-1,1>
 
     public HashSet<Vertex> erosionEffect;
     public HashSet<Vertex> outflowField;
     public HashSet<Vertex> noWater;
 
 
+    /// <summary>
+    /// calculates ouflow maps based on water map
+    /// direction is influenced by wind
+    /// </summary>
     public void UpdateOutflow(float G,
         int windX, int windZ, float windStrength, float windCoverage)
     {
@@ -260,18 +266,15 @@ public class HydraulicErosion  {
 
     float maxOutflow = 0.5f;
 
+    /// <summary>
+    /// calculates sediment maps based on ouflow maps
+    /// </summary>
     public void UpdateSediment(float Kc, float Ks, float Kd)
     {
         float waterSum = 0;
 
-        //Debug.Log(erosionEffect.Count);
-        //Debug.Log("---");
-
         foreach (Vertex v in erosionEffect)
         {
-            
-            //Debug.Log(v);
-
             int x = v.x;
             int z = v.z;
 
@@ -310,9 +313,6 @@ public class HydraulicErosion  {
             float KS = Mathf.Max(0, Ks * (C - currentSediment));
             float KD = Mathf.Max(0, Kd * (currentSediment - C));
 
-            //KS /= Mathf.Max(1+currentHydraulicErosion, 1);
-            //KD /= Mathf.Max(1+currentHydraulicErosion, 1);
-
             if (KS != 0 && (C > currentSediment) && GetWaterValue(x, z) > currentSediment)
             {
                 float newVal = currentHydraulicErosion - KS / Mathf.Max(currentHydraulicErosion, 1);
@@ -323,8 +323,6 @@ public class HydraulicErosion  {
             }
             else if (KD != 0)
             {
-                //Debug.Log(KD);
-
                 hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion + KD);
                 sedimentMap.SetValue(x, z, currentSediment - KD);
             }
@@ -334,14 +332,15 @@ public class HydraulicErosion  {
 
             waterSum += GetWaterValue(x, z);                 
         }
-        
-        
-        //Debug.Log("waterSum: " + waterSum);
     }
 
-    
+    /// <summary>
+    /// lowers water amount of each water cell in waterMap
+    /// </summary>
     public void EvaporateWater(float evaporation)
     {
+        //evaporation *= 1.5f; 
+        evaporation /= 2;
         if (evaporation > 1)
             evaporation = 1;
 
@@ -349,20 +348,17 @@ public class HydraulicErosion  {
         {
             int x = v.x;
             int z = v.z;
-            float newVal = GetWaterValue(x, z) * (1 - evaporation*evaporation);
+            
+
+            float newVal = GetWaterValue(x, z) * (1 - evaporation);
             if (newVal < 0.01f)
             {
                 newVal = 0;
             }
             waterMap.SetValue(x, z, newVal);
-            if (newVal < 0)
-            {
-                Debug.Log("!");
-            }
             if (GetWaterValue(x, z) <= 0)
             {
                 noWater.Add(v);
-                //Debug.Log("no water " + v);
             }
         }
         foreach (Vertex v in noWater)

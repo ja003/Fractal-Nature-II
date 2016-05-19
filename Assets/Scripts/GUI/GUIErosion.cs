@@ -71,7 +71,7 @@ public class GUIErosion {
     int refreshFrame = 15;
     int refreshBuildFrame = 30;
 
-    int refreshTerrainSize = 200;
+    int refreshTerrainSize = 250;
     public bool refreshTerrain = true;
 
     public void OnGui(int yPosition)
@@ -79,8 +79,10 @@ public class GUIErosion {
 
 
         yPos = yPosition;
-                
-        yPos += 5;
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 1 * buttonHeight), "");
+        refreshTerrain = GUI.Toggle(new Rect(Screen.width - menuWidth + sideOffset, yPos - 1.5f, 2*buttonWidth, buttonHeight), refreshTerrain, " refresh terrain");
+
+        yPos += buttonHeight + 6;
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Hydraulic erosion"))
         {
             hydraulicErosionMenu = !hydraulicErosionMenu;
@@ -202,7 +204,7 @@ public class GUIErosion {
             evaporation = GUI.HorizontalSlider(new Rect(
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
                     menuWidth - sideOffset - buttonWidth - 5,
-                    buttonHeight), evaporation, 0, 0.6f);
+                    buttonHeight), evaporation, 0, 0.5f);
             yPos += buttonHeight + 3;
 
             ///////////////WIND///////////////////
@@ -279,7 +281,7 @@ public class GUIErosion {
             bool startErosionTFlag = startErosionT;
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), startErosionTString))
             {
-                Debug.Log("iterations: " + iterations);
+                //Debug.Log("iterations: " + iterations);
                 startErosionT = !startErosionT;
                 if (startErosionT)
                     startErosionTString = "STOP EROSION";

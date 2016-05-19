@@ -63,9 +63,9 @@ public class GUIManager : MonoBehaviour
 
         fractalNatureFlag = true;
         generalSettingsFlag = false;
-        erosionMenuFlag = false;
+        erosionMenuFlag = true;
         filterMenuFlag = false ;
-        riverMenuFlag = true;
+        riverMenuFlag = false;
         debugMenuFlag = false;
 
         messageFlag = false;
@@ -204,7 +204,7 @@ public class GUIManager : MonoBehaviour
         if(msec > msecMax)
         {
             msecMax = msec;
-            Debug.Log("msecMax: " + msecMax);
+            //Debug.Log("msecMax: " + msecMax);
         }
 
         //This section stores the data regarding the interactive menu.

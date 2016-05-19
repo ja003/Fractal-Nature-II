@@ -67,7 +67,7 @@ public class GUIExport {
             yPos2 = 5;
             float menu2Width = 2 * menuWidth;
 
-            GUI.Box(new Rect(Screen.width - menu2Width, yPos2, menuWidth - rightMenuOffset, buttonHeight * 5), "Export");
+            GUI.Box(new Rect(Screen.width - menu2Width, yPos2, menuWidth - rightMenuOffset, buttonHeight * 3.5f), "Export");
             yPos2 += buttonHeight/2;
 
             //"C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export"
@@ -83,7 +83,7 @@ public class GUIExport {
             
 
 
-
+            /*
             yPos2 += buttonHeight/2 + 2;
             exportTerrain = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight/2), gm.onFlyGeneration, "  terrain");
             yPos2 += buttonHeight / 2 + 2;
@@ -92,8 +92,9 @@ public class GUIExport {
             yPos2 += buttonHeight / 2 + 2;
 
             exportFilter = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight / 2), gm.onFlyGeneration, "  filter");
+            */
             yPos2 += buttonHeight / 2 + 3;
-
+            
             if (GUI.Button(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight), "EXPORT"))
             {
                 Export();
