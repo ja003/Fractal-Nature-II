@@ -73,9 +73,10 @@ public class TerrainGenerator
     public bool debugNoise = false;
 
     public float terrainBrightness = -0.1f;
-    
+
 
     //------/PATCH PARAMETERS-----
+    GUIterrainPatch gtp;
 
     int individualMeshWidth;
     int individualMeshHeight;
@@ -91,14 +92,15 @@ public class TerrainGenerator
         {
             GUIterrainPlannerMenu tpMenu = GameObject.Find("TerrainPlanner").GetComponent<GUIterrainPlannerMenu>();
             pm = tpMenu.patch.pm;
+            gtp = tpMenu.patch;
             extraPatchCount = tpMenu.patch.extraPatchCount;
         }
         catch (Exception e)
         {
             Debug.Log("TerrainPlanner not found"); 
             //pm = new PatchManager(patchSize);
-            GUIterrainPatch gtp = new GUIterrainPatch(patchSize);
-            gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
+            gtp = new GUIterrainPatch(patchSize);
+            //gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
             pm = gtp.pm;
             
             extraPatchCount = 0;
@@ -290,19 +292,36 @@ public class TerrainGenerator
                                 Debug.Log(x + "," + z);
                                 Debug.Log(i);
                             }
-                            rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
+                            Debug.Log(x + "," + z);
+
+                            Vertex patchC = gm.GetGridCoordinates(new Vertex(x, z));
+                            Debug.Log(patchC);
+
+                            gtp.SetPatchValue(patchC.x, patchC.z, PatchLevel.random);
+                            rMin = pm.rMin.GetValue(_x, _z, -1);
+                            rMax = pm.rMax.GetValue(_x, _z, 1);
+                            noise = pm.noise.GetValue(_x, _z, 2);
+
+                            Debug.Log(rMin);
+                            Debug.Log(rMax);
+                            Debug.Log(noise);
+
+                            /*rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
                             rMax = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMax);
                             noise = pm.GetNeighbourAverage(_x, _z, PatchInfo.noise);
+                            
 
                             if (rMin == 666)
                                 rMin = -1;
                             if (rMax == 666)
                                 rMax = 1;
                             if (noise == 666)
-                                noise = 3;
+                                noise = 2;
 
                             if (rMax <= rMin)
-                                rMax = rMin + 0.5f;
+                                rMax = rMin + 0.5f;*/
+
+                            //pm.SetValues(new Vertex(x, z), patchSize, rMin, rMax, noise);
 
                             localTerrain.MoveVisibleTerrain(tmpCenter, false);
                             ds.Initialize(patchSize, noise, rMin, rMax);

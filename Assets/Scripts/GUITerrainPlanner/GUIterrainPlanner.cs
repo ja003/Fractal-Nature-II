@@ -34,7 +34,7 @@ public class GUIterrainPlanner : MonoBehaviour
     public void OnGui(int yPos)
     {
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, 9 * buttonHeight), "Terrain planner");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, 8.5f * buttonHeight), "Terrain planner");
 
         yPos += smallButtonHeight;
 
@@ -106,14 +106,14 @@ public class GUIterrainPlanner : MonoBehaviour
         {
             patch.SetDefaultPatch(DefaultTerrain.valleys);
         }
-        /*
+        
         yPos += buttonHeight + 5;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Random Hills"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "Random"))
         {
-            patch.SetDefaultPatch(DefaultTerrain.hillGrid);
-        }*/
+            patch.SetDefaultPatch(DefaultTerrain.random);
+        }
 
-        yPos += buttonHeight + 20;
+        yPos += buttonHeight + 10;
         yPosMax = yPos;
     }
 

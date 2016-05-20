@@ -8,7 +8,7 @@ public class PatchManager {
     public GlobalCoordinates rMin;
     public GlobalCoordinates rMax;
     public GlobalCoordinates noise;
-    public GlobalCoordinates patchLevel;
+    public GlobalCoordinates patchLevel;//-1 = random,0=low,1=medium,2=high
 
     public GridManager gm;
 

@@ -1,0 +1,4 @@
+Random terrain
+
+- implemented random distribution of patch values
+- fixed determining of random values during terrain generation

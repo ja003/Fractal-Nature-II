@@ -36,7 +36,7 @@ public class GUIterrainPatch {
         this.patchSize = patchSize;
 
         SetPatchAttributes();
-        SetDefaultPatch(DefaultTerrain.hillGrid);
+        SetDefaultPatch(DefaultTerrain.random);
     }
 
    
@@ -185,8 +185,13 @@ public class GUIterrainPatch {
                 valleyDir = !valleyDir;
                 pm.SetPatchOrder(PatchOrder.LHM);
                 break;
+            case DefaultTerrain.random:
+                SetRandomPatchLevel(5);
+                break;
+
         }
     }
+    
 
     /// <summary>
     /// sets valey lines starting in [x,z]
@@ -255,6 +260,32 @@ public class GUIterrainPatch {
         SetPatchValue(_x, _z, PatchLevel.high);
     }
 
+    /// <summary>
+    /// sets random PatchLevel to all patches in distance < radius
+    /// generates 3 in advance
+    /// </summary>
+    public void SetRandomPatchLevel(int radius)
+    {
+        for(int i = 0;i < radius ; i++)
+        {
+            SetPatchLevelInRadius(i, PatchLevel.random);
+        }
+    }
+
+    /// <summary>
+    /// sets PatchLevel in |radius| distance from center
+    /// </summary>
+    public void SetPatchLevelInRadius(int radius, PatchLevel level)
+    {
+        for (int x = -radius; x <= radius; x++)
+            SetPatchValue(x, radius, level);
+        for (int x = -radius; x <= radius; x++)
+            SetPatchValue(x, -radius, level);
+        for (int z = -radius+1; z < radius; z++)
+            SetPatchValue(radius, z, level);
+        for (int z = -radius + 1; z < radius; z++)
+            SetPatchValue(-radius, z, level);
+    }
 
     /// <summary>
     /// returns set level on patch [x,z]
@@ -280,13 +311,14 @@ public class GUIterrainPatch {
     /// <summary>
     /// sets valus to patch defined by center [x,z] and patchSize
     /// </summary>
-    void SetPatchValue(int x, int z, PatchLevel level)
+    public void SetPatchValue(int x, int z, PatchLevel level)
     {
         switch (level)
         {
             case PatchLevel.random:
-                pm.SetValues(new Vertex(x * patchSize, z * patchSize),
-                    patchSize, 666, 666, 666);
+                SetPatchRandomLevel(x, z);
+                //pm.SetValues(new Vertex(x * patchSize, z * patchSize),
+                //    patchSize, 666, 666, 666);
                 break;
 
             case PatchLevel.low:
@@ -304,6 +336,67 @@ public class GUIterrainPatch {
         }
     }
 
+
+
+    /// <summary>
+    /// determines and sets level value from neighbouring patches
+    /// to [x,z] patch
+    /// </summary>
+    void SetPatchRandomLevel(int x, int z)
+    {
+        int top = (int)pm.patchLevel.GetValue(x, z + patchSize, 0);
+        int right = (int)pm.patchLevel.GetValue(x + patchSize, z , 0);
+        int bot = (int)pm.patchLevel.GetValue(x, z - patchSize, 0);
+        int left = (int)pm.patchLevel.GetValue(x - patchSize, z, 0);
+
+        int avg = (top + right + bot + left) / 4;
+        if (x == 0 && z == 0)
+            avg += (int)Random.Range(0f, 2.5f);
+        
+        float rnd = Random.Range(0f, 1f);
+
+        if (rnd < 0.1f)
+            avg -= 2;
+        else if (rnd < 0.25f)
+            avg -= 1;
+        else if (rnd < 0.7)
+            avg = avg;
+        else if (rnd < 0.9)
+            avg += 1;
+        else
+            avg += 2;
+
+        avg = Mathf.Clamp(avg, 0, 2);
+
+        PatchLevel level = GetLevelFromNum(avg);
+
+        if (level == PatchLevel.random)
+        {
+            Debug.Log("random shouldn't be here - fail");
+            return;
+        }
+        SetPatchValue(x, z, level);
+    }
+
+    /// <summary>
+    /// returns PatchLevel representation of number
+    /// </summary>
+    public PatchLevel GetLevelFromNum(int number)
+    {
+        switch (number)
+        {
+            case -1:
+                return PatchLevel.random;
+            case 0:
+                return PatchLevel.low;
+            case 1:
+                return PatchLevel.medium;
+            case 2:
+                return PatchLevel.high;
+        }
+        return PatchLevel.random;
+    }
+
     public PatchLevel GetNextLevel(PatchLevel level)
     {
         switch (level)
@@ -315,7 +408,9 @@ public class GUIterrainPatch {
             case PatchLevel.medium:
                 return PatchLevel.high;
             case PatchLevel.high:
-                return PatchLevel.random;
+                return PatchLevel.low; //for better user control
+            //case PatchLevel.high:
+                //return PatchLevel.random;
         }
         return PatchLevel.random;
     }
@@ -360,6 +455,7 @@ public class GUIterrainPatch {
     {
         this.patchSize = patchSize;
         pm = new PatchManager(patchSize);
+        SetRandomPatchLevel(patchCount);
     }
 }
 
@@ -374,5 +470,6 @@ public enum PatchLevel
 public enum DefaultTerrain
 {
     hillGrid,
-    valleys
+    valleys,
+    random
 }
