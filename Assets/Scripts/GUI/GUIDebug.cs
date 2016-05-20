@@ -39,7 +39,7 @@ public class GUIDebug {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,17.5f * buttonHeight), "Debug");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,15f * buttonHeight), "Debug");
 
         yPos += buttonHeight + 5;
         
@@ -50,13 +50,13 @@ public class GUIDebug {
         }
         yPos += buttonHeight + 5;
 
-        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "rMin"))
+        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "patch level"))
         {
             ChangeDebugMode(DebugMode.rMin);
             gm.cm.terrainGenerator.build();
         }
         yPos += buttonHeight + 5;
-
+        /*
         if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "rMax"))
         {
             ChangeDebugMode(DebugMode.rMax);
@@ -70,7 +70,7 @@ public class GUIDebug {
             gm.cm.terrainGenerator.build();
         }
         yPos += buttonHeight + 5;
-
+        */
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight),"brightness");
 
         brightness = GUI.HorizontalSlider(new Rect(

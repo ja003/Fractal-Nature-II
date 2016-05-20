@@ -63,10 +63,10 @@ public class GUIManager : MonoBehaviour
 
         fractalNatureFlag = true;
         generalSettingsFlag = false;
-        erosionMenuFlag = true;
+        erosionMenuFlag = false;
         filterMenuFlag = false ;
         riverMenuFlag = false;
-        debugMenuFlag = false;
+        debugMenuFlag = true;
 
         messageFlag = false;
         //messageEndFrame = 666;

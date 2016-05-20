@@ -58,8 +58,7 @@ public class GUIterrainPatch {
         GUI.color = GetLevelColor(level);
         if (GUI.Button(new Rect(centerX, centerZ, buttonWidth, buttonHeight),GetLevelString(level)))
         {
-            SetPatchValue(0, 0, GetNextLevel(level));
-            //Debug.Log("0,0");
+            SetPatchValue(0, 0, GetNextLevel(level), true);
         }
         //quadrant 1
         for (int x = 1; x < patchCount; x++)
@@ -71,8 +70,7 @@ public class GUIterrainPatch {
 
                 if (GUI.Button(new Rect(centerX + x* buttonWidth, centerZ - z* buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
-                    SetPatchValue(x,z, GetNextLevel(level));
-                    //Debug.Log(x + "," + z);
+                    SetPatchValue(x,z, GetNextLevel(level), true);
                 }
 
             }
@@ -86,8 +84,7 @@ public class GUIterrainPatch {
                 GUI.color = GetLevelColor(level);
                 if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
-                    SetPatchValue(x, z, GetNextLevel(level));
-                    //Debug.Log(x + "," + z);
+                    SetPatchValue(x, z, GetNextLevel(level), true);
                 }
 
             }
@@ -101,8 +98,7 @@ public class GUIterrainPatch {
                 GUI.color = GetLevelColor(level);
                 if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
-                    SetPatchValue(x, z, GetNextLevel(level));
-                    //Debug.Log(x + "," + z);
+                    SetPatchValue(x, z, GetNextLevel(level), true);
                 }
 
             }
@@ -116,8 +112,7 @@ public class GUIterrainPatch {
                 GUI.color = GetLevelColor(level);
                 if (GUI.Button(new Rect(centerX + x * buttonWidth, centerZ - z * buttonHeight, buttonWidth, buttonHeight), GetLevelString(level)))
                 {
-                    SetPatchValue(x, z, GetNextLevel(level));
-                    //Debug.Log(x + "," + z);
+                    SetPatchValue(x, z, GetNextLevel(level), true);
                 }
 
             }
@@ -187,6 +182,7 @@ public class GUIterrainPatch {
                 break;
             case DefaultTerrain.random:
                 SetRandomPatchLevel(5);
+                pm.SetPatchOrder(PatchOrder.HLM);
                 break;
 
         }
@@ -308,17 +304,29 @@ public class GUIterrainPatch {
         return PatchLevel.random;
     }
 
+    public void SetPatchValue(int x, int z, PatchLevel level)
+    {
+        SetPatchValue(x, z, level, false);
+    }
+
     /// <summary>
     /// sets valus to patch defined by center [x,z] and patchSize
+    /// randomValue = random value can be asigned to patch
     /// </summary>
-    public void SetPatchValue(int x, int z, PatchLevel level)
+    public void SetPatchValue(int x, int z, PatchLevel level, bool randomValue)
     {
         switch (level)
         {
             case PatchLevel.random:
-                SetPatchRandomLevel(x, z);
-                //pm.SetValues(new Vertex(x * patchSize, z * patchSize),
-                //    patchSize, 666, 666, 666);
+                if (randomValue)
+                {
+                    pm.SetValues(new Vertex(x * patchSize, z * patchSize),
+                        patchSize, 666, 666, 666);
+                }
+                else
+                {
+                    SetPatchRandomLevel(x, z);
+                }
                 break;
 
             case PatchLevel.low:
@@ -407,10 +415,10 @@ public class GUIterrainPatch {
                 return PatchLevel.medium;
             case PatchLevel.medium:
                 return PatchLevel.high;
-            case PatchLevel.high:
-                return PatchLevel.low; //for better user control
             //case PatchLevel.high:
-                //return PatchLevel.random;
+            //    return PatchLevel.low; //for better user control
+            case PatchLevel.high:
+                return PatchLevel.random;
         }
         return PatchLevel.random;
     }

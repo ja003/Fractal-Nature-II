@@ -72,7 +72,7 @@ public class TerrainGenerator
     public bool debugRmax = false;
     public bool debugNoise = false;
 
-    public float terrainBrightness = -0.1f;
+    public float terrainBrightness = 0f;
 
 
     //------/PATCH PARAMETERS-----
@@ -100,7 +100,7 @@ public class TerrainGenerator
             Debug.Log("TerrainPlanner not found"); 
             //pm = new PatchManager(patchSize);
             gtp = new GUIterrainPatch(patchSize);
-            //gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
+            gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
             pm = gtp.pm;
             
             extraPatchCount = 0;
@@ -292,7 +292,7 @@ public class TerrainGenerator
                                 Debug.Log(x + "," + z);
                                 Debug.Log(i);
                             }
-                            Debug.Log(x + "," + z);
+                            //Debug.Log(x + "," + z);
 
                             Vertex patchC = gm.GetGridCoordinates(new Vertex(x, z));
                             Debug.Log(patchC);
@@ -302,9 +302,9 @@ public class TerrainGenerator
                             rMax = pm.rMax.GetValue(_x, _z, 1);
                             noise = pm.noise.GetValue(_x, _z, 2);
 
-                            Debug.Log(rMin);
-                            Debug.Log(rMax);
-                            Debug.Log(noise);
+                            //Debug.Log(rMin);
+                            //Debug.Log(rMax);
+                            //Debug.Log(noise);
 
                             /*rMin = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMin);
                             rMax = pm.GetNeighbourAverage(_x, _z, PatchInfo.rMax);
@@ -876,7 +876,11 @@ public class TerrainGenerator
             valueRange = 1;
         float minusValue = 0;
         if (globalTerrain.globalTerrainC.globalMin < 0)
-            minusValue = -globalTerrain.globalTerrainC.globalMin;
+            minusValue = Mathf.Abs(globalTerrain.globalTerrainC.globalMin);
+        //Debug.Log("----");
+        //Debug.Log(minusValue);
+        //Debug.Log(valueRange);
+        valueRange += terrainBrightness;
 
         //Rebuild mesh data
         for (int i = 0; i < 2; i++)
@@ -888,6 +892,9 @@ public class TerrainGenerator
                 {
                     for (int x = 0; x < individualMeshWidth; x++)
                     {
+
+                        Vertex gc = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);//global coord
+                        Vertex glob_grid_c = gm.GetRealCoordinates(gm.GetGridCoordinates(gc));
 
                         //Set output vertices
                         verticesOut[meshIndex][(z * individualMeshHeight) + x] = vertices[x + individualMeshWidth * j - j, z + individualMeshHeight * i - i];
@@ -905,29 +912,47 @@ public class TerrainGenerator
                         //float this_color = vertices[x + individualMeshWidth * j, z + 
                         //individualMeshHeight * i].y;
                         float this_color = 666;
-                        if(debugHeightmap)
-                            this_color= Mathf.Clamp(((vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
-                            +minusValue)/valueRange) + terrainBrightness, 0.1f, 0.9f);
-
-                        Vertex c = localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshWidth);
-                        if(debugRmin)
-                            this_color = Mathf.Clamp((pm.GetValue(c.x, c.z, PatchInfo.rMin) + Mathf.Abs(rMin_min) ) / (rMin_max - rMin_min) + terrainBrightness, 0,1);
-                            //this_color = (pm.rMin.GetValue(c.x, c.z) -rMin_min) / (rMin_max - rMin_min) +terrainBrightness;
-                        //this_color = pm.rMin.GetValue(c.x, c.z) + (- rMin_min);
-                        if (debugRmax)
-                            this_color = Mathf.Clamp((pm.GetValue(c.x, c.z, PatchInfo.rMax))/ (rMax_max - rMax_min) + terrainBrightness, 0,1);
-                        if (debugNoise)
-                            this_color = Mathf.Clamp((pm.GetValue(c.x, c.z, PatchInfo.noise)) / (noise_max - noise_min) + terrainBrightness,0,1);
-
-
-                        if (counter < 10 && (this_color < 0 || this_color > 1) && this_color < 50)
+                        if (debugHeightmap)
                         {
+                            this_color = Mathf.Clamp(((vertices[x + j * individualMeshWidth, z + i * individualMeshWidth].y
+                            + minusValue) / valueRange) + terrainBrightness, 0.1f, 0.9f);
 
-                            //Debug.Log(localTerrain.GetGlobalCoordinate(x + j * individualMeshWidth, z + i * individualMeshHeight) + ":" + this_color);
-                            counter++;
+                            this_color = localTerrain.lm.GetCurrentHeight(gc.x, gc.z);
+                                //localTerrain.GetLocalHeight(x + j * individualMeshWidth, z + i * individualMeshWidth);
+                            this_color += minusValue;
+                            this_color += terrainBrightness;
+                            this_color /= valueRange;
                         }
-                        
-                        heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                        else if (debugRmin || debugRmax || debugNoise)
+                        {
+                            this_color = Mathf.Clamp((pm.GetValue(gc.x, gc.z, PatchInfo.rMin) + Mathf.Abs(rMin_min)) / (rMin_max - rMin_min) + terrainBrightness, 0, 1);
+
+                            this_color = pm.patchLevel.GetValue(glob_grid_c.x, glob_grid_c.z, 0);
+                            this_color += 1;
+                            this_color /= 3;
+                        }
+                        /*else if (debugRmax)
+                            this_color = Mathf.Clamp((pm.GetValue(gc.x, gc.z, PatchInfo.rMax))/ (rMax_max - rMax_min) + terrainBrightness, 0,1);
+                        else if (debugNoise)
+                            this_color = Mathf.Clamp((pm.GetValue(gc.x, gc.z, PatchInfo.noise)) / (noise_max - noise_min) + terrainBrightness,0,1);
+                            */
+                        /*
+                        if(gc.x == 0 && gc.z == 0)
+                        {
+                            Debug.Log(gc);
+                            Debug.Log(this_color);
+                        }
+                        if (gc.x == 64 && gc.z == 0)
+                        {
+                            Debug.Log(gc);
+                            Debug.Log(this_color);
+                        }*/
+
+                        int local_x = x + individualMeshWidth * j;
+                        int local_z = z + individualMeshHeight * i;
+
+                        if (!colorMode)
+                            heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
                             new Color(this_color, this_color, this_color));
                         
 
@@ -936,21 +961,31 @@ public class TerrainGenerator
                             float secondary = this_color / 2;
                             if (secondary < 0.1)
                                 secondary = 0.1f;
-                            if (this_color < 0.33f)
+                            if(this_color < 0.1)//random
                             {
-                                if (this_color < 0.1)
-                                    this_color = 0.1f;
-                                heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                                this_color = 0.1f;
+                                heightMap.SetPixel(local_x, local_z,
+                            new Color(this_color, this_color, this_color));
+                            }
+                            else if (this_color <= 0.34f)//low
+                            {
+                                heightMap.SetPixel(local_x, local_z,
                             new Color(secondary, secondary, this_color));
                             }
-                            else if (this_color < 0.66f)
+                            else if (this_color <= 0.67f)//medium
                             {
-                                heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                                heightMap.SetPixel(local_x, local_z,
                             new Color(secondary, this_color, secondary));
                             }
-                            else if (this_color < 1.1f)
-                            {
-                                heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
+                            else //high
+                            {/*
+                                if(counter < 10)
+                                {
+                                    counter++;
+                                    Debug.Log("-----");
+                                    Debug.Log(this_color);
+                                }*/
+                                heightMap.SetPixel(local_x, local_z,
                             new Color(this_color, secondary, secondary));
                             }
                         }

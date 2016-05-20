@@ -1,0 +1,7 @@
+Mesh builder
+
+- added possibility to leave random patch value
+- fixed grid coordinates getter
+- upgraded mesh coloring
+- removed rMin, rMax and noise debuging
+-- replaced with "patch level"

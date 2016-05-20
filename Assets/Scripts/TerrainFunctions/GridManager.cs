@@ -50,8 +50,8 @@ public class GridManager {
     /// </summary>
     public Vertex GetGridCoordinates(Vertex point)
     {
-        int x = point.x / stepX;
-        int z = point.z / stepZ;
+        int x = Mathf.RoundToInt((float)point.x / stepX);
+        int z = Mathf.RoundToInt((float)point.z / stepZ);
         return new Vertex(x, z);
     }
 

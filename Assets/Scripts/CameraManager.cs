@@ -38,7 +38,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
         //TODO: terrainWidth has to be same as terrainHeight (only due to mesh construction error)
         terrainWidth = 100; 
-        terrainHeight = 100;
+        terrainHeight = terrainWidth;
 
         try
         {
