@@ -56,21 +56,7 @@ public class GUIDebug {
             gm.cm.terrainGenerator.build();
         }
         yPos += buttonHeight + 5;
-        /*
-        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "rMax"))
-        {
-            ChangeDebugMode(DebugMode.rMax);
-            gm.cm.terrainGenerator.build();
-        }
-        yPos += buttonHeight + 5;
-
-        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, menuWidth - 3 * rightMenuOffset, buttonHeight), "noise"))
-        {
-            ChangeDebugMode(DebugMode.noise);
-            gm.cm.terrainGenerator.build();
-        }
-        yPos += buttonHeight + 5;
-        */
+        
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight),"brightness");
 
         brightness = GUI.HorizontalSlider(new Rect(
@@ -131,6 +117,7 @@ public class GUIDebug {
 
         GUI.Label(new Rect(Screen.width - menuWidth + 6 * sideOffset, yPos, buttonWidth, buttonHeight), "default terrain");
         yPos += buttonHeight;
+        //removed for now because of bad performance
         /*if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "gradientX_LR"))
         {
             terrainSize = gm.cm.localTerrain.terrainWidth;

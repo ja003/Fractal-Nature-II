@@ -61,7 +61,6 @@ public class FunctionRiverDigger {
     {
         for (int i = 1; i < path.Count - 1; i++)
         {
-            //Debug.Log(path[i] + " => ");
             //do not disturb if nodes are too close to each other
             if(!(Vector3.Distance(path[i], path[i-1]) < (gridStep/2) ||
                 Vector3.Distance(path[i], path[i + 1]) < (gridStep / 2)))
@@ -83,49 +82,9 @@ public class FunctionRiverDigger {
                 }
                 v.Rewrite((int)(v.x + d * normal.x), (int)(v.z + d * normal.z), v.height);
             }
-            //Debug.Log(path[i]);
         }
     }
-
-
-    /// <summary>
-    /// function for determine "strength" of each river path nodes
-    /// </summary>
-    /*public List<float> AssignWidthToPoints(List<Vertex> path, float minWidth)
-    {
-        List<float> sumOfPointNeighb = new List<float>();
-        float totalSum = 0;
-        float maxSum = 0;
-        foreach (Vertex v in path)
-        {
-            sumOfPointNeighb.Add(ftm.GetSumFromNeighbourhood(v.x, v.z, 2 * (int)minWidth));
-            totalSum += sumOfPointNeighb[path.IndexOf(v)]; 
-            if(sumOfPointNeighb[path.IndexOf(v)] > maxSum){
-                maxSum = sumOfPointNeighb[path.IndexOf(v)];
-            }           
-        }
-        float averageSum = totalSum / sumOfPointNeighb.Count;
-
-        List<float> finalWidthValues = new List<float>();
-        //Debug.Log("-------------");
-        foreach (float f in sumOfPointNeighb)
-        {
-            float value = 0;
-            value = minWidth + minWidth / 2 * (maxSum - f) / maxSum;
-            if (Double.IsPositiveInfinity(value) && counter<10) //TODO: fix assigning maxSum...shouldnt start with 0
-            {
-                value = minWidth;
-                Debug.Log(f + "/" + maxSum + " IsPositiveInfinity");
-                counter++;
-            }
-            finalWidthValues.Add(value);
-        }
-        
-        return finalWidthValues;
-    }
-    */
-
-
+    
     private float GetLocalWidth(Vertex point, Vertex v1, Vertex v2,float w1,float w2)
     {
         if (v1.CoordinatesEquals(v2))
@@ -368,26 +327,8 @@ public class FunctionRiverDigger {
             return -depth;
         }
         double r = -(depth/ Math.PI) * (Math.Sin(x * Math.PI / width) / x) * width;
-        /*
-        if(counter < 10)
-        {
-            Debug.Log(x + "," + width + "," + depth + " = " + r);
-            counter++;
-        }*/
-
-        /*if (Double.IsNaN(r) && counter < 10)
-        {
-            Debug.Log("NaN");
-            counter++;
-        }*/
+        
         return (float)r;
-        /*
-        return (float)(-
-            (depth/Math.PI)
-            *Math.Sin((x / (width* widthFactor / Math.PI)))
-            /(x / Math.PI))
-            *(float)(width* widthFactor / Math.PI);
-            */
     }
 
     private float MyArctan(float x, float width, float depth)

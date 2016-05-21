@@ -2,7 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-//using UnityEditor;
+using System;
+#if UNITY_EDITOR
+using UnityEngine;
+#endif
 
 
 public class GUIExport {
@@ -79,25 +82,14 @@ public class GUIExport {
             {
                 path = "";
                 // "C:\\Users\\Vukmir\\Desktop\\obj"; //personal default path
-                // EditorUtility.SaveFolderPanel("Select destination","","");
+                path = UnityEditor.EditorUtility.SaveFolderPanel("Select destination","","");
                 //  --- can't be used outside of UNITY
             }
             yPos2 += buttonHeight / 2 + 2;
             GUI.Label(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth/2, buttonHeight/2),"name: ");
             name = GUI.TextArea(new Rect(Screen.width - menu2Width + buttonWidth/2, yPos2, buttonWidth/2, buttonHeight / 2), name);
             
-
-
-            /*
-            yPos2 += buttonHeight/2 + 2;
-            exportTerrain = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight/2), gm.onFlyGeneration, "  terrain");
-            yPos2 += buttonHeight / 2 + 2;
-
-            exportRiver = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight / 2), gm.onFlyGeneration, "  river");
-            yPos2 += buttonHeight / 2 + 2;
-
-            exportFilter = GUI.Toggle(new Rect(Screen.width - menu2Width + sideOffset, yPos2, menuWidth - rightMenuOffset, buttonHeight / 2), gm.onFlyGeneration, "  filter");
-            */
+            
             yPos2 += buttonHeight / 2 + 3;
             
             if (GUI.Button(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight), "EXPORT"))
@@ -155,9 +147,20 @@ public class GUIExport {
             ObjExporter.TerrainToFile(gm.cm.layerManager, layers, path + "\\" + name + ".obj");
             gm.message.ShowMessage("TERRAIN EXPORTED", 5*30);
         }
-        catch(System.UnauthorizedAccessException e)
+        catch (Exception ex)
         {
-            gm.message.ShowMessage("terrain could not be saved \n UnauthorizedAccessException", 5*30);
+            if (ex is UnauthorizedAccessException)
+            {
+                gm.message.ShowMessage("terrain could not be saved \n UnauthorizedAccessException", 5 * 30);
+            }
+            else if (ex is DirectoryNotFoundException)
+            {
+                gm.message.ShowMessage("terrain could not be saved \n directory was not found", 5 * 30);
+            }
+            else
+            {
+                gm.message.ShowMessage("terrain could not be saved \n" + ex.GetType(), 5 * 30);
+            }
         }
 
 

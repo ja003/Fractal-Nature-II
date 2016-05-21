@@ -7,8 +7,6 @@ public class DiamondSquare
     int[] indices;
 
     Random random;
-    //int noise = 2;
-    //int gridSize = 257;
     int seed = 0;
     
     LocalTerrain lt;
@@ -64,32 +62,12 @@ public class DiamondSquare
     /// </summary>
     public void SetLocalHeight(int x, int z, float value, bool overwrite)
     {
-        /*if(counter < 10 && Double.IsNaN(value))
-        {
-            counter++;
-            UnityEngine.Debug.Log(x + "," + z);
-            UnityEngine.Debug.Log(rMin);
-            UnityEngine.Debug.Log(rMax);
-            UnityEngine.Debug.Log(noise);
-        }*/
         if (Double.IsNaN(value))
             value = 0;
 
         lt.SetLocalHeight(x, z, value, overwrite);
     }
-
-    /*
-    public void SetLocalHeight(int x, int z)
-    {
-        float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(0, 0, closestPeaks)) / maxDistance;
-        float value = RandRange(rand, rMin * lowFactor, rMax * highFactor);
-        bool overwrite = false;
-        //value = 1;
-        if (debugPeaks)
-            SetLocalHeight(0, 0, factor, overwrite); //DEBUG PEAKS
-        SetLocalHeight(0, 0, value * factor, overwrite);
-    }*/
-
+    
     float maxDistance = 128;
 
 
@@ -124,17 +102,6 @@ public class DiamondSquare
             distance = 0;
         return distance;
     }
-    /*
-    private int LocalX(int x)
-    {
-        return x + (lt.terrainWidth / 2 - patchSize / 2);
-    }
-
-    private int LocalZ(int z)
-    {
-        return z + (lt.terrainHeight / 2 - patchSize / 2);
-    }
-    */
     /// <summary>
     /// set corners based on neighbouring values
     /// if neighbourhood is not defined, values are random
@@ -144,11 +111,6 @@ public class DiamondSquare
         float neighbourhood = 666;
         float factor = 666;
         float value = 666;
-
-        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(0, 0));
-        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(s, 0));
-        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(0, s));
-        //UnityEngine.Debug.Log("setting: " + lt.GetGlobalCoordinate(s, s));
 
         float rMinTop = 666;
         float rMinRight = 666;
@@ -398,31 +360,10 @@ public class DiamondSquare
             highFactor = lowFactor;
         else
             lowFactor = highFactor;
-
-        if (counter < 10 && (lowFactor > 1 || highFactor > 1))
-        {
-            //UnityEngine.Debug.Log(factor);
-            //UnityEngine.Debug.Log(GetSmallestDistanceToPeak(x, z, closestPeaks));
-            //UnityEngine.Debug.Log(lowFactor);
-            //UnityEngine.Debug.Log(highFactor);
-
-            counter++;
-        }
-
-        //modNoise *= (float)Math.Sqrt(factor);
-        float minNoise = -modNoise * lowFactor;// + (float)Math.Sqrt(factor);
-        float maxNoise = modNoise * highFactor;// + (float)Math.Sqrt(factor);
-        /*if(counter < 10)
-        {
-            counter++;
-            UnityEngine.Debug.Log(modNoise);
-            UnityEngine.Debug.Log(rMin);
-            UnityEngine.Debug.Log(rMax);
-        }*/
-
-
-        //minNoise = rMin/10 * modNoise;
-        //maxNoise = rMax/10 * modNoise;
+        
+        
+        float minNoise = -modNoise * lowFactor;
+        float maxNoise = modNoise * highFactor;
 
         float height = initValue + RandRange(rand, minNoise, maxNoise);
         
@@ -435,24 +376,6 @@ public class DiamondSquare
 
         float modNoise = modNoiseOrig;// = modNoiseOrig * factor;
         modNoise *= (float)Math.Sqrt(Math.Abs(factor));
-        //if ((x > 10 && x <= 30))
-        //{
-        //    modNoise += factor;
-        //}
-        if (x < 64)
-        {
-            //modNoise /= (2*factor*factor);
-            //modNoise -= factor;
-            //if (modNoise < 0)
-                //modNoise = 0;
-        }
-        /*if(counter < 5)
-        {
-            counter++;
-            UnityEngine.Debug.Log(factor);
-            UnityEngine.Debug.Log(modNoise);
-        }*/
-
         return modNoise;
     }
 

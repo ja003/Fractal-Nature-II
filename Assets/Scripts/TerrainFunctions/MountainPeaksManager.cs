@@ -17,21 +17,7 @@ public class MountainPeaksManager {
         mountainPeaks.InitializePeaks(20);
         //Debug.Log(mountainPeaks);
     }
-
-    /// <summary>
-    /// generates new peaks in given neighbourhood
-    /// </summary>
-    /*public void GeneratePeaks(int x, int z)// shouldnt be neccessary
-    {
-        MountainPeaks peaks = new MountainPeaks(x, z, 
-            gridManager.GetPointAreaOnGrid(gridManager.GetRealCoordinates(new Vector3(x, 0, z))));
-        peaks.GeneratePeaks();
-
-        UpdateNeighbourhood(x, z, peaks.peaks);
-        
-
-        //Debug.Log("generated: " + peaks);
-    }*/
+    
 
     /// <summary>
     /// when new peak is added, neighbouring peaks have to be updated 
@@ -47,18 +33,13 @@ public class MountainPeaksManager {
         {
             for (int z = _z - 1; z <= _z + 1; z++)
             {
-                //Debug.Log(peaks);
-                //Debug.Log(mountainPeaks);
                 mountainPeaks.GetValue(x, z).AddPeaks(peaks);
-                //Debug.Log(mountainPeaks.GetValue(x, z));
-                //mountainPeaks.UpdateValue(x, z, peaks);
             }
         }
     }
 
     /// <summary>
     /// returns closest peak from neigbouring areas
-    /// TODO: make constant 
     /// </summary>
     public List<Vertex> GetClosestPeaks(Vector3 center)
     {
@@ -66,8 +47,7 @@ public class MountainPeaksManager {
         List<Vertex> closestPeaks = new List<Vertex>();
         int x = centerCoordOnGrid.x;
         int z = centerCoordOnGrid.z;
-
-        //if (mountainPeaks.IsDefined(x, z))        
+       
         closestPeaks.AddRange(mountainPeaks.GetValue(x-1, z-1).peaks);
         closestPeaks.AddRange(mountainPeaks.GetValue(x-1, z).peaks);
         closestPeaks.AddRange(mountainPeaks.GetValue(x-1, z+1).peaks);
@@ -80,44 +60,8 @@ public class MountainPeaksManager {
         if (closestPeaks.Count == 0)
         {
             Debug.Log("!");
-            //closestPeaks.Add(new Vertex(0, 0));
             closestPeaks.Add(center);
         }
-        //closestPeaks.Add(mountainPeaks.GetValue(x, z).peaks[0]);
-
-        /*
-        if (!mountainPeaks.IsDefined(x - 1, z - 1))
-            GeneratePeaks(x - 1, z - 1);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x - 1, z - 1).peaks);
-        if (!mountainPeaks.IsDefined(x, z - 1))
-            GeneratePeaks(x, z - 1);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x, z - 1).peaks);
-        if (!mountainPeaks.IsDefined(x + 1, z - 1))
-            GeneratePeaks(x + 1, z - 1);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x + 1, z - 1).peaks);
-
-
-        if (!mountainPeaks.IsDefined(x - 1, z))
-            GeneratePeaks(x - 1, z);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x - 1, z).peaks);
-        if (!mountainPeaks.IsDefined(x, z))
-            GeneratePeaks(x, z);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x, z).peaks);
-        if (!mountainPeaks.IsDefined(x + 1, z))
-            GeneratePeaks(x + 1, z);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x + 1, z).peaks);
-
-
-        if (!mountainPeaks.IsDefined(x - 1, z + 1))
-            GeneratePeaks(x - 1, z + 1);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x - 1, z + 1).peaks);
-        if (!mountainPeaks.IsDefined(x, z + 1))
-            GeneratePeaks(x, z + 1);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x, z + 1).peaks);
-        if (!mountainPeaks.IsDefined(x + 1, z + 1))
-            GeneratePeaks(x + 1, z + 1);
-        closestPeaks.AddRange(mountainPeaks.GetValue(x + 1, z + 1).peaks);
-        */
         return closestPeaks;
     }
 }

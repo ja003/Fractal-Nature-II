@@ -60,7 +60,6 @@ public class GaussianFilter {
                                 float value;
                                 if (!lt.globalTerrainC.IsDefined(x + m, z + n))
                                     definedNeighb = false;
-                                //value = centerVal;
                                 value = lt.lm.GetCurrentHeight(x + m, z + n);
                                 sum += value * kernel[m + half_step, n + half_step];
                             }

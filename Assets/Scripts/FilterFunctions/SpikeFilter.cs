@@ -24,7 +24,6 @@ public class SpikeFilter {
 
     public void GenerateSpikeFilterInRegion(Area region, float epsilon)
     {
-        //Debug.Log("spikes on " + region + " with " + epsilon);
 
         int x_min = region.botLeft.x;
         int z_min = region.botLeft.z;
@@ -42,7 +41,7 @@ public class SpikeFilter {
                     float average = lt.gt.GetNeighbourAverage(x, z, 2);
                     if (average != 666)
                     {
-                        float height = lt.lm.GetCurrentHeight(x, z);// lt.gt.GetHeight(x, z);
+                        float height = lt.lm.GetCurrentHeight(x, z);
 
                         if (height < average - epsilon)
                             fg.SetGlobalValue(x, z, height - (average - epsilon), false, globalFilterSpikeC);

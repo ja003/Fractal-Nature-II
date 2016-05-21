@@ -77,18 +77,7 @@ public class GUIterrainPlanner : MonoBehaviour
             patch.UpdatePatchSize(128);
         }
         yPos += buttonHeight;
-        /*
-        // 256x256 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "256x256"))
-        {
-            patch.UpdatePatchSize(256);
-        }
 
-        // 512x512 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2 * sideOffset, yPos, buttonWidth, buttonHeight), "512x512"))
-        {
-            patch.UpdatePatchSize(512);
-        }*/
         GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2*buttonWidth, buttonHeight), "estimated time: " + GetTimeEstimate(patch.patchSize,(int)Mathf.Pow(3+2*(int)extraPatches, 2)) + " sec");
 
         yPos += buttonHeight;

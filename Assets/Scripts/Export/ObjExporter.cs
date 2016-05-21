@@ -78,12 +78,6 @@ public class ObjExporter
                 sb.Append(string.Format("f {0} {1} {2} {3}\n", x*h+z+1, x*h+z+2, x*h+h+z+2, x*h+h+z+1));
             }
         }
-
-        /*
-        for(int i = 1; i < 20*20 - 20; i++)
-        {
-            sb.Append(string.Format("f {0} {1} {2} {3}\n", i, i+1, i + 21, i + 20));
-        }*/
         
         return sb.ToString();
     }

@@ -146,43 +146,7 @@ public class FunctionMathCalculator {
         vertex.side = Direction.none;
         return borderVertex;        
     }
-
-    /// <summary>
-    /// assignes values to boundaries
-    /// boundaries starts on starting point and ends on opposite side of the reached side
-    /// </summary>
-    /// MAYBE OBSOLETE
-    /*public void DetermineBoundaries(Vertex start, RiverInfo river,
-         ref int x_min, ref int z_min, ref int x_max, ref int z_max)
-    {
-        //Debug.Log("FROM");
-        //Debug.Log(x_min);
-        //Debug.Log(z_min);
-        //Debug.Log(x_max);
-        //Debug.Log(z_max);
-
-        if (river.reachTop)
-        {
-            z_max = start.z;
-        }
-        else if (river.reachRight)
-        {
-            x_max = start.x;
-        }
-        else if (river.reachBot)
-        {
-            z_min = start.z;
-        }
-        else if (river.reachBot)
-        {
-            x_min = start.x;
-        }
-        //Debug.Log("TO");
-        //Debug.Log(x_min);
-        //Debug.Log(z_min);
-        //Debug.Log(x_max);
-        //Debug.Log(z_max);
-    }*/
+    
 
     public Direction GetOppositeDirection(Direction direction)
     {
@@ -453,30 +417,6 @@ public class FunctionMathCalculator {
     /// </summary>
     public Area CalculateRestrictedArea(Vertex point)
     {
-        /*
-        Vector3 botLeft = lt.GetBotLeft();
-        Vector3 topRight= lt.GetTopRight();
-        
-        switch (point.side)
-        {
-            case Direction.top:
-                botLeft = new Vector3(lt.GetBotLeft().x, 0, point.z);
-                topRight = lt.GetTopRight();
-                break;
-            case Direction.right:
-                botLeft = new Vector3(point.x, 0, lt.GetBotLeft().z);
-                topRight = lt.GetTopRight();
-                break;
-            case Direction.bot:
-                botLeft = lt.GetBotLeft();
-                topRight = new Vector3(lt.GetTopRight().x, 0, point.z);
-                break;
-            case Direction.left:
-                botLeft = lt.GetBotLeft();
-                topRight = new Vector3(point.x, 0, lt.GetTopRight().z);
-                break;
-        }*/
-
         Vector3 botLeft = lt.globalTerrainC.definedArea.botLeft;
         Vector3 topRight = lt.globalTerrainC.definedArea.topRight;
         Area definedArea = lt.globalTerrainC.definedArea;

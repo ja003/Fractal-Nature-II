@@ -103,13 +103,7 @@ public class GUIMesh {
             UpdateScaleY(scaleY);
         }
         yPos += buttonHeight;
-
-        /*
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightOffset, 65), " ");
-        if (GUI.Button(new Rect(Screen.width - menuWidth + 10, offset + 5, menuWidth - rightOffset - 20, 35), "EXPORT MESH"))
-        {
-
-        }*/
+        
     }
 
     /// <summary>

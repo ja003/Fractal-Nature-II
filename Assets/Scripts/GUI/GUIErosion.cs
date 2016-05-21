@@ -189,21 +189,7 @@ public class GUIErosion {
                     menuWidth - sideOffset - buttonWidth - 5,
                     buttonHeight), erosionStrength, 0, 0.2f);
             yPos += buttonHeight;
-
-            /*GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "deposition");
-            deposition = GUI.HorizontalSlider(new Rect(
-                    Screen.width - menuWidth + buttonWidth, yPos + 5,
-                    menuWidth - sideOffset - buttonWidth - 5,
-                    buttonHeight), deposition, 0, 0.2f);
-            yPos += buttonHeight;
-
-            GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "viscosity");
-            viscosity = GUI.HorizontalSlider(new Rect(
-                    Screen.width - menuWidth + buttonWidth, yPos + 5,
-                    menuWidth - sideOffset - buttonWidth - 5,
-                    buttonHeight), viscosity, 0, 0.2f);
-            yPos += buttonHeight;
-            */
+            
             GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "evaporation");
             evaporation = GUI.HorizontalSlider(new Rect(
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
@@ -246,9 +232,7 @@ public class GUIErosion {
                     menuWidth - sideOffset - buttonWidth - 5,
                     buttonHeight), windStrength, 0, 100);
             yPos += buttonHeight;
-
-            /*GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "angle: " + (int)(90 * windAngle) + "." +
-                Mathf.Abs((int)((90 * windAngle - (int)(90 * windAngle)) * 100)));*/
+            
             GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "effect: ");
 
             //renamed to "effect" because "windAngle" is not very intuitive

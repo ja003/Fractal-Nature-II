@@ -39,8 +39,6 @@ public class GlobalCoordinates {
     /// returns value on given coordinates (666 = undefined)
     /// heighmaps are stored in 4 quadrants
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
     /// <returns>height value at given coordinates</returns>
     public float GetValue(int x, int z)
     {
@@ -180,11 +178,6 @@ public class GlobalCoordinates {
     public bool IsDefined(int x, int z)
     {
         return IsDefinedArea(x, z, 0);
-        /*
-        if (GetValue(x, z) == 666)
-            return false;
-        else
-            return true;*/
     }
 
     /// <summary>

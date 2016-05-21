@@ -32,6 +32,14 @@ public class GUIMessage {
     }
 
     /// <summary>
+    /// shows message for 3 sec
+    /// </summary>
+    public void ShowMessage(string message)
+    {
+        ShowMessage(message, 100);
+    }
+
+    /// <summary>
     /// shows message for 'duration' number of frames
     /// </summary>
     public void ShowMessage(string message, int duration)

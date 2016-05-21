@@ -61,8 +61,7 @@ public class LocalTerrain {
 
         if (!fg.ftm.IsDefinedTerrainArea(GetVisibleArea()))
         {
-            //Debug.Log(GetVisibleArea() + " not defined!");
-            tg.GenerateTerrainOn(localTerrainC.center, defaultTerrain); //localCoordinates.botLeft, localCoordinates.topRight);
+            tg.GenerateTerrainOn(localTerrainC.center, defaultTerrain); 
 
             //connect river (if it has been generated)
             if (!defaultTerrain)
@@ -73,13 +72,6 @@ public class LocalTerrain {
                     rg.GenerateConnectingRiver(river);
                 }
             }
-            /*
-            if (rg.currentRiver != null && rg.currentRiver.riverPath.Count > 0)
-            {
-
-                Debug.Log("connection river");
-                rg.GenerateConnectingRiver();
-            }*/
         }
 
         //generate filter if selected
@@ -286,24 +278,4 @@ public class LocalTerrain {
     {
         return new Area(GetBotLeft(), GetTopRight());
     }
-    /*
-    public void PrintValues(int from, int to)
-    {
-        for(int x = from; x < to; x++)
-        {
-            for (int z = from; z < to; z++)
-            {
-                Debug.Log(x + "," + z + ": " + visibleTerrain[x, z] + "/" + GetLocalHeight(x, z));
-
-            }
-        }
-    }*/
-    /*
-    public void SetHeight(int x, int z, float height, bool overwrite)
-    {
-        if (!overwrite && GetLocalHeight(x, z) != 666)
-            return;
-
-        visibleTerrain[x, z] = height;
-    }*/
 }

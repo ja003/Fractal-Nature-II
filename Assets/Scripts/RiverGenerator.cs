@@ -111,12 +111,7 @@ public class RiverGenerator  {
 
     public void GenerateNewRiver(float width, float areaEffect, float depth, int gridStep)
     {
-
-        //Vertex start = ftm.GetLowestRegionCenter(20, 20);//LOCAL!
-        //Vertex globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
         Vertex globalStart = ftm.GetLowestRegionCenter(20, 50);//now GLOBAL
-        Debug.Log(globalStart);
-        //Debug.Log(ftm.lm);
 
         if(globalStart.height > riverLevel)
         {
@@ -128,7 +123,6 @@ public class RiverGenerator  {
         //globalStart.height = start.height;
         
         RiverInfo river = frp.GetRiverFrom(globalStart, new List<Direction>(), gridStep, forceRiverGeneration);
-        Debug.Log(river);
         if (river.riverPath.Count == 0)
         {
             ShowErrorMessage("river path finding failed \n" + river.errorMessage);
@@ -145,7 +139,6 @@ public class RiverGenerator  {
         // 2)find second path
         //Debug.Log(restrictedArea);
         RiverInfo river2 = frp.GetRiverFrom(globalStart, reachedSides, restrictedArea, river, river.gridStep, forceRiverGeneration);
-        Debug.Log(river2);
 
         if(river2.riverPath.Count == 0)
         {
@@ -156,14 +149,6 @@ public class RiverGenerator  {
         // connect them
         river.ConnectWith(river2);
         river.DrawRiver();
-
-        Debug.Log(river);
-
-        Debug.Log(riverGui);
-        Debug.Log(riverGui.riverFlags);
-        Debug.Log(rivers);
-
-
         AddRiver(river);
 
         frd.DistortPath(river.riverPath, river.gridStep/3, river.gridStep);
@@ -173,8 +158,6 @@ public class RiverGenerator  {
         river.depth = depth;
         
         frd.DigRiver(rivers[rivers.Count - 1]);
-
-        Debug.Log("distorted: " + river);
     }
 
     /// <summary>
@@ -216,33 +199,18 @@ public class RiverGenerator  {
             }
 
             frd.DistortPath(startRiver.riverPath, startRiver.gridStep/3, startRiver.gridStep);
-            //Debug.Log("startRiver:" + startRiver);
+
             river.ConnectWith(startRiver);
-            //Debug.Log(river);
 
             startPoint.side = Direction.none;
             
-            //frd.DigRiver(startRiver.riverPath);
-        }
-        else
-        {
-            //Debug.Log(startPoint + " OUT [START]");
-            //Debug.Log(lt.localTerrainC.botLeft + ", " + lt.localTerrainC.topRight);
         }
 
         Vertex endPoint = river.GetLastVertex();
-        //direction of river might have been changed
-        /*if(!ftm.IsInVisibleterrain(endPoint) && ftm.IsOnBorder(endPoint))
-        {
-            endPoint = river.riverPath[0];
-        }*/
-
-        //if (ftm.IsInVisibleterrain(endPoint) && !ftm.IsOnBorder(endPoint))
+        
         if (ftm.IsInDefinedTerrain(endPoint) && !ftm.IsOnBorder(endPoint))
         {
             Area restrictArea = fmc.CalculateRestrictedArea(endPoint);
-            //Debug.Log("connection river from end: " + endPoint);
-            //Debug.Log("ON: " + restrictArea);
 
             List<Direction> reachedSides = new List<Direction>();
             reachedSides.Add(fmc.GetOppositeDirection(endPoint.side));
@@ -255,21 +223,11 @@ public class RiverGenerator  {
             }
 
             frd.DistortPath(endRiver.riverPath, endRiver.gridStep / 3, endRiver.gridStep);
-            //Debug.Log("endRiver:" + endRiver);
+
             river.ConnectWith(endRiver);
 
             endPoint.side = Direction.none;
-            
-            //frd.DigRiver(endRiver.riverPath);
         }
-        else
-        {
-            //Debug.Log(endPoint + " OUT [END]");
-            //Debug.Log(lt.localTerrainC.botLeft + ", " + lt.localTerrainC.topRight);
-
-        }
-
-        //Debug.Log("connected river:" + river);
 
         frd.DigRiver(river);
     }
@@ -331,11 +289,5 @@ public class RiverGenerator  {
     {
         rivers = new List<RiverInfo>();
         riverGui.riverFlags = new List<bool>();
-        /*for(int i = rivers.Count - 1; i >= 0; i--)
-        {
-            Debug.Log("remove: " + i);
-            rivers.RemoveAt(i);
-        }*/
-        //globalRiverC.ResetQuadrants();
     }
 }

@@ -171,17 +171,6 @@ public class PatchManager {
         rMin.SetValue(center.x, center.z, rMinV);
         rMax.SetValue(center.x, center.z, rMaxV);
         noise.SetValue(center.x, center.z, noiseV);
-        /*
-        for (int x = center.x - patchSize / 2; x <= center.x + patchSize / 2; x++)
-        {
-            for (int z = center.z - patchSize / 2; z <= center.z + patchSize / 2; z++)
-            {
-                rMin.SetValue(x, z, rMinV);
-                rMax.SetValue(x, z, rMaxV);
-                this.noise.SetValue(x, z, noise);
-                
-            }
-        }*/
     }
 
     /// <summary>

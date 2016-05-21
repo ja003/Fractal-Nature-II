@@ -45,7 +45,6 @@ public class ThresholdFilter {
                     if (height < minThreshold)
                     {
                         fg.SetGlobalValue(x, z, -Mathf.Log(Mathf.Abs(height - minThreshold)+1, strength), false, globalMinThresholdC);
-                        //fg.SetGlobalValue(x, z, -Mathf.Sqrt(Mathf.Abs(height - minThreshold)), false, globalMinThresholdC);
                     }
                 }
             }
@@ -74,10 +73,6 @@ public class ThresholdFilter {
                     if (height > maxThreshold)
                     {
                         fg.SetGlobalValue(x, z, Mathf.Log(height - maxThreshold+1, strength), false, globalMaxThresholdC);
-                        /*if(height - maxThreshold > 1)
-                            fg.SetGlobalValue(x, z, Mathf.Sqrt(Mathf.Abs(height - maxThreshold)), false, globalMaxThresholdC);
-                        else
-                            fg.SetGlobalValue(x, z, height - maxThreshold, false, globalMaxThresholdC);*/
                     }
                 }
             }

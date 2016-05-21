@@ -155,11 +155,28 @@ public class CameraManager : MonoBehaviour, ICameraManager
         //generate terrain when camera gets close to border
         if(guiManager.onFlyGeneration && Get2dDistance(gameObject.transform.position, localTerrain.localTerrainC.center) > 70)
         {
-            //FixCameraPosition(); //no need now
-            //Debug.Log("moving to center: " + gameObject.transform.position);
             localTerrain.UpdateVisibleTerrain(gameObject.transform.position, false);
         }
 
+        if (Input.GetKey("m") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("mark axis");
+            terrainGenerator.markAxis = !terrainGenerator.markAxis;
+            terrainGenerator.build();
+            guiManager.message.ShowMessage("mark axis");
+            lastActionFrame = Time.frameCount;
+        }
+        if (Input.GetKey("n") && lastActionFrame < Time.frameCount - 30)
+        {
+            Debug.Log("draw rivers");
+            foreach (RiverInfo river in riverGenerator.rivers)
+            {
+                river.DrawRiver();
+            }
+            guiManager.message.ShowMessage("draw rivers");
+            lastActionFrame = Time.frameCount;
+        }
+        /*
         if (Input.GetKey("8") && lastActionFrame < Time.frameCount - 30)
         {
             FixCameraPosition();
@@ -171,16 +188,6 @@ public class CameraManager : MonoBehaviour, ICameraManager
             terrainGenerator.build();
             lastActionFrame = Time.frameCount;
         }
-
-
-        if (Input.GetKey("m") && lastActionFrame < Time.frameCount - 30)
-        {
-            Debug.Log("mark axis");
-            terrainGenerator.markAxis = !terrainGenerator.markAxis;
-            terrainGenerator.build();
-            lastActionFrame = Time.frameCount;
-        }
-
         if (Input.GetKey("u") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("delete water");
@@ -197,17 +204,12 @@ public class CameraManager : MonoBehaviour, ICameraManager
             hydraulicErosionStep = 1;
             erosionGenerator.he.DistributeWater(localTerrain.GetVisibleArea(), hydraulicErosionStep, 0.1f);
             terrainGenerator.build();
-
-            //Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
             lastActionFrame = Time.frameCount;
         }
         if (Input.GetKey("6") && lastActionFrame < Time.frameCount - 10)
         {
-            //Debug.Log("hydraulic erosion step " + hydraulicErosionStep);
             erosionGenerator.he.HydraulicErosionStep();
             terrainGenerator.build();
-
-            //Debug.Log(erosionGenerator.he.ErosionValuesString(localTerrain.GetVisibleArea()));
 
             hydraulicErosionStep++;
             lastActionFrame = Time.frameCount;
@@ -215,13 +217,10 @@ public class CameraManager : MonoBehaviour, ICameraManager
         if (Input.GetKey("5") && lastActionFrame < Time.frameCount - 30)
         {
             hydraulicErosionStep += 10;
-            //Debug.Log("hydraulic erosion " + hydraulicErosionStep + " steps ");
             for(int i = hydraulicErosionStep - 10; i < hydraulicErosionStep; i++)
             {
                 erosionGenerator.he.HydraulicErosionStep();
             }
-            //Debug.Log(erosionGenerator.he.WaterValuesString(localTerrain.GetVisibleArea()));
-            //Debug.Log(erosionGenerator.he.TerrainWaterValuesString(localTerrain.GetVisibleArea()));
             Debug.Log(erosionGenerator.he.ErosionValuesString(localTerrain.GetVisibleArea()));
 
             terrainGenerator.build();
@@ -230,11 +229,6 @@ public class CameraManager : MonoBehaviour, ICameraManager
         }
         if (Input.GetKey("4") && lastActionFrame < Time.frameCount - 30)
         {
-            /*Debug.Log("thermal erosion");
-
-            erosionGenerator.te.ThermalErosionStep(localTerrain.GetVisibleArea(), 500, 0.00002f, 0.2f);
-
-            terrainGenerator.build();*/
             Debug.Log("color peaks");
 
             List<Vertex> closestPeaks =
@@ -247,29 +241,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
             lastActionFrame = Time.frameCount;
         }
 
-        if (Input.GetKey("3") && lastActionFrame < Time.frameCount - 30)
-        {
-            Debug.Log("draw rivers");
-            /*
-            riverGenerator.GenerateNewRiver();
-            lastActionFrame = Time.frameCount;
-            terrainGenerator.build();*/
-
-
-            foreach (RiverInfo river in riverGenerator.rivers)
-            {
-                river.DrawRiver();
-            }
-
-            lastActionFrame = Time.frameCount;
-            //Debug.Log(terrainGenerator.patchSize);
-            //Debug.Log(terrainGenerator.terrainWidth);
-            //Debug.Log(localTerrain.terrainWidth);
-            //Debug.Log(localTerrain.localTerrainC.terrainWidth);
-            //Debug.Log(gridManager.stepX);
-
-            //localTerrain.MoveVisibleTerrain(gameObject.transform.position);
-        }
+        
         if (Input.GetKey("2") && lastActionFrame < Time.frameCount - 30)
         {
             Debug.Log("default river"); 
@@ -309,7 +281,7 @@ public class CameraManager : MonoBehaviour, ICameraManager
 
             lastActionFrame = Time.frameCount;
         }
-
+        */
 
     }
 

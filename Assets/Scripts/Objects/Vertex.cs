@@ -79,30 +79,22 @@ public class Vertex
     {
         return x - e <= v2.x && v2.x <= x + e && z - e <= v2.z && v2.z <= z + e;
     }
-
-    /* not sure if good/necessary
+    
     public override int GetHashCode()
     {
-        return x * 98411 + z * 98507;
-    }*/
-
-    //TODO: ...correct?
-    public override int GetHashCode()
-    {
-        return (x - 666) * (z + 666);
+        return (x - 98411) * (z + 98507);
     }
 
     public Vertex Clone()
     {
         return new Vertex(x, z, height);
     }
-
-    // User-defined conversion from Digit to double
+    
     public static implicit operator Vector3 (Vertex vertex)
     {
         return new Vector3(vertex.x, 0, vertex.z);
     }
-    //  User-defined conversion from double to Digit
+
     public static implicit operator Vertex(Vector3 vector)
     {
         return new Vertex((int)vector.x, (int)vector.z);

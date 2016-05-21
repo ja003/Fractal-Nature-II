@@ -25,8 +25,6 @@ public class AverageFilter {
     /// </summary>
     public void GenerateAverageFilterInRegion(Area region)
     {
-        Debug.Log("average on " + region);
-
         int x_min = region.botLeft.x;
         int z_min = region.botLeft.z;
 

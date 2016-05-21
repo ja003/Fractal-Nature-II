@@ -8,12 +8,6 @@ public class MountainPeaks {
     public Vertex gridCoordinates;
     public Area area;
     public List<Vertex> peaks;
-    /*
-    public MountainPeaks()
-    {
-        gridCoordinates = new Vertex(666,666);
-        peaks = new List<Vertex>();
-    }*/
 
     /// <summary>
     /// structure holds x peaks in certain area

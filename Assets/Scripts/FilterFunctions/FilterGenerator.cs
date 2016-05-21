@@ -39,10 +39,6 @@ public class FilterGenerator// : IFilterGenerator
         lt = localTerrain;
         localCoordinates = lt.localTerrainC;
 
-        //localFilterMountainC = new LocalCoordinates(globalFilterMountainC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
-        //localFilterAverageC = new LocalCoordinates(globalFilterAverageC, new Vector3(0,0,0), lt.terrainWidth, lt.terrainHeight);
-
-        //peaks = new List<Vertex>();
         mf = new MountainFilter(this);
         af = new AverageFilter(this);
         mdf = new MedianFilter(this);

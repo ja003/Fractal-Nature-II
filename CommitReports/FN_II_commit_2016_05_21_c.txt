@@ -1,0 +1,5 @@
+Project cleanup
+
+- some classes moved
+- updated export dialog (works only in Unity)
+- removed commented parts

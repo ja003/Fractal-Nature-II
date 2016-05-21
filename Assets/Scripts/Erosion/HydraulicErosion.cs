@@ -125,12 +125,10 @@ public class HydraulicErosion  {
         // Ke = evaporation speed
         // Kr = droplet weight
         // G  = gravity
-
-        //DistributeWater(area, stepNumber, 0.1f);
+        
         UpdateOutflow(9.81f, windX, windZ, windStrength, windEffect);
         UpdateSediment(waterViscosity, strength, deposition);
         EvaporateWater(evaporation);
-        //UpdateStepNumber(area, -666);
     }
 
     float T = 0.1f;  //delta time
@@ -186,14 +184,6 @@ public class HydraulicErosion  {
             if (windX > 0 && deltaH > windEffect)
                 windForce = windPotentialX;
             fluxR = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.right) + T * A * ((G * deltaH + windForce) / L));
-            /*if (x == 4 && counter < 10)
-            {
-                Debug.Log("currentH:"+currentH);
-                Debug.Log("hN:" + hN);
-                Debug.Log("deltaH:" + deltaH);
-                Debug.Log("fluxR:" + fluxR);
-                counter++;
-            }*/
 
             //BOT
             hN = GetTerrainWatterValue(x, z - 1);
@@ -213,24 +203,13 @@ public class HydraulicErosion  {
 
             fluxL = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.left) + T * A * ((G * deltaH + windForce) / L));
 
-
-            //If the sum of the outflow flux exceeds the water amount of the cell,
-            //the flux value will be scaled down by a factor K to avoid negative
-            //updated water height
-
-
             
-
             float K;
             if ((fluxL + fluxR + fluxT + fluxB) * T > GetWaterValue(x, z))
                 K = Mathf.Min(1.0f, GetWaterValue(x, z) / ((fluxL + fluxR + fluxT + fluxB) * T));
             else
                 K = 1;
-
-            //Debug.Log(fluxT);
-            //Debug.Log(fluxR);
-            //Debug.Log(fluxB);
-            //Debug.Log(fluxL);
+            
 
             fluxT = Mathf.Min(maxOutflow, fluxT*K);
             fluxR = Mathf.Min(maxOutflow, fluxR * K);
@@ -259,9 +238,7 @@ public class HydraulicErosion  {
         {
             erosionEffect.Add(v);
         }
-        //outflowField.Union(erosionEffect); //??? why not working?
         outflowField.Clear();
-        //Debug.Log(erosionEffect.Count);
     }
 
     float maxOutflow = 0.5f;
@@ -302,15 +279,9 @@ public class HydraulicErosion  {
                 + GetOutflowValue(x, z, Direction.bot) - inB;
 
             Vector2 velocity = new Vector2(velocity_x, velocity_z);
-            //velocity /= 2;
 
             // Compute maximum sediment capacity
             float C = Kc * 10 * velocity.magnitude * GetSlope(x, z);
-            /*if(counter < 10)
-            {
-                counter++;
-                Debug.Log(C);
-            }*/
 
             float currentSediment = GetSedimentValue(x, z);
             float currentHydraulicErosion = GetHydraulicErosionValue(x, z);
@@ -323,7 +294,6 @@ public class HydraulicErosion  {
                 float newVal = currentHydraulicErosion - KS / Mathf.Max(currentHydraulicErosion, 1);
 
                 hydraulicErosionMap.SetValue(x, z, currentHydraulicErosion - KS);
-                //hydraulicErosionMap.SetValue(x, z, newVal);
                 sedimentMap.SetValue(x, z, currentSediment + KS);
             }
             else if (KD != 0)
@@ -377,11 +347,6 @@ public class HydraulicErosion  {
 
     private float GetSlope(int x, int z)
     {
-        //float topN = eg.GetTerrainValue(x, z + 1);
-        //float rightN = eg.GetTerrainValue(x + 1, z);
-        //float botN = eg.GetTerrainValue(x, z - 1);
-        //float leftN = eg.GetTerrainValue(x - 1, z);
-
         float topN = lm.GetCurrentHeight(x, z + 1);
         float rightN = lm.GetCurrentHeight(x + 1, z);
         float botN = lm.GetCurrentHeight(x, z - 1);
@@ -389,37 +354,18 @@ public class HydraulicErosion  {
 
         float currentH = lm.GetCurrentHeight(x, z);
         
-
         //to prevent too high slopes
         if ((topN+rightN+botN+leftN)/4 > currentH + e)
-        {/*
-            if (counter < 20)
-            {
-                counter++;
-                //Debug.Log(x + "," + z + ": " + currentH);
-            }*/
+        {
             return 0;
         }
-
-        //if (!area.Contains(new Vertex(x, z + 1)))
-        //    topN = eg.GetTerrainValue(x, z);
-        //if (!area.Contains(new Vertex(x + 1, z)))
-        //    rightN = eg.GetTerrainValue(x, z);
-        //if (!area.Contains(new Vertex(x, z - 1)))
-        //    botN = eg.GetTerrainValue(x, z);
-        //if (!area.Contains(new Vertex(x - 1, z)))
-        //    leftN = eg.GetTerrainValue(x, z);
-
         //Find normal
         Vector3 va = new Vector3(1, rightN - leftN, 0);
         Vector3 vb = new Vector3(0, topN - botN, 1);
         //Vector3 n = Vector3.Cross(va.normalized, vb.normalized);
         Vector3 n = Vector3.Cross(va, vb);
-
-        //float val = Mathf.Max(0.05f, 1.0f - Mathf.Abs(Vector3.Dot(n, new Vector3(0, 1, 0))));
+        
         float val = Vector3.Dot(n.normalized, new Vector3(0, 1, 0));
-        //Debug.Log(x + "," + z + " : " + val);
-        //Return dot product of normal with the Y axis
         
         return 10*(1-Mathf.Abs(val));
     }
@@ -427,17 +373,6 @@ public class HydraulicErosion  {
     private float GetWindStrength(float strength, float height, int x, int z)
     {
         float slope = GetSlope(x, z);
-        //Debug.Log(x + "," + z + " : " + slope);
-
-        //Clamp to 0.005 
-        //if (slope < 0.005f) slope = 0.005f;
-
-        //Check if altitude scaling is not on 
-        //Set value to null if so, 1
-        //if (!windAltitude) height = 1;
-
-        //Return wind potential force
-        //return strength * height * slope;
         return Mathf.Abs(strength * slope);
     }
 
@@ -448,13 +383,7 @@ public class HydraulicErosion  {
     /// </summary>
     public float GetTerrainWatterValue(int x, int z) //not sure how to name this:/
     {
-        //float value = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z) + GetWaterValue(x, z);
         float value = lm.GetCurrentHeight(x, z) + GetWaterValue(x, z);
-        /*if(eg.lt.rg.rivers.Count > 0 && eg.lt.rg.rivers[0].globalRiverC.IsDefined(x, z) && counter < 10)
-        {
-            Debug.Log(eg.GetTerrainValue(x, z));
-            counter++;
-        }*/
 
         if ( value > 600  && counter < 50)
         {

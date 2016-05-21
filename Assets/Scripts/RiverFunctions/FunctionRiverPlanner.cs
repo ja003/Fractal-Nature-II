@@ -88,22 +88,9 @@ public class FunctionRiverPlanner  {
         
         List<FloodNode> reachableNodes = new List<FloodNode>();
         reachableNodes.Add(new FloodNode(start, 0));
-        /*foreach(Vertex v in ignoreNodes)
-        {
-            FloodNode fn = new FloodNode(v, 666);
-            fn.processed = true;
-            fn.vertex.side = Direction.none;
-            reachableNodes.Add(fn);
-        }*/
 
-        float threshold;
-        //if (start.height > 0)
-            threshold = start.height + step;
-        //else
-           // threshold = step;
-
-        //TODO: cancel default step!!!
-        //int gridStep = 30; //step between river path points
+        float threshold = start.height + step;
+        
         int borderOffset = gridStep + 5;
         
         //bool reachedSide = false;
@@ -117,18 +104,8 @@ public class FunctionRiverPlanner  {
                 FloodNode currentNode = reachableNodes[i];
                 if (!currentNode.processed)
                 {
-                    //get local coordinates to check which side has been reached
-                    //int x = (int)rg.localCoordinates.GetLocalCoordinates(currentNode.vertex).x;
-                    //int z = (int)rg.localCoordinates.GetLocalCoordinates(currentNode.vertex).z;
                     int x = (int)currentNode.vertex.x;
                     int z = (int)currentNode.vertex.z;
-                    /*if (i < 100)
-                    {
-                        Debug.Log(i + ":" + currentNode);
-                        Debug.Log(x);
-                        Debug.Log(z);
-
-                    }*/
                     if (rg.IsRiverDefined(x,z) && rg.GetRiverOn(x, z) != ignoreRiver && 
                         !ignoreRiver.riverPath.Contains(currentNode.vertex) && !reachedSides.Contains(Direction.river))
                     {
@@ -141,9 +118,6 @@ public class FunctionRiverPlanner  {
                     reachedSide = fmc.GetReachedSide(x, z, borderOffset, x_min, z_min, x_max, z_max);
                     if (reachedSide != Direction.none)
                     {
-                        //if(i < 100)
-                        //    Debug.Log(currentNode);
-
                         //check if node is not on side that has already been reached
                         bool reachedAvailableSide = 
                             fmc.ReachedAvailableSide(x, z, reachedSides, borderOffset, x_min, z_min, x_max, z_max);
@@ -164,10 +138,6 @@ public class FunctionRiverPlanner  {
                             break;
                         }
                     }
-                    else
-                    {
-                        //Debug.Log(currentNode);
-                    }
 
                     if (reachedSide != Direction.none)
                     {
@@ -182,9 +152,6 @@ public class FunctionRiverPlanner  {
                             Debug.Log("FAIL");
                             errorRiver.errorMessage = "FAIL - algorithm timeout";
                             return errorRiver;
-                            finalIndex = i;
-                            reachedSide = Direction.top;
-                            break;
                         }
 
                         List<Vertex> neighbours =
@@ -195,24 +162,14 @@ public class FunctionRiverPlanner  {
                         }
                         foreach (Vertex v in neighbours)
                         {
-                            //if (!rg.IsRiverDefined(v.x, v.z)) //remove if river can connect to river (right now doesn't look well)
-                            //{
                             if (v.height < threshold && !rg.IsRiverDefined(v.x, v.z) && 
                                 !reachableNodes.Contains(new FloodNode(v, i)) || //normal node
                                 !reachedSides.Contains(Direction.river) && rg.IsRiverDefined(v.x, v.z) && //river node
                                 !ignoreRiver.riverPath.Contains(v))
                             {
-                                //if(ignoreRiver.riverPath.Count>0)
-                                //    Debug.Log(ignoreRiver.riverPath[0]);
-                                //Debug.Log(v);
                                 reachableNodes.Add(new FloodNode(v, i));
                             }
-                            //}
                         }
-                    }
-                    else
-                    {
-                        //Debug.Log("skip " + i);
                     }
                 }
                 if (reachedSide != Direction.none)
@@ -236,10 +193,8 @@ public class FunctionRiverPlanner  {
             {
                 Debug.Log("step=" + step);
                 Debug.Log("max=" + maxThreshold);
-                Debug.Log("FAILz");
                 errorRiver.errorMessage = "RIVER FAIL\n reached max threshold:  " + threshold;
                 return errorRiver;
-                break;
             }
         }
         
@@ -276,8 +231,6 @@ public class FunctionRiverPlanner  {
             Vector3.Distance(finalPath[0], finalPath[1]) < gridStep / 2 &&
             finalPath[1] != start)
         {
-            Debug.Log("removing " + finalPath[1]);
-            Debug.Log("too close to " + finalPath[0]);
             finalPath.RemoveAt(1);
         }
 
@@ -291,24 +244,6 @@ public class FunctionRiverPlanner  {
         river.gridStep = gridStep;
 
         reachedSides.Add(reachedSide);
-        /*foreach(Direction side in reachedSides)
-        {
-            switch (reachedSide)
-            {
-                case Direction.top:
-                    river.reachTop = true;
-                    break;
-                case Direction.right:
-                    river.reachRight = true;
-                    break;
-                case Direction.bot:
-                    river.reachBot = true;
-                    break;
-                case Direction.left:
-                    river.reachLeft = true;
-                    break;
-            }
-        }*/
         return river;
     }
 
@@ -355,29 +290,17 @@ public class FunctionRiverPlanner  {
         for (int i = 0; i < path.Count - 2; i++)
         {
             reduction = 0;
-            //while(i < path.Count-2 && fmc.GetDistance(path[i], path[i + 2]) < 2* gridStep)
-            //Vertex center = new Vertex((path[i].x + path[i + 2].x) / 2, (path[i].z + path[i + 2].z) / 2);
-            //center.height = rg.lt.globalTerrainC.GetValue(center.x, center.z);
             Vertex next = path[i + 2];
             while(reduction < maxReduction && i < path.Count - 3 && 
                 ftm.IsOnContour(path[i], next, river.threshold))
             //if (fmc.GetDistance(path[i], path[i+2]) < 2* gridStep)//corner detected
             {
                 Debug.Log(i + " remove: " + path[i+1] + ", left: " + (path.Count-1));
-                //center = new Vertex((path[i].x + path[i + 3].x) / 2, (path[i].z + path[i + 3].z) / 2);
-                //center.height = rg.lt.globalTerrainC.GetValue(center.x, center.z);
                 path.RemoveAt(i+1);
                 next = path[i + 2];
                 reduction++;
             }
-
-            //not relevant with 4 neighbourhood method
-            /*if(fmc.GetDistance(path[i], path[i+1]) < gridStep/2 ||
-                fmc.GetDistance(path[i], path[i - 1]) < gridStep/2)
-            {
-                Debug.Log("remove: " + path[i]);
-                path.RemoveAt(i);
-            }*/
+            
         }
     }
     
@@ -459,150 +382,5 @@ public class FunctionRiverPlanner  {
         return path;
     }
 
-
-    //not working
-    /*
-    public List<Vertex> GetRiverPathFromTo2(Vertex start, Vertex end, float step, float e, int counter)
-    {
-        //int counter = 0;
-        float threshold = Mathf.Max(start.height + e, end.height + e);
-        Debug.Log("threshold: " + threshold);
-
-        Vertex current = start;
-        Vector3 dir = ((Vector3)end - start).normalized;
-        List<Vertex> path = new List<Vertex>();
-        Debug.Log("path from " + start + " to " + end);
-        Vertex tmpVert = current;
-        counter++;
-        if (counter > 10)
-            return path;
-
-        //while (fmc.GetDistance(current,end) > (step + e) && ftm.IsInDefinedTerrain(current) && counter < 50)
-        //{
-        counter++;
-        while (current.height < threshold && fmc.GetDistance(current, end) > (step + e))
-        {
-            path.Add(current);
-            Debug.Log("add: " + current);
-            tmpVert = current;
-            current = new Vertex((int)(current.x + dir.x * step), (int)(current.z + dir.z * step));
-            current.height = rg.lt.globalTerrainC.GetValue(current);
-            Debug.Log("new: " + current);
-
-        }
-        if (fmc.GetDistance(current, end) < (step + e) && current.height < threshold)
-        {
-            if ((path.Count > 0 && !current.CoordinatesEquals(path[path.Count - 1])))
-                path.Add(current);
-        }
-        else
-        {
-            //barrier reached
-            Vertex barrier = current;
-            current = tmpVert;
-            while (barrier.height > threshold && fmc.GetDistance(barrier, end) > (step + e))
-            {
-                barrier = new Vertex((int)(barrier.x + dir.x * step), (int)(barrier.z + dir.z * step));
-                barrier.height = rg.lt.globalTerrainC.GetValue(barrier);
-            }
-            Vertex center = new Vertex((current.x + barrier.x) / 2, (current.z + barrier.z) / 2);
-            if (fmc.GetDistance(barrier, end) <= (step + e))//case when barrier is very close to end
-            {
-                center = barrier;
-                barrier = end;
-            }
-            center.height = rg.lt.globalTerrainC.GetValue(center);
-            Vertex b1 = center;
-            Vertex b2 = center;
-            Vector3 b_dir = ((Vector3)barrier - current).normalized; //perpendicular vector to barrier
-            float tmp = b_dir.x;
-            b_dir.x = -b_dir.z;
-            b_dir.z = tmp;
-
-            while (b1.height > threshold && b1.height < 666)
-            {
-                b1 = new Vertex((int)(b1.x + b_dir.x * step), (int)(b1.z + b_dir.z * step));
-                b1.height = rg.lt.globalTerrainC.GetValue(b1);
-            }
-            while (b2.height > threshold && b2.height < 666)
-            {
-                b2 = new Vertex((int)(b2.x - b_dir.x * step), (int)(b2.z - b_dir.z * step));
-                b2.height = rg.lt.globalTerrainC.GetValue(b2);
-            }
-            Vertex bc;
-            if (b1.height != 666 && b2.height != 666) //both of them are in defined terrain => choose closer one
-            {
-                if (fmc.GetDistance(current, b1) < fmc.GetDistance(current, b2))
-                    bc = b1;
-                else
-                    bc = b2;
-            }
-            else//1 of them is not defined for sure
-            {
-                if (b1.height < b2.height)
-                    bc = b1;
-                else
-                    bc = b2;
-            }
-
-            //try method dependent on distance from end
-            if (fmc.GetDistance(end, b1) < fmc.GetDistance(end, b2))
-                bc = b1;
-            else
-                bc = b2;
-
-
-            Debug.Log("current: " + current);
-            Debug.Log("barrier: " + barrier);
-            Debug.Log("center: " + center);
-            Debug.Log("b1: " + b1);
-            Debug.Log("b2: " + b2);
-            Debug.Log("bc: " + bc);
-
-            if (bc.height == 666)//if chosen point is not defined, find the closest defined point
-            {
-                //...
-                Debug.Log(bc + " is out");
-                Vector3 bourder_dir = ((Vector3)current - bc).normalized;
-                while (bc.height == 666)
-                {
-                    bc = new Vertex((int)(bc.x + bourder_dir.x * step / 3), (int)(bc.z + bourder_dir.z * step / 3));
-                    bc.height = rg.lt.globalTerrainC.GetValue(bc);
-                }
-                Debug.Log("moved to " + bc);
-                //bc = current;
-            }
-
-            List<Vertex> path1 = GetRiverPathFromTo2(current, bc, step, e, counter);
-            if (path1.Count > 0 && path[path.Count - 1] == path1[0])
-            {
-                Debug.Log("remove: " + path1[0]);
-                path1.RemoveAt(0);
-            }
-            path.AddRange(path1);
-            List<Vertex> path2 = GetRiverPathFromTo2(bc, barrier, step, e, counter);
-            if (path2.Count > 0 && path[path.Count - 1] == path2[0])
-            {
-                Debug.Log("remove: " + path2[0]);
-                path2.RemoveAt(0);
-            }
-            path.AddRange(path2);
-        }
-
-        if (path.Count > 0 && fmc.GetDistance(path[path.Count - 1], end) > (step + e))
-        {
-            List<Vertex> pathEnd = GetRiverPathFromTo2(path[path.Count - 1], end, step, e, counter);
-            path.AddRange(pathEnd);
-        }
-
-
-        //}
-        if (path.Count == 0)
-            path.Add(start);
-
-        if (path.Count > 0 && !end.CoordinatesEquals(path[path.Count - 1]))
-            path.Add(end);
-        return path;
-    }
-    */
+    
 }
