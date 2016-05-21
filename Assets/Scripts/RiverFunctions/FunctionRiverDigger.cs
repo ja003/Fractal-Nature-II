@@ -140,7 +140,7 @@ public class FunctionRiverDigger {
         else if (widthFactor >= 1.5)
             widthFactor = 2;
 
-        widthFactor = 2;//for current depth function (aTan) it is neccesarry to have bigger area effect
+        widthFactor = 2;
 
         //DigCorners(path, width, widthFactor, maxDepth);
         currentRiver = river;
@@ -151,9 +151,6 @@ public class FunctionRiverDigger {
             Debug.Log("path too short: " + path.Count);
             return;
         }
-
-        //Debug.Log("digging: " + currentRiver);
-        //Debug.Log("lowest: " + currentRiver.lowestPoint);
 
         DigRiverPath(path, width, widthFactor, maxDepth, river.shape);
 

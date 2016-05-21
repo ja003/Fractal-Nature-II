@@ -14,7 +14,7 @@ public class GUIDebug {
     bool sedimentMap = true;
     bool thermalMap = true;
 
-    float brightness = 0.5f;
+    float brightness = 0f;
     float brightnessFlag = 0;
 
 

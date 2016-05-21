@@ -36,7 +36,7 @@ public class GUIterrainPatch {
         this.patchSize = patchSize;
 
         UpdatePatchAttributes();
-        SetDefaultPatch(DefaultTerrain.random);
+        SetDefaultPatch(DefaultTerrain.hillGrid);
     }
 
    

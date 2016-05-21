@@ -1,0 +1,4 @@
+Project cleanup
+
+- removed comments
+- FPS display upgraded

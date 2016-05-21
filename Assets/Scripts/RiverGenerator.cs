@@ -148,7 +148,7 @@ public class RiverGenerator  {
         
         // connect them
         river.ConnectWith(river2);
-        river.DrawRiver();
+        //river.DrawRiver();
         AddRiver(river);
 
         frd.DistortPath(river.riverPath, river.gridStep/3, river.gridStep);
@@ -175,18 +175,11 @@ public class RiverGenerator  {
     /// </summary>
     public void GenerateConnectingRiver(RiverInfo river)
     {
-        //Debug.Log("currentRiver:"+ river);
-        //Debug.Log("definedArea:" + lt.globalTerrainC.definedArea);
-
-
         Vertex startPoint = river.riverPath[0];
-        //if (ftm.IsInVisibleterrain(startPoint) && !ftm.IsOnBorder(startPoint))
         if (ftm.IsInDefinedTerrain(startPoint) && !ftm.IsOnBorder(startPoint))
         {
-            //Debug.Log("connection river from start: " + startPoint);
 
             Area restrictArea = fmc.CalculateRestrictedArea(startPoint);
-            //Debug.Log("ON: " + restrictArea);
 
             List<Direction> reachedSides = new List<Direction>();
             reachedSides.Add(fmc.GetOppositeDirection(startPoint.side));
@@ -195,7 +188,7 @@ public class RiverGenerator  {
                 frp.GetRiverFrom(startPoint, reachedSides, restrictArea, river, river.gridStep, true);
             if(startRiver.riverPath.Count == 0)
             {
-                ShowErrorMessage("connecting start river fail \n" + startRiver.errorMessage);
+                ShowErrorMessage("connecting river failed \n" + startRiver.errorMessage);
             }
 
             frd.DistortPath(startRiver.riverPath, startRiver.gridStep/3, startRiver.gridStep);
@@ -219,7 +212,7 @@ public class RiverGenerator  {
                 frp.GetRiverFrom(endPoint, reachedSides, restrictArea, river, river.gridStep, true);
             if (endRiver.riverPath.Count == 0)
             {
-                ShowErrorMessage("connecting end river fail \n" + endRiver.errorMessage);
+                ShowErrorMessage("connecting river failed \n" + endRiver.errorMessage);
             }
 
             frd.DistortPath(endRiver.riverPath, endRiver.gridStep / 3, endRiver.gridStep);

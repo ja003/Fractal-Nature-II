@@ -25,7 +25,7 @@ public class MouseLook : MonoBehaviour {
 			
 			rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
             minimumY = -90;
-            maximumY = 90; // WTF??? can't be set in setter, defautly set on 60
+            maximumY = 90; 
             rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 
             transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
@@ -37,7 +37,6 @@ public class MouseLook : MonoBehaviour {
 		else
 		{
 			rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
-			//rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 			
 			transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
 		}

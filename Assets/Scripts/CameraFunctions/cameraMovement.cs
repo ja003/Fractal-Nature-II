@@ -25,7 +25,6 @@ public class cameraMovement : MonoBehaviour {
                 gameObject.GetComponent<MouseLook>().enabled = false;
             else
                 gameObject.GetComponent<MouseLook>().enabled = transform;
-            //gameObject.GetComponent<MouseLook>().enabled = !gameObject.GetComponent<MouseLook>().enabled;
             lastActionFrame = Time.frameCount;
         }
 

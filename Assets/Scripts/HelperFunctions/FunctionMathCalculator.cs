@@ -209,12 +209,7 @@ public class FunctionMathCalculator {
         bool isInSet = IsInSet(x, z, rectangle);
         return isInSet;
     }
-
-    /// <summary>
-    /// some..??? magic
-    /// y = z (...used in Vector2)
-    /// </summary>
-    /// <returns></returns>
+    
     public bool IsInSet(int x, int y, List<Vector2> set)
     {
         if (set.Count < 3)

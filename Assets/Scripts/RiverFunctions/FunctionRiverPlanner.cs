@@ -15,12 +15,7 @@ public class FunctionRiverPlanner  {
     
     public int terrainWidth;
     public int terrainHeight;
-
-    public Color redColor = new Color(1, 0, 0);
-    public Color greenColor = new Color(0, 1, 0);
-    public Color blueColor = new Color(0, 0, 1);
-    public Color pinkColor = new Color(1, 0, 1);
-
+    
     RiverInfo errorRiver; //only as error message carrier
 
     public FunctionRiverPlanner()
@@ -66,16 +61,13 @@ public class FunctionRiverPlanner  {
     public RiverInfo GetRiverFrom(Vertex start, List<Direction> reachedSides,
         Area restrictedArea, RiverInfo ignoreRiver, int gridStep, bool forceRiver)
     {
-        fd.ColorPixel(start.x, start.z, 5, redColor);
         float step = Math.Abs(start.height); //height can be negative
         
         int x_min = restrictedArea.botLeft.x;
         int z_min = restrictedArea.botLeft.z;
         int x_max = restrictedArea.topRight.x;
         int z_max = restrictedArea.topRight.z;
-
-        //Debug.Log("start: " + start);
-
+        
         if (step <= 0.1f) //step can't be too small
             step = 0.1f;
         else if (step > 0.1f) //step can't be too big
@@ -83,8 +75,6 @@ public class FunctionRiverPlanner  {
 
         Vertex highestPoint = ftm.GetHighestpoint(x_min, z_min, x_max, z_max);
         float maxThreshold = highestPoint.height; //highest value on map - river can't flow that heigh
-        fd.ColorPixel(highestPoint.x, highestPoint.z, 5, blueColor);
-        //Debug.Log(highestPoint);
         
         List<FloodNode> reachableNodes = new List<FloodNode>();
         reachableNodes.Add(new FloodNode(start, 0));
@@ -93,7 +83,6 @@ public class FunctionRiverPlanner  {
         
         int borderOffset = gridStep + 5;
         
-        //bool reachedSide = false;
         Direction reachedSide = Direction.none;
         int finalIndex = 0;//index of final node (reached one of the sides)
 

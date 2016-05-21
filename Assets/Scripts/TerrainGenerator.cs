@@ -1295,9 +1295,6 @@ public class TerrainGenerator
 
     }
     
-    /// <summary>
-    /// PARAMETERS I DONT NEED...
-    /// </summary>
 
     Vector3 sandColor = new Vector3(0.90f, 0.90f, 0.00f);  // Sand r,g,b
     Vector3 grassColor = new Vector3(0.00f, 0.70f, 0.00f); // Grass r,g,b
@@ -1332,14 +1329,7 @@ public class TerrainGenerator
     public Vector3 endOf;
     public Vector3 startOf;
     public Vector3 middleOf;
-
-    //Terrain sizes
-    //public int terrainSize;
-    //public int patchSize;
-    //int patchCount;
-    //int meshSize;
-    //int individualMeshSize;
-
+    
     Vector2 uvScale;
     Vector3 vertsScale;
     Vector2 waterUvScale;

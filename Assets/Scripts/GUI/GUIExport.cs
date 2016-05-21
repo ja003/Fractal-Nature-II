@@ -82,7 +82,9 @@ public class GUIExport {
             {
                 path = "";
                 // "C:\\Users\\Vukmir\\Desktop\\obj"; //personal default path
-                path = UnityEditor.EditorUtility.SaveFolderPanel("Select destination","","");
+                #if UNITY_EDITOR
+                    path = UnityEditor.EditorUtility.SaveFolderPanel("Select destination", "", "");
+                #endif
                 //  --- can't be used outside of UNITY
             }
             yPos2 += buttonHeight / 2 + 2;

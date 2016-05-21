@@ -170,14 +170,10 @@ public class RiverInfo  {
     {
         foreach(Vertex v in riverPath)
         {
-            //int localX = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).x;
-            //int localZ = (int)frp.rg.localCoordinates.GetLocalCoordinates(v).z;
-            //fd.ColorPixel(localX, localZ, 3, fd.pinkColor);
             fd.ColorPixel(v.x, v.z, 3, fd.pinkColor);
         }
         for(int i = 0; i < riverPath.Count-1; i++)
         {
-            //fd.ColorLine(riverPath[i], riverPath[i + 1], 2, fd.redColor);
             Vector3 dir = ((Vector3)riverPath[i + 1] - riverPath[i]).normalized;
             float dist = ftm.fmc.GetDistance(riverPath[i + 1], riverPath[i]);
             for(int j = 0; j < dist; j++)

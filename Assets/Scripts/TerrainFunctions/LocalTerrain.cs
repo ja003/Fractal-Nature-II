@@ -68,7 +68,6 @@ public class LocalTerrain {
             {
                 foreach (RiverInfo river in rg.rivers)
                 {
-                    //Debug.Log("connection river");
                     rg.GenerateConnectingRiver(river);
                 }
             }
@@ -96,18 +95,12 @@ public class LocalTerrain {
                 tg.filterGenerator.gf.lastKernelSize, GetVisibleArea());
         }
 
-        //fg.mf.PerserveMountainsInRegion(localTerrainC.botLeft, localTerrainC.topRight, 4, 60, 10);
-
-
-
-
-
         tg.build();
 
-        //draw river (if it has been generated)
+        //draw rivers
         foreach (RiverInfo river in rg.rivers)
         {
-            river.DrawRiver();
+            //river.DrawRiver();
         }
     }
 

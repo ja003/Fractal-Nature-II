@@ -273,19 +273,17 @@ public class DiamondSquare
         {
             // reduce the random range at each step
             float modNoiseOrig = (rMax - rMin) * noise * ((float)i / s);
-            //float modNoiseOrig = noise * ((float)i / s);
 
             // diamonds
             for (int z = 0; z < s; z += i)
             {
                 for (int x = 0; x < s; x += i)
                 {
-                    s0 = lt.GetLocalHeight(x, z, defaultHeight); //shouldn't need to define default 'undefined' value
+                    s0 = lt.GetLocalHeight(x, z, defaultHeight); 
                     s1 = lt.GetLocalHeight(x + i, z, defaultHeight);
                     s2 = lt.GetLocalHeight(x, z + i, defaultHeight);
                     s3 = lt.GetLocalHeight(x + i, z + i, defaultHeight);
-
-                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + (i / 2), closestPeaks)) / maxDistance;
+                    
                     modNoise = GetModNoise(x + (i / 2), z + (i / 2), modNoiseOrig);
                     height = GetHeight(x + (i / 2), z + (i / 2),(s0 + s1 + s2 + s3) / 4.0f, modNoise);
                     SetLocalHeight(x + (i / 2), z + (i / 2), height, overwrite);
@@ -313,26 +311,18 @@ public class DiamondSquare
                     d3 = z >= s - i ? (cn + s2 + s3) / 3.0f :
                         (cn + s2 + s3 + lt.GetLocalHeight(x + (i / 2), z + i + (i / 2), defaultHeight)) / 4.0f;
                     
-
-                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x+ (i / 2), z, closestPeaks)) / maxDistance;
                     modNoise = GetModNoise(x + (i / 2), z, modNoiseOrig); 
                     height = GetHeight(x + (i / 2), z, d0, modNoise);
                     SetLocalHeight(x + (i / 2), z, height, overwrite);
-
-
-                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z + (i / 2), closestPeaks)) / maxDistance;
+                    
                     modNoise = GetModNoise(x, z + (i / 2), modNoiseOrig);
                     height = GetHeight(x, z + (i / 2), d1, modNoise);
                     SetLocalHeight(x, z + (i / 2), height, overwrite);
-
-
-                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + i, z + (i / 2), closestPeaks)) / maxDistance;
+                    
                     modNoise = GetModNoise(x + i, z + (i / 2), modNoiseOrig);
                     height = GetHeight(x + i, z + (i / 2), d2, modNoise);
                     SetLocalHeight(x + i, z + (i / 2), height, overwrite);
-
-
-                    //factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x + (i / 2), z + i, closestPeaks)) / maxDistance;
+                
                     modNoise = GetModNoise(x + (i / 2), z + i, modNoiseOrig);
                     height = GetHeight(x + (i / 2), z + i,d3, modNoise);
                     SetLocalHeight(x + (i / 2), z + i, height, overwrite);
@@ -340,7 +330,6 @@ public class DiamondSquare
                 }
             }
         }
-        //UnityEngine.Debug.Log("Diamond square complete");
     }
 
     public float GetHeight(int x, int z, float initValue, float modNoise)
@@ -374,20 +363,15 @@ public class DiamondSquare
     {
         float factor = factorConstant * (maxDistance - GetSmallestDistanceToPeak(x, z, closestPeaks)) / maxDistance;
 
-        float modNoise = modNoiseOrig;// = modNoiseOrig * factor;
+        float modNoise = modNoiseOrig;
         modNoise *= (float)Math.Sqrt(Math.Abs(factor));
         return modNoise;
     }
-
-    //float[][] ds;
+    
 
     public void GenerateTerrain(int patchSize, float noise, float rMin, float rMax)
     {
-    //    UnityEngine.Debug.Log("!!!");
-    //    UnityEngine.Debug.Log(tg.localTerrain.localTerrainC.center);
         maxDistance = 2*(float)Math.Sqrt(patchSize * patchSize + patchSize * patchSize);
-
-        //DiamondSquareGrid(patchSize, seed, -1, 1, roughness / 5.0f);
         DiamondSquareGrid(patchSize, seed, rMin, rMax, noise / 5.0f);
 
     }
