@@ -173,6 +173,7 @@ public class GUIErosion {
 
             if (startErosionH && Time.frameCount % refreshFrame == 1)
             {
+                gm.cm.erosionGenerator.he.HydraulicErosionStep(viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, -windEffect);
 
                 //gm.cm.terrainGenerator.build();
 
