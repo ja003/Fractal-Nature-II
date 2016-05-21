@@ -83,4 +83,9 @@ public class ThermalErosion {
     {
         return eg.GetTerrainValue(x, z) + thermalErosionMap.GetValue(x, z, 0);
     }
+
+    public void ResetErosion()
+    {
+        thermalErosionMap.ResetQuadrants();
+    }
 }

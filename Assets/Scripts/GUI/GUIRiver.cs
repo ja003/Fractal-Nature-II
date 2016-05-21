@@ -152,7 +152,7 @@ public class GUIRiver
             {
                 selectedRiver = rg.rivers[i];
                 RedigRiver(selectedRiver);
-                selectedRiver.DrawRiver();
+                //selectedRiver.DrawRiver();
             }
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + 10 * sideOffset + buttonWidth/3, yPos, 3*sideOffset, buttonHeight), "X"))

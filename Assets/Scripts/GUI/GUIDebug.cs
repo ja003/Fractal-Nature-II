@@ -14,7 +14,7 @@ public class GUIDebug {
     bool sedimentMap = true;
     bool thermalMap = true;
 
-    float brightness = 0;
+    float brightness = 0.5f;
     float brightnessFlag = 0;
 
 
@@ -39,7 +39,7 @@ public class GUIDebug {
 
         yPos = yPosition;
 
-        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,15f * buttonHeight), "Debug");
+        GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset,12.5f * buttonHeight), "Debug");
 
         yPos += buttonHeight + 5;
         
@@ -76,7 +76,7 @@ public class GUIDebug {
         brightness = GUI.HorizontalSlider(new Rect(
                 Screen.width - menuWidth + buttonWidth, yPos + 5,
                 menuWidth - sideOffset - buttonWidth - 5,
-                buttonHeight), brightness, -1, 1);
+                buttonHeight), brightness, -1, 2);
         if (brightnessFlag != brightness)
         {
             brightnessFlag = brightness;
@@ -131,7 +131,7 @@ public class GUIDebug {
 
         GUI.Label(new Rect(Screen.width - menuWidth + 6 * sideOffset, yPos, buttonWidth, buttonHeight), "default terrain");
         yPos += buttonHeight;
-        if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "gradientX_LR"))
+        /*if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "gradientX_LR"))
         {
             terrainSize = gm.cm.localTerrain.terrainWidth;
             gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradientX_lr, terrainSize);
@@ -156,7 +156,7 @@ public class GUIDebug {
             gm.cm.terrainGenerator.GenerateDefaultTerrain(TerrainType.gradientZ_rl, terrainSize);
             gm.cm.terrainGenerator.build();
         }
-        yPos += buttonHeight + 5;
+        yPos += buttonHeight + 5;*/
         if (GUI.Button(new Rect(Screen.width - menuWidth + rightMenuOffset, yPos, buttonWidth, buttonHeight), "radial +"))
         {
             terrainSize = gm.cm.localTerrain.terrainWidth;

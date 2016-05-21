@@ -12,7 +12,7 @@ public class GUIterrainPatch {
     float centerZ = Screen.height / 2;
 
     
-    public int patchSize = 64;
+    public int patchSize = 128;
 
 
     float low_rMin;
@@ -35,7 +35,7 @@ public class GUIterrainPatch {
         pm = new PatchManager(patchSize);
         this.patchSize = patchSize;
 
-        SetPatchAttributes();
+        UpdatePatchAttributes();
         SetDefaultPatch(DefaultTerrain.random);
     }
 
@@ -135,9 +135,12 @@ public class GUIterrainPatch {
         extraPatchCount = count;
     }
 
-    public void SetPatchAttributes()
+    /// <summary>
+    /// updates rMin, rMax and noise values based on current patchSize
+    /// </summary>
+    public void UpdatePatchAttributes()
     {
-        float scale = 1.3f;
+        float scale =  patchSize/64 + 0.3f;
 
         low_rMin = scale * -1f;
         low_rMax = scale * -0.3f;
@@ -462,6 +465,7 @@ public class GUIterrainPatch {
     public void UpdatePatchSize(int patchSize)
     {
         this.patchSize = patchSize;
+        UpdatePatchAttributes();
         pm = new PatchManager(patchSize);
         SetRandomPatchLevel(patchCount);
     }

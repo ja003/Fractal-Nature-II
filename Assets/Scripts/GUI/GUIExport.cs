@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 //using UnityEditor;
 
 
@@ -40,8 +41,8 @@ public class GUIExport {
         sideOffset = 10;
         scaleY = gm.scaleY;
 
-        path = "C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export";
-        path = "C:\\Users\\Vukmir\\Desktop\\obj";
+        //path = "C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export";
+        path = "C:";
         name = "";
     }
 
@@ -71,11 +72,15 @@ public class GUIExport {
             yPos2 += buttonHeight/2;
 
             //"C:\\Users\\Vukmir\\Dropbox\\ŠKOLA\\SBAPR\\Fractal Nature II\\Assets\\Export"
-            GUI.TextField(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight/2), path);
+
+            path = GUI.TextField(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight/2), path);
             yPos2 += buttonHeight/2 + 2;
             if (GUI.Button(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth, buttonHeight/2), "..."))
             {
-                path = "C:\\Users\\Vukmir\\Desktop\\obj";// EditorUtility.SaveFolderPanel("Select destination","","");
+                path = "";
+                // "C:\\Users\\Vukmir\\Desktop\\obj"; //personal default path
+                // EditorUtility.SaveFolderPanel("Select destination","","");
+                //  --- can't be used outside of UNITY
             }
             yPos2 += buttonHeight / 2 + 2;
             GUI.Label(new Rect(Screen.width - menu2Width + sideOffset, yPos2, buttonWidth/2, buttonHeight/2),"name: ");
@@ -105,15 +110,6 @@ public class GUIExport {
 
     private void Export()
     {
-        //gm.cm.objExporter.t
-        //string s = ObjExporter.TerrainToString(gm.cm.localTerrain.globalTerrainC);
-        //string s = ObjExporterMy.MeshToString(tg.myMesh[0]);
-
-        //string fileName = Application.persistentDataPath + "/" + FILE_NAME; fileWriter = File.CreateText(fileName); fileWriter.WriteLine("Hello world"); fileWriter.Close();
-
-
-        //ObjExporter.MeshToFile(tg.myTerrain[0].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_0.obj");
-        //ObjExporter.MeshToFile(tg.myTerrain[1].GetComponent<MeshFilter>(), "C:\\Users\\Vukmir\\Desktop\\obj\\myTerrain_1.obj");
         List<Layer> layers = new List<Layer>();
         if (tg.terrainLayer)
             layers.Add(Layer.terrain);
@@ -148,14 +144,22 @@ public class GUIExport {
         Debug.Log("exporting");
         foreach(Layer l in layers)
         {
-            Debug.Log(l);
+            //Debug.Log(l);
         }
 
         if (name.Length == 0)
         {
             name = "default_name";
         }
+        try {
+            ObjExporter.TerrainToFile(gm.cm.layerManager, layers, path + "\\" + name + ".obj");
+            gm.message.ShowMessage("TERRAIN EXPORTED", 5*30);
+        }
+        catch(System.UnauthorizedAccessException e)
+        {
+            gm.message.ShowMessage("terrain could not be saved \n UnauthorizedAccessException", 5*30);
+        }
 
-        ObjExporter.TerrainToFile(gm.cm.layerManager, layers, path + "\\" + name + ".obj");
+
     }
 }

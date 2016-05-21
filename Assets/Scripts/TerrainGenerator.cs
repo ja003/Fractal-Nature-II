@@ -100,7 +100,7 @@ public class TerrainGenerator
             Debug.Log("TerrainPlanner not found"); 
             //pm = new PatchManager(patchSize);
             gtp = new GUIterrainPatch(patchSize);
-            gtp.SetDefaultPatch(DefaultTerrain.hillGrid);
+            gtp.SetDefaultPatch(DefaultTerrain.valleys);
             pm = gtp.pm;
             
             extraPatchCount = 0;
@@ -177,10 +177,9 @@ public class TerrainGenerator
         //Debug.Log("centerOnGrid: " + centerOnGrid);
         //Debug.Log("visibleArea: " + visibleArea);
         //Debug.Log("surroundingArea: " + surroundingArea);
-        //extraPatchCount = 0;
 
-
-
+        extraPatchCount = 1; //set to 1 after first generation
+        
 
         int x_min = (int)surroundingArea.botLeft.x;
         int z_min = (int)surroundingArea.botLeft.z;
@@ -295,7 +294,6 @@ public class TerrainGenerator
                             //Debug.Log(x + "," + z);
 
                             Vertex patchC = gm.GetGridCoordinates(new Vertex(x, z));
-                            Debug.Log(patchC);
 
                             gtp.SetPatchValue(patchC.x, patchC.z, PatchLevel.random);
                             rMin = pm.rMin.GetValue(_x, _z, -1);
@@ -391,7 +389,7 @@ public class TerrainGenerator
     /// </summary>
     public void GenerateDefaultTerrain(TerrainType type, int size) 
     {
-        float factor = 1.5f;
+        float factor = 1f;
         for (int x = -size; x < size; x++)
         {
             for (int z = -size; z < size; z++)
@@ -406,14 +404,14 @@ public class TerrainGenerator
                         break;
 
                     case TerrainType.gradientZ_lr:
-                        localTerrain.globalTerrainC.SetValue(x, z, factor * z / size);
+                        localTerrain.globalTerrainC.SetValue(x, z, factor * (z+Mathf.Sin(z)/2) / size);
                         break;
                     case TerrainType.gradientZ_rl:
                         localTerrain.globalTerrainC.SetValue(x, z, factor * (- z) / size);
                         break;
 
                     case TerrainType.constant:
-                        localTerrain.globalTerrainC.SetValue(x, z, 0.5f);
+                        localTerrain.globalTerrainC.SetValue(x, z, -0.1f);
                         break;
                     case TerrainType.gradient_radialPlus:
                         float distance = Vector2.Distance(new Vector2(0, 0), new Vector2(x, z));
@@ -607,7 +605,7 @@ public class TerrainGenerator
 
         riverGenerator.ResetRivers();
 
-        filterGenerator.ResetFilters();
+        //filterGenerator.ResetFilters();
     }
 
     public void destroyMeshes()
@@ -877,10 +875,12 @@ public class TerrainGenerator
         float minusValue = 0;
         if (globalTerrain.globalTerrainC.globalMin < 0)
             minusValue = Mathf.Abs(globalTerrain.globalTerrainC.globalMin);
+        if (riverGenerator.rivers.Count > 0)
+            minusValue += 0.1f;
         //Debug.Log("----");
         //Debug.Log(minusValue);
         //Debug.Log(valueRange);
-        valueRange += terrainBrightness;
+        //valueRange += terrainBrightness;
 
         //Rebuild mesh data
         for (int i = 0; i < 2; i++)
@@ -922,6 +922,7 @@ public class TerrainGenerator
                             this_color += minusValue;
                             this_color += terrainBrightness;
                             this_color /= valueRange;
+                            this_color = Mathf.Clamp(this_color, 0.1f, 0.9f);
                         }
                         else if (debugRmin || debugRmax || debugNoise)
                         {
@@ -931,6 +932,7 @@ public class TerrainGenerator
                             this_color += 1;
                             this_color /= 3;
                         }
+
                         /*else if (debugRmax)
                             this_color = Mathf.Clamp((pm.GetValue(gc.x, gc.z, PatchInfo.rMax))/ (rMax_max - rMax_min) + terrainBrightness, 0,1);
                         else if (debugNoise)
@@ -952,8 +954,10 @@ public class TerrainGenerator
                         int local_z = z + individualMeshHeight * i;
 
                         if (!colorMode)
-                            heightMap.SetPixel(x + individualMeshWidth * j, z + individualMeshHeight * i,
-                            new Color(this_color, this_color, this_color));
+                        {
+                            heightMap.SetPixel(local_x, local_z,
+                              new Color(this_color, this_color, this_color));
+                        }
                         
 
                         if (colorMode)

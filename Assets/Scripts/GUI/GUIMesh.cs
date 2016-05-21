@@ -69,49 +69,6 @@ public class GUIMesh {
         }
         yPos += 2*buttonHeight;
 
-        /*
-        // 64x64 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "64x64"))
-        {
-            UpdatePatchSize(64);
-        }
-
-        // 128x128 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2* sideOffset-2, yPos, buttonWidth, buttonHeight), "128x128"))
-        {
-            UpdatePatchSize(128);
-        }
-        yPos += buttonHeight + 2;
-
-        // 256x256 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "256x256"))
-        {
-            UpdatePatchSize(256);
-        }
-
-        // 512x512 patch size
-        if (GUI.Button(new Rect(Screen.width - menuWidth + buttonWidth + 2 * sideOffset-2, yPos, buttonWidth, buttonHeight), "512x512"))
-        {
-            UpdatePatchSize(512);
-        }
-        yPos += buttonHeight + 5;*/
-
-        //ROUGNESS
-        /*GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth + 4*sideOffset, buttonHeight), "Noise = " + (int)noise
-            + "." + (int)((noise - (int)noise)*100));
-
-        noise = GUI.HorizontalSlider(new Rect(
-                Screen.width - menuWidth + buttonWidth + 3*sideOffset, yPos + 5,
-                menuWidth - 4*sideOffset - buttonWidth - 5,
-                buttonHeight), noise, 0, 5);
-
-        if (noise != gm.cm.terrainGenerator.noise)
-        {
-            gm.cm.terrainGenerator.noise = noise;
-        }
-
-        yPos += buttonHeight + 5;*/
-
         // GENERATE
         if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, menuWidth - 2*sideOffset, 1.5f* buttonHeight), "GENERATE"))
         {
@@ -126,6 +83,9 @@ public class GUIMesh {
             Debug.Log("DELETE mesh" + gm.cm.gameObject.transform.position);
             gm.cm.terrainGenerator.destroyMeshes();
             gm.cm.terrainGenerator.ResetTerrainValues();
+            gm.cm.filterGenerator.ResetFilters();
+            gm.cm.erosionGenerator.he.ResetValues();
+            gm.cm.erosionGenerator.te.ResetErosion();
         }
 
         yPos += buttonHeight;

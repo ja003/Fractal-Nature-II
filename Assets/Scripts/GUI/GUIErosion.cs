@@ -28,6 +28,9 @@ public class GUIErosion {
         sideOffset = 10;
         buttonWidth = menuWidth / 2 - sideOffset - sideOffset / 2;
         smallButtonWidth = buttonWidth / 2;
+
+        windStrength = 50;
+        windEffect = 0.5f;
     }
 
     int erosionHCounter = 0;
@@ -50,8 +53,8 @@ public class GUIErosion {
     int windX = 0;
     int windZ = 0;
 
-    float windStrength = 20;
-    float windAngle = 0;
+    float windStrength = 50;
+    float windEffect = 0.5f;
 
 
     float erosionStrength = 0.1f;
@@ -76,7 +79,8 @@ public class GUIErosion {
 
     public void OnGui(int yPosition)
     {
-
+        //Debug.Log(windEffect);
+        //Debug.Log(windStrength);
 
         yPos = yPosition;
         GUI.Box(new Rect(Screen.width - menuWidth, yPos, menuWidth - rightMenuOffset, 1 * buttonHeight), "");
@@ -169,7 +173,6 @@ public class GUIErosion {
 
             if (startErosionH && Time.frameCount % refreshFrame == 1)
             {
-                gm.cm.erosionGenerator.he.HydraulicErosionStep(viscosity, erosionStrength, deposition, evaporation, windX, windZ, windStrength, windAngle);
 
                 //gm.cm.terrainGenerator.build();
 
@@ -248,10 +251,10 @@ public class GUIErosion {
             GUI.Label(new Rect(Screen.width - menuWidth + sideOffset, yPos, buttonWidth, buttonHeight), "effect: ");
 
             //renamed to "effect" because "windAngle" is not very intuitive
-            windAngle = GUI.HorizontalSlider(new Rect(
+            windEffect = GUI.HorizontalSlider(new Rect(
                     Screen.width - menuWidth + buttonWidth, yPos + 5,
                     menuWidth - sideOffset - buttonWidth - 5,
-                    buttonHeight), windAngle, 1, -1);
+                    buttonHeight), windEffect, -1, 1);
             yPos += buttonHeight + 5;
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))
@@ -328,7 +331,7 @@ public class GUIErosion {
 
             if (GUI.Button(new Rect(Screen.width - menuWidth + sideOffset, yPos, 2 * buttonWidth, buttonHeight), "RESET EROSION"))
             {
-                gm.cm.erosionGenerator.te.thermalErosionMap.ResetQuadrants();
+                gm.cm.erosionGenerator.te.ResetErosion();
                 gm.cm.terrainGenerator.build();
                 erosionTCounter = 0;
 

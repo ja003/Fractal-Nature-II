@@ -180,7 +180,7 @@ public class FunctionRiverPlanner  {
                         if (i > terrainWidth* terrainHeight)
                         {
                             Debug.Log("FAIL");
-                            errorRiver.errorMessage = "algorithm timeout";
+                            errorRiver.errorMessage = "FAIL - algorithm timeout";
                             return errorRiver;
                             finalIndex = i;
                             reachedSide = Direction.top;
@@ -228,7 +228,7 @@ public class FunctionRiverPlanner  {
             if(!forceRiver && threshold > rg.riverLevel + 2 * step)
             {
                 Debug.Log("threshold too high: " + threshold);
-                errorRiver.errorMessage = "threshold too high: " + threshold;
+                errorRiver.errorMessage = "RIVER FAIL\n reached max threshold: " + threshold;
                 return errorRiver;
             }
 
@@ -237,7 +237,7 @@ public class FunctionRiverPlanner  {
                 Debug.Log("step=" + step);
                 Debug.Log("max=" + maxThreshold);
                 Debug.Log("FAILz");
-                errorRiver.errorMessage = "reached max threshold: " + threshold;
+                errorRiver.errorMessage = "RIVER FAIL\n reached max threshold:  " + threshold;
                 return errorRiver;
                 break;
             }

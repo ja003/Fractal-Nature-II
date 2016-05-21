@@ -114,14 +114,14 @@ public class RiverGenerator  {
 
         //Vertex start = ftm.GetLowestRegionCenter(20, 20);//LOCAL!
         //Vertex globalStart = lt.GetGlobalCoordinate((int)start.x, (int)start.z);
-        Vertex globalStart = ftm.GetLowestRegionCenter(20, 20);//now GLOBAL
+        Vertex globalStart = ftm.GetLowestRegionCenter(20, 50);//now GLOBAL
         Debug.Log(globalStart);
         //Debug.Log(ftm.lm);
 
         if(globalStart.height > riverLevel)
         {
             Debug.Log("start too high: " + globalStart);
-            ShowErrorMessage("river can't be here, start too high: " + globalStart);
+            ShowErrorMessage("river can't be here, start is too high: " + globalStart);
             return;
         }
 
@@ -131,7 +131,7 @@ public class RiverGenerator  {
         Debug.Log(river);
         if (river.riverPath.Count == 0)
         {
-            ShowErrorMessage("river part 1 - fail \n" + river.errorMessage);
+            ShowErrorMessage("river path finding failed \n" + river.errorMessage);
             return;
         }
 
@@ -149,7 +149,7 @@ public class RiverGenerator  {
 
         if(river2.riverPath.Count == 0)
         {
-            ShowErrorMessage("river part 2 - fail\n" + river2.errorMessage);
+            ShowErrorMessage("river path finding failed \n" + river2.errorMessage);
             return;
         }
         

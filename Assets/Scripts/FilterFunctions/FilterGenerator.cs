@@ -114,6 +114,20 @@ public class FilterGenerator// : IFilterGenerator
         sf.ResetFilter();
         gf.ResetFilter();
         tf.ResetFilters();
+
+        lt.tg.filterAverageLayer = false;
+        lt.tg.filterGaussianLayer = false;
+        lt.tg.filterMaxThresholdLayer = false;
+        lt.tg.filterMedianLayer = false;
+        lt.tg.filterMinThresholdLayer = false;
+        lt.tg.filterSpikeLayer = false;
+
+        lt.tg.guiManager.filter.averageFilter = false;
+        lt.tg.guiManager.filter.gaussFilter = false;
+        lt.tg.guiManager.filter.maxThresholdFilter = false;
+        lt.tg.guiManager.filter.medianFilter = false;
+        lt.tg.guiManager.filter.minThresholdFilter = false;
+        lt.tg.guiManager.filter.spikeFilter = false;
     }
 
 }

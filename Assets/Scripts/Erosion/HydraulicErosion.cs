@@ -117,7 +117,7 @@ public class HydraulicErosion  {
     /// <summary>
     /// perform 1 step number 'stepNumber' of hydraulic erosion on given area
     /// </summary>
-    public void HydraulicErosionStep(float waterViscosity, float strength,float deposition, float evaporation, int windX, int windZ, float windStrength, float windAngle)
+    public void HydraulicErosionStep(float waterViscosity, float strength,float deposition, float evaporation, int windX, int windZ, float windStrength, float windEffect)
     {
         // Kc = water viscosity
         // Ks = strength or (1.0 - terrainDensity)
@@ -127,7 +127,7 @@ public class HydraulicErosion  {
         // G  = gravity
 
         //DistributeWater(area, stepNumber, 0.1f);
-        UpdateOutflow(9.81f, windX, windZ, windStrength, windAngle);
+        UpdateOutflow(9.81f, windX, windZ, windStrength, windEffect);
         UpdateSediment(waterViscosity, strength, deposition);
         EvaporateWater(evaporation);
         //UpdateStepNumber(area, -666);
@@ -147,7 +147,7 @@ public class HydraulicErosion  {
     /// direction is influenced by wind
     /// </summary>
     public void UpdateOutflow(float G,
-        int windX, int windZ, float windStrength, float windCoverage)
+        int windX, int windZ, float windStrength, float windEffect)
     {
         // Kc = water viscosity
         // Ks = strength or (1.0 - terrainDensity)
@@ -174,7 +174,7 @@ public class HydraulicErosion  {
             float hN = GetTerrainWatterValue(x, z + 1);
             float deltaH = currentH - hN;
             windForce = 0;
-            if (windZ > 0 && deltaH > windCoverage)
+            if (windZ > 0 && deltaH > windEffect)
                 windForce = windPotentialZ;
 
             fluxT = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.top) + T * A * ((G * deltaH + windForce) / L));
@@ -183,7 +183,7 @@ public class HydraulicErosion  {
             hN = GetTerrainWatterValue(x + 1, z);
             deltaH = currentH - hN;
             windForce = 0;
-            if (windX > 0 && deltaH > windCoverage)
+            if (windX > 0 && deltaH > windEffect)
                 windForce = windPotentialX;
             fluxR = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.right) + T * A * ((G * deltaH + windForce) / L));
             /*if (x == 4 && counter < 10)
@@ -199,7 +199,7 @@ public class HydraulicErosion  {
             hN = GetTerrainWatterValue(x, z - 1);
             deltaH = currentH - hN;
             windForce = 0;
-            if (windZ < 0 && deltaH > windCoverage)
+            if (windZ < 0 && deltaH > windEffect)
                 windForce = windPotentialZ;
 
             fluxB = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.bot) + T * A * ((G * deltaH + windForce) / L));
@@ -208,7 +208,7 @@ public class HydraulicErosion  {
             hN = GetTerrainWatterValue(x - 1, z);
             deltaH = currentH - hN;
             windForce = 0;
-            if (windX < 0 && deltaH > windCoverage)
+            if (windX < 0 && deltaH > windEffect)
                 windForce = windPotentialX;
 
             fluxL = Mathf.Max(0.0f, GetOutflowValue(x, z, Direction.left) + T * A * ((G * deltaH + windForce) / L));
@@ -306,6 +306,11 @@ public class HydraulicErosion  {
 
             // Compute maximum sediment capacity
             float C = Kc * 10 * velocity.magnitude * GetSlope(x, z);
+            /*if(counter < 10)
+            {
+                counter++;
+                Debug.Log(C);
+            }*/
 
             float currentSediment = GetSedimentValue(x, z);
             float currentHydraulicErosion = GetHydraulicErosionValue(x, z);
@@ -377,20 +382,22 @@ public class HydraulicErosion  {
         //float botN = eg.GetTerrainValue(x, z - 1);
         //float leftN = eg.GetTerrainValue(x - 1, z);
 
-        float topN = eg.GetTerrainValue(x, z + 1) + GetHydraulicErosionValue(x,z+1);
-        float rightN = eg.GetTerrainValue(x + 1, z)+ GetHydraulicErosionValue(x + 1, z);
-        float botN = eg.GetTerrainValue(x, z - 1)+ GetHydraulicErosionValue(x, z - 1);
-        float leftN = eg.GetTerrainValue(x - 1, z)+ GetHydraulicErosionValue(x - 1, z);
+        float topN = lm.GetCurrentHeight(x, z + 1);
+        float rightN = lm.GetCurrentHeight(x + 1, z);
+        float botN = lm.GetCurrentHeight(x, z - 1);
+        float leftN = lm.GetCurrentHeight(x - 1, z);
 
-        float currentH = eg.GetTerrainValue(x, z) + GetHydraulicErosionValue(x, z);
+        float currentH = lm.GetCurrentHeight(x, z);
+        
+
         //to prevent too high slopes
         if ((topN+rightN+botN+leftN)/4 > currentH + e)
-        {
+        {/*
             if (counter < 20)
             {
                 counter++;
                 //Debug.Log(x + "," + z + ": " + currentH);
-            }
+            }*/
             return 0;
         }
 
@@ -413,6 +420,7 @@ public class HydraulicErosion  {
         float val = Vector3.Dot(n.normalized, new Vector3(0, 1, 0));
         //Debug.Log(x + "," + z + " : " + val);
         //Return dot product of normal with the Y axis
+        
         return 10*(1-Mathf.Abs(val));
     }
 

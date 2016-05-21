@@ -73,6 +73,9 @@ public class GaussianFilter {
         }
     }
 
+    /// <summary>
+    /// creates Gaussian kernel
+    /// </summary>
     private float[,] initGaussKernel(float blurring_factor, int kernel_size)
     {
 
@@ -112,5 +115,6 @@ public class GaussianFilter {
     public void ResetFilter()
     {
         globalFilterGaussianC.ResetQuadrants();
+        Debug.Log("reset gauss");
     }
 }

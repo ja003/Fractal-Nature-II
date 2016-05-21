@@ -1,0 +1,5 @@
+Reseting values
+
+- patch attributes are dependant on patchSize
+- erosion and filter values are deleted after terrain delete
+- removed 'gradient' default terrains (bad performance)

@@ -23,7 +23,7 @@ public class GUIterrainPlannerMenu : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        patch = new GUIterrainPatch(64);//TODO: set patch size
+        patch = new GUIterrainPatch(64);
         DontDestroyOnLoad(transform.gameObject);
         buttonWidth = menuWidth / 2 - sideOffset - sideOffset / 2;
 
